@@ -1,11 +1,13 @@
 namespace AllSopFoodService
 {
     using AllSopFoodService.Constants;
+    using AllSopFoodService.Model;
     using Boxed.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Infrastructure;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -59,7 +61,8 @@ namespace AllSopFoodService
                 .AddProjectCommands()
                 .AddProjectMappers()
                 .AddProjectRepositories()
-                .AddProjectServices();
+                .AddProjectServices()
+                .AddDbContext<FoodDBContext>(options => options.UseSqlServer(this.configuration.GetConnectionString("DefaultConnection")));
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is

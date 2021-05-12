@@ -44,7 +44,7 @@ namespace AllSopFoodService.Controllers
         // PUT: api/FoodProducts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFoodProduct(int id, FoodProduct foodProduct)
+        public async Task<IActionResult> PutFoodProductAsync(int id, FoodProduct foodProduct)
         {
             if (id != foodProduct.Id)
             {

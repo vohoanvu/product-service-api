@@ -57,12 +57,13 @@ namespace AllSopFoodService
                 .AddControllers()
                     .AddCustomJsonOptions(this.webHostEnvironment)
                     .AddCustomMvcOptions(this.configuration)
+                    .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .Services
                 .AddProjectCommands()
                 .AddProjectMappers()
                 .AddProjectRepositories()
                 .AddProjectServices()
-                .AddDbContext<FoodDBContext>(options => options.UseSqlServer(this.configuration.GetConnectionString("DefaultConnection")));
+                .AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is

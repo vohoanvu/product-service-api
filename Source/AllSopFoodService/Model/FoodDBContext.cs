@@ -19,6 +19,7 @@ namespace AllSopFoodService.Model
 
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<FoodProduct> FoodProducts { get; set; }
+        public virtual DbSet<CartItem> ShoppingCartItems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -80,25 +80,25 @@ namespace AllSopFoodService.Controllers
         // POST: api/CartItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CartItem>> AddToCartItem(int cartItem)
+        public ActionResult<CartItem> AddToCartItem(int cartItem)
         {
             //_context.ShoppingCartItems.Add(cartItem);
             this.usersShoppingCart.AddToCart(cartItem);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (CartItemExists(cartItem.ItemId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //try
+            //{
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (DbUpdateException)
+            //{
+            //    if (CartItemExists(cartItem.ItemId))
+            //    {
+            //        return Conflict();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
             return CreatedAtAction("GetCartItem", new { id = cartItem }, cartItem);
         }

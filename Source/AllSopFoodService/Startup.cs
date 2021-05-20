@@ -39,31 +39,31 @@ namespace AllSopFoodService
         /// http://blogs.msdn.com/b/webdev/archive/2014/06/17/dependency-injection-in-asp-net-vnext.aspx
         /// </summary>
         /// <param name="services">The services.</param>
-        public virtual void ConfigureServices(IServiceCollection services) =>
-            services
-                .AddCustomCaching()
-                .AddCustomCors()
-                .AddCustomOptions(this.configuration)
-                .AddCustomRouting()
-                .AddResponseCaching()
-                .AddCustomResponseCompression(this.configuration)
-                .AddCustomHealthChecks()
-                .AddCustomSwagger()
-                .AddHttpContextAccessor()
-                // Add useful interface for accessing the ActionContext outside a controller.
-                .AddSingleton<IActionContextAccessor, ActionContextAccessor>()
-                .AddCustomApiVersioning()
-                .AddServerTiming()
-                .AddControllers()
+        public virtual void ConfigureServices(IServiceCollection services) => services
+                    .AddCustomCaching()
+                    .AddCustomCors()
+                    .AddCustomOptions(this.configuration)
+                    .AddCustomRouting()
+                    .AddResponseCaching()
+                    .AddCustomResponseCompression(this.configuration)
+                    .AddCustomHealthChecks()
+                    .AddCustomSwagger()
+                    .AddHttpContextAccessor()
+                    // Add useful interface for accessing the ActionContext outside a controller.
+                    .AddSingleton<IActionContextAccessor, ActionContextAccessor>()
+                    .AddCustomApiVersioning()
+                    .AddServerTiming()
+                    .AddControllers()
                     .AddCustomJsonOptions(this.webHostEnvironment)
                     .AddCustomMvcOptions(this.configuration)
                     .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
-                .Services
-                .AddProjectCommands()
-                .AddProjectMappers()
-                .AddProjectRepositories()
-                .AddProjectServices()
-                .AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
+                    .Services
+                    .AddProjectCommands()
+                    .AddProjectMappers()
+                    .AddProjectRepositories()
+                    .AddProjectServices()
+                    .AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")))
+                    .AddDistributedMemoryCache().AddSession();
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is
@@ -97,6 +97,7 @@ namespace AllSopFoodService
                             .RequireCors(CorsPolicyName.AllowAny);
                     })
                 .UseSwagger()
-                .UseCustomSwaggerUI();
+                .UseCustomSwaggerUI()
+                .UseSession();
     }
 }

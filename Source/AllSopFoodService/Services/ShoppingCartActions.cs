@@ -8,14 +8,23 @@ namespace AllSopFoodService.Services
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
     using Microsoft.AspNetCore.Http;
+    using System.Security.Claims;
 
     public class ShoppingCartActions
     {
         public string ShoppingCartId { get; set; } = default!;
 
         private FoodDBContext _db = new();
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private ISession _session => this._httpContextAccessor.HttpContext.Session;
 
         public const string CartSessionKey = "CartId";
+
+        public ShoppingCartActions(IHttpContextAccessor httpContextAccessor) => this._httpContextAccessor = httpContextAccessor;
+
+        public ShoppingCartActions()
+        {
+        }
 
         public void AddToCart(int id)
         {
@@ -34,7 +43,7 @@ namespace AllSopFoodService.Services
                     ProductId = id,
                     CartId = ShoppingCartId,
                     Product = _db.FoodProducts.SingleOrDefault(
-                   p => p.Id == id),
+                    p => p.Id == id),
                     Quantity = 1,
                     DateCreated = DateTime.Now
                 };
@@ -50,31 +59,33 @@ namespace AllSopFoodService.Services
             _db.SaveChanges();
         }
 
-        public void Dispose()
-        {
-            if (_db != null)
-            {
-                _db.Dispose();
-                _db = null;
-            }
-        }
+        //public void Dispose()
+        //{
+        //    if (_db != null)
+        //    {
+        //        _db.Dispose();
+        //        _db = null;
+        //    }
+        //}
 
         public string GetCartId()
         {
-            if (HttpContext.Current.Session[CartSessionKey] == null)
+            if (_session.GetString(CartSessionKey) == null)
             {
-                if (!string.IsNullOrWhiteSpace(HttpContext.Current.User.Identity.Name))
+                if (!string.IsNullOrWhiteSpace(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value))
                 {
-                    HttpContext.Current.Session[CartSessionKey] = HttpContext.Current.User.Identity.Name;
+                    _session.SetString(CartSessionKey, this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value);
                 }
                 else
                 {
                     // Generate a new random GUID using System.Guid class.     
                     var tempCartId = Guid.NewGuid();
-                    HttpContext.Current.Session[CartSessionKey] = tempCartId.ToString();
+                    _session.SetString(CartSessionKey, tempCartId.ToString());
+                    //HttpContext.Current.Session[CartSessionKey] = tempCartId.ToString();
                 }
             }
-            return HttpContext.Current.Session[CartSessionKey].ToString();
+            //return HttpContext.Current.Session[CartSessionKey].ToString();
+            return _session.GetString(CartSessionKey);
         }
 
         public List<CartItem> GetCartItems()

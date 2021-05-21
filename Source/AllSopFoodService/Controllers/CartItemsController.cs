@@ -14,114 +14,89 @@ namespace AllSopFoodService.Controllers
     [ApiController]
     public class CartItemsController : ControllerBase
     {
-        private readonly FoodDBContext _context;
+        //private readonly FoodDBContext _context;
         //private readonly IHttpContextAccessor httpcontextaccessor;
-        private ShoppingCartActions usersShoppingCart = new();
+        private readonly ShoppingCartActions _usersShoppingCart;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public CartItemsController(FoodDBContext context)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public CartItemsController(ShoppingCartActions usersShoppingCart)
         {
-            _context = context;
+            this._usersShoppingCart = usersShoppingCart;
         }
 
         // GET: api/CartItems
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CartItem>>> GetShoppingCartItems()
-        {
-            return await _context.ShoppingCartItems.ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<CartItem>>> GetShoppingCartItems()
+        //{
+        //    return await _context.ShoppingCartItems.ToListAsync();
+        //}
 
-        // GET: api/CartItems/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CartItem>> GetCartItem(string id)
-        {
-            var cartItem = await _context.ShoppingCartItems.FindAsync(id);
+        //// GET: api/CartItems/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<CartItem>> GetCartItem(string id)
+        //{
+        //    var cartItem = await _context.ShoppingCartItems.FindAsync(id);
 
-            if (cartItem == null)
-            {
-                return NotFound();
-            }
+        //    if (cartItem == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return cartItem;
-        }
+        //    return cartItem;
+        //}
 
-        // PUT: api/CartItems/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCartItem(string id, CartItem cartItem)
-        {
-            if (id != cartItem.ItemId)
-            {
-                return BadRequest();
-            }
+        //// PUT: api/CartItems/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutCartItem(string id, CartItem cartItem)
+        //{
+        //    if (id != cartItem.ItemId)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(cartItem).State = EntityState.Modified;
+        //    _context.Entry(cartItem).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CartItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    await _context.SaveChangesAsync().ConfigureAwait(true);
+   
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // POST: api/CartItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult<CartItem> AddToCartItem(int cartItem)
+        public async Task<ActionResult<CartItem>> AddToCartItem(int productItem)
         {
             //_context.ShoppingCartItems.Add(cartItem);
-            this.usersShoppingCart.AddToCart(cartItem);
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    if (CartItemExists(cartItem.ItemId))
-            //    {
-            //        return Conflict();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
+            await _usersShoppingCart.AddToCartAsync(productItem);
+            if (CartItemExists(productItem))
+            {
+                return Conflict();
+            }
 
-            return CreatedAtAction("GetCartItem", new { id = cartItem }, cartItem);
+            return CreatedAtAction("GetCartItem", new { id = productItem }, productItem);
         }
 
         // DELETE: api/CartItems/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCartItem(string id)
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteCartItem(string id)
+        //{
+        //    var cartItem = await _context.ShoppingCartItems.FindAsync(id);
+        //    if (cartItem == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.ShoppingCartItems.Remove(cartItem);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
+        private bool CartItemExists(int productID)
         {
-            var cartItem = await _context.ShoppingCartItems.FindAsync(id);
-            if (cartItem == null)
-            {
-                return NotFound();
-            }
-
-            _context.ShoppingCartItems.Remove(cartItem);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool CartItemExists(string id)
-        {
-            return _context.ShoppingCartItems.Any(e => e.ItemId == id);
+            return _usersShoppingCart.IsThisProductExistInCart(productID);
+            //return _context.ShoppingCartItem.Any(e => e.ProductId == productID);
         }
     }
 }

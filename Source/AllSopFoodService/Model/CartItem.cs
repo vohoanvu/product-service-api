@@ -13,7 +13,7 @@ namespace AllSopFoodService.Model
         [Key]
         public string ItemId { get; set; }
         //used for cart sessions
-        public string CartId { get; set; }
+        //public string CartId { get; set; }
 
         public int Quantity { get; set; }
 

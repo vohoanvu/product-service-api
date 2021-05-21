@@ -57,7 +57,6 @@ namespace AllSopFoodService.Controllers
         //    _context.Entry(cartItem).State = EntityState.Modified;
 
         //    await _context.SaveChangesAsync().ConfigureAwait(true);
-   
 
         //    return NoContent();
         //}

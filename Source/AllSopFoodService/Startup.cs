@@ -2,6 +2,7 @@ namespace AllSopFoodService
 {
     using AllSopFoodService.Constants;
     using AllSopFoodService.Model;
+    using AllSopFoodService.Services;
     using Boxed.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -51,6 +52,7 @@ namespace AllSopFoodService
                     .AddHttpContextAccessor()
                     // Add useful interface for accessing the ActionContext outside a controller.
                     .AddSingleton<IActionContextAccessor, ActionContextAccessor>()
+                    .AddScoped<IShoppingCartActions, ShoppingCartActions>()
                     .AddCustomApiVersioning()
                     .AddServerTiming()
                     .AddControllers()
@@ -63,7 +65,7 @@ namespace AllSopFoodService
                     .AddProjectRepositories()
                     .AddProjectServices()
                     .AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")))
-                    .AddDistributedMemoryCache().AddSession();
+                    .AddDistributedMemoryCache().AddSession().AddMvc();
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is

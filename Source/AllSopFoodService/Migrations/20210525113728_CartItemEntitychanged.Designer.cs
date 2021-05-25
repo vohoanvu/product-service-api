@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AllSopFoodService.Migrations
 {
     [DbContext(typeof(FoodDBContext))]
-    [Migration("20210521105538_CartItemCreated")]
-    partial class CartItemCreated
+    [Migration("20210525113728_CartItemEntitychanged")]
+    partial class CartItemEntitychanged
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,21 +24,19 @@ namespace AllSopFoodService.Migrations
 
             modelBuilder.Entity("AllSopFoodService.Model.CartItem", b =>
                 {
-                    b.Property<string>("ItemId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("ItemId");
-
-                    b.HasIndex("ProductId");
+                    b.HasKey("ProductId");
 
                     b.ToTable("ShoppingCartItems");
                 });

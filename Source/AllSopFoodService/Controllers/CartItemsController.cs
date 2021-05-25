@@ -10,18 +10,15 @@ namespace AllSopFoodService.Controllers
     using AllSopFoodService.Model;
     using AllSopFoodService.Services;
 
-    [Route("api/[controller]")]
+    [Route("api/ShoppingCart")]
     [ApiController]
     public class CartItemsController : ControllerBase
     {
         //private readonly FoodDBContext _context;
         //private readonly IHttpContextAccessor httpcontextaccessor;
-        private readonly ShoppingCartActions _usersShoppingCart;
+        private readonly IShoppingCartActions _usersShoppingCart;
 
-        public CartItemsController(ShoppingCartActions usersShoppingCart)
-        {
-            this._usersShoppingCart = usersShoppingCart;
-        }
+        public CartItemsController(IShoppingCartActions usersShoppingCart) => this._usersShoppingCart = usersShoppingCart;
 
         // GET: api/CartItems
         //[HttpGet]
@@ -61,20 +58,22 @@ namespace AllSopFoodService.Controllers
         //    return NoContent();
         //}
 
-        // POST: api/CartItems
+        // POST: api/ShoppingCart
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<CartItem>> AddToCartItem(int productItem)
+        [HttpPost("/add")]
+        public async Task<IActionResult> AddToCartItemAsync(int productItem)
         {
             //_context.ShoppingCartItems.Add(cartItem);
-            await _usersShoppingCart.AddToCartAsync(productItem);
-            if (CartItemExists(productItem))
+            await this._usersShoppingCart.AddToCartAsync(productItem).ConfigureAwait(true);
+            if (this.CartItemExists(productItem))
             {
-                return Conflict();
+                return this.Conflict();
             }
 
-            return CreatedAtAction("GetCartItem", new { id = productItem }, productItem);
+            return this.CreatedAtAction("GetCartItem", new { id = productItem }, productItem);
+            //return Content("This Product has been added to CART");
         }
+
 
         // DELETE: api/CartItems/5
         //[HttpDelete("{id}")]
@@ -92,10 +91,6 @@ namespace AllSopFoodService.Controllers
         //    return NoContent();
         //}
 
-        private bool CartItemExists(int productID)
-        {
-            return _usersShoppingCart.IsThisProductExistInCart(productID);
-            //return _context.ShoppingCartItem.Any(e => e.ProductId == productID);
-        }
+        private bool CartItemExists(int productID) => this._usersShoppingCart.IsThisProductExistInCart(productID);//return _context.ShoppingCartItem.Any(e => e.ProductId == productID);
     }
 }

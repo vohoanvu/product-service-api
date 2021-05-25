@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AllSopFoodService.Migrations
 {
-    public partial class CartItemCreated : Migration
+    public partial class CartIdChanged : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,14 +11,14 @@ namespace AllSopFoodService.Migrations
                 name: "ShoppingCartItems",
                 columns: table => new
                 {
-                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true,
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ProductId = table.Column<int>(type: "int", nullable: true)
+                    CartId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShoppingCartItems", x => x.ItemId);
+                    table.PrimaryKey("PK_ShoppingCartItems", x => x.CartId);
                     table.ForeignKey(
                         name: "FK_ShoppingCartItems_FoodProducts_ProductId",
                         column: x => x.ProductId,
@@ -37,6 +37,12 @@ namespace AllSopFoodService.Migrations
         {
             migrationBuilder.DropTable(
                 name: "ShoppingCartItems");
+
+            //migrationBuilder.DropTable(
+            //    name: "FoodProducts");
+
+            //migrationBuilder.DropTable(
+            //    name: "categories");
         }
     }
 }

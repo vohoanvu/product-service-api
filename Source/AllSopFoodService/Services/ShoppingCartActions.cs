@@ -10,8 +10,9 @@ namespace AllSopFoodService.Services
     using Microsoft.AspNetCore.Http;
     using System.Security.Claims;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Mvc;
 
-    public class ShoppingCartActions
+    public class ShoppingCartActions : IShoppingCartActions
     {
         //public string ShoppingCartId { get; set; } = default!;
         private readonly FoodDBContext _db;
@@ -22,16 +23,13 @@ namespace AllSopFoodService.Services
 
         //public ShoppingCartActions(IHttpContextAccessor httpContextAccessor) => this._httpContextAccessor = httpContextAccessor;
 
-        public ShoppingCartActions(FoodDBContext dbcontext)
-        {
-            this._db = dbcontext;
-        }
+        public ShoppingCartActions(FoodDBContext dbcontext) => this._db = dbcontext;
 
-        public async Task AddToCartAsync(int id)
+        public async Task AddToCartAsync(int productId)
         {
             // Retrieve the product from the database.           
             //this.ShoppingCartId = GetCartId();
-            var cartItem = await _db.ShoppingCartItems.SingleOrDefaultAsync(ci => ci.ProductId == id).ConfigureAwait(true);
+            var cartItem = await this._db.ShoppingCartItems.SingleOrDefaultAsync(ci => ci.ProductId == productId).ConfigureAwait(true);
             //var cartItem = _db.ShoppingCartItems.SingleOrDefault(
             //    c => c.CartId == this.ShoppingCartId
             //    && c.ProductId == id);
@@ -41,15 +39,17 @@ namespace AllSopFoodService.Services
                 cartItem = new CartItem
                 {
                     ItemId = Guid.NewGuid().ToString(),
-                    ProductId = id,
+                    ProductId = productId,
                     //CartId = ShoppingCartId,
-                    Product = _db.FoodProducts.SingleOrDefault(
-                    p => p.Id == id),
+                    Product = this._db.FoodProducts.SingleOrDefault(
+                    p => p.Id == productId),
                     Quantity = 1,
+                    Description = this._db.FoodProducts.SingleOrDefault(
+                    p => p.Id == productId).Name,
                     DateCreated = DateTime.Now
                 };
 
-                _db.ShoppingCartItems.Add(cartItem);
+                this._db.ShoppingCartItems.Add(cartItem);
             }
             else
             {
@@ -57,13 +57,12 @@ namespace AllSopFoodService.Services
                 // then add one to the quantity.                 
                 cartItem.Quantity++;
             }
-            await _db.SaveChangesAsync().ConfigureAwait(true);
+            await this._db.SaveChangesAsync().ConfigureAwait(true);
+
+            //return Create();
         }
 
-        public bool IsThisProductExistInCart(int productID)
-        {
-            return _db.ShoppingCartItems.Any(e => e.ProductId == productID);
-        }
+        public bool IsThisProductExistInCart(int productID) => this._db.ShoppingCartItems.Any(e => e.ProductId == productID);
 
         //public void Dispose()
         //{

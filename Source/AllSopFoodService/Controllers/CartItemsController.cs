@@ -61,17 +61,14 @@ namespace AllSopFoodService.Controllers
         // POST: api/ShoppingCart
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("/add")]
-        public async Task<IActionResult> AddToCartItemAsync(int productItem)
+        public async Task<ActionResult> AddToCartItemAsync(int productItem)
         {
             //_context.ShoppingCartItems.Add(cartItem);
-            await this._usersShoppingCart.AddToCartAsync(productItem).ConfigureAwait(true);
-            if (this.CartItemExists(productItem))
-            {
-                return this.Conflict();
-            }
+            var newCartItem = await this._usersShoppingCart.AddToCartAsync(productItem).ConfigureAwait(true);
 
-            return this.CreatedAtAction("GetCartItem", new { id = productItem }, productItem);
-            //return Content("This Product has been added to CART");
+            //return this.CreatedAtAction("GetCartItem", new { itemID = newCartItem.ItemId }, newCartItem);
+            //return this.CreatedAtRoute("GetCartItem", new { itemID = newCartItem.ItemId }, newCartItem);
+            return this.CreatedAtRoute(new { itemID = newCartItem.ItemId }, newCartItem);
         }
 
 
@@ -91,6 +88,6 @@ namespace AllSopFoodService.Controllers
         //    return NoContent();
         //}
 
-        private bool CartItemExists(int productID) => this._usersShoppingCart.IsThisProductExistInCart(productID);//return _context.ShoppingCartItem.Any(e => e.ProductId == productID);
+        //private bool CartItemExists(int productID) => this._usersShoppingCart.IsThisProductExistInCart(productID);//return _context.ShoppingCartItem.Any(e => e.ProductId == productID);
     }
 }

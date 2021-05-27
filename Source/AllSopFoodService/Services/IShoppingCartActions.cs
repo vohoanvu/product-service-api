@@ -4,10 +4,11 @@ namespace AllSopFoodService.Services
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AllSopFoodService.Model;
 
     public interface IShoppingCartActions
     {
         bool IsThisProductExistInCart(int productID);
-        Task AddToCartAsync(int productId);
+        Task<CartItem> AddToCartAsync(int productId);
     }
 }

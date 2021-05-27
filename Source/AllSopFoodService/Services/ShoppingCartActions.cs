@@ -25,7 +25,7 @@ namespace AllSopFoodService.Services
 
         public ShoppingCartActions(FoodDBContext dbcontext) => this._db = dbcontext;
 
-        public async Task AddToCartAsync(int productId)
+        public async Task<CartItem> AddToCartAsync(int productId)
         {
             // Retrieve the product from the database.           
             //this.ShoppingCartId = GetCartId();
@@ -59,7 +59,7 @@ namespace AllSopFoodService.Services
             }
             await this._db.SaveChangesAsync().ConfigureAwait(true);
 
-            //return Create();
+            return cartItem;
         }
 
         public bool IsThisProductExistInCart(int productID) => this._db.ShoppingCartItems.Any(e => e.ProductId == productID);

@@ -41,26 +41,16 @@ namespace AllSopFoodService.Controllers
         //    return cartItem;
         //}
 
-        //// PUT: api/CartItems/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutCartItem(string id, CartItem cartItem)
-        //{
-        //    if (id != cartItem.ItemId)
-        //    {
-        //        return BadRequest();
-        //    }
+        //GET: api/ShoppingCart/sum
+        //to protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpGet("sum")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public decimal GetTotalPrice() => this._usersShoppingCart.GetTotal();
 
-        //    _context.Entry(cartItem).State = EntityState.Modified;
-
-        //    await _context.SaveChangesAsync().ConfigureAwait(true);
-
-        //    return NoContent();
-        //}
-
-        // POST: api/ShoppingCart
+        // POST: api/ShoppingCart/add
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("/add")]
+        [HttpPost("add")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult> AddToCartItemAsync(int productItem)
         {
             //_context.ShoppingCartItems.Add(cartItem);
@@ -71,22 +61,27 @@ namespace AllSopFoodService.Controllers
             return this.CreatedAtRoute(new { itemID = newCartItem.ItemId }, newCartItem);
         }
 
+        //DELETE: api/ShoppingCart/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<CartItem>> DeleteCartItemAsync(int id)
+        {
+            try
+            {
+                var cartItem = await this._usersShoppingCart.RemoveFromCartAsync(id).ConfigureAwait(true);
+                if (cartItem == null)
+                {
+                    return this.NotFound($"The Cart does not have any product with Id= {id} !");
+                }
 
-        // DELETE: api/CartItems/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteCartItem(string id)
-        //{
-        //    var cartItem = await _context.ShoppingCartItems.FindAsync(id);
-        //    if (cartItem == null)
-        //    {
-        //        return NotFound();
-        //    }
+                return cartItem;
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Error deleting data");
+            }
 
-        //    _context.ShoppingCartItems.Remove(cartItem);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
+        }
 
         //private bool CartItemExists(int productID) => this._usersShoppingCart.IsThisProductExistInCart(productID);//return _context.ShoppingCartItem.Any(e => e.ProductId == productID);
     }

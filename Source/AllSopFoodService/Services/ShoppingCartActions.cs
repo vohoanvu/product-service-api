@@ -64,6 +64,31 @@ namespace AllSopFoodService.Services
 
         public bool IsThisProductExistInCart(int productID) => this._db.ShoppingCartItems.Any(e => e.ProductId == productID);
 
+        public async Task<CartItem> RemoveFromCartAsync(int productId)
+        {
+            var isExisted = this.IsThisProductExistInCart(productId);
+            if (!isExisted)
+            {
+                return null;
+            }
+            var cartItem = await this._db.ShoppingCartItems.FirstOrDefaultAsync(ci => ci.ProductId == productId).ConfigureAwait(true);
+            this._db.ShoppingCartItems.Remove(cartItem);
+            await this._db.SaveChangesAsync().ConfigureAwait(true);
+
+            return cartItem;
+        }
+
+        public decimal GetTotal()
+        {
+            var total = decimal.Zero;
+            foreach (var cartItem in this.GetCartItems())
+            {
+                total += cartItem.Product.Price * cartItem.Quantity;
+            }
+
+            return total;
+        }
+
         //public void Dispose()
         //{
         //    if (_db != null)
@@ -97,6 +122,12 @@ namespace AllSopFoodService.Services
         {
             //this.ShoppingCartId = GetCartId();
             var allCartItems = _db.ShoppingCartItems.ToList();
+
+            foreach (var item in allCartItems)
+            {
+                item.Product = _db.FoodProducts.Find(item.ProductId);
+            }
+
             return allCartItems;
             //return _db.ShoppingCartItems.Where(
             //    c => c.CartId == ShoppingCartId).ToList();

@@ -24,6 +24,7 @@ namespace AllSopFoodService.Controllers
 
         // GET: api/FoodProducts
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<FoodProduct>>> GetFoodProductsAsync()
         {
             //return await _context.FoodProducts.ToListAsync().ConfigureAwait(true);
@@ -44,39 +45,39 @@ namespace AllSopFoodService.Controllers
 
         //PUT: api/FoodProducts/cart/5
         // adding a product to the shopping cart
-        [HttpPut("/cart/{id}")]
-        public async Task<ActionResult> AddToCartAsync(int id)
-        {
-            var entity = await _context.FoodProducts.FindAsync(id).ConfigureAwait(true);
+        //[HttpPut("/cart/{id}")]
+        //public async Task<ActionResult> AddToCartAsync(int id)
+        //{
+        //    var entity = await _context.FoodProducts.FindAsync(id).ConfigureAwait(true);
 
-            if (entity == null)
-            {
-                return NotFound();
-            }
+        //    if (entity == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            entity.IsInCart = true;
-            await _context.SaveChangesAsync().ConfigureAwait(true);
+        //    entity.IsInCart = true;
+        //    await _context.SaveChangesAsync().ConfigureAwait(true);
 
-            return Ok(entity);
-        }
+        //    return Ok(entity);
+        //}
 
         //DELETE: api/FoodProducts/cart/5
         //removing a product from the shopping cart
-        [HttpDelete("/cart/{id}")]
-        public async Task<ActionResult> RemoveFromAsync(int id)
-        {
-            var entity = await _context.FoodProducts.FindAsync(id).ConfigureAwait(true);
+        //[HttpDelete("/cart/{id}")]
+        //public async Task<ActionResult> RemoveFromAsync(int id)
+        //{
+        //    var entity = await _context.FoodProducts.FindAsync(id).ConfigureAwait(true);
 
-            if (entity == null)
-            {
-                return NotFound();
-            }
+        //    if (entity == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            entity.IsInCart = false;
-            await _context.SaveChangesAsync().ConfigureAwait(true);
+        //    entity.IsInCart = false;
+        //    await _context.SaveChangesAsync().ConfigureAwait(true);
 
-            return Ok(entity);
-        }
+        //    return Ok(entity);
+        //}
 
         // GET: api/FoodProducts/5
         [HttpGet("{id}")]

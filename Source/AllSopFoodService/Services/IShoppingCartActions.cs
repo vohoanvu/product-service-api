@@ -10,5 +10,7 @@ namespace AllSopFoodService.Services
     {
         bool IsThisProductExistInCart(int productID);
         Task<CartItem> AddToCartAsync(int productId);
+        Task<CartItem> RemoveFromCartAsync(int productId);
+        decimal GetTotal();
     }
 }

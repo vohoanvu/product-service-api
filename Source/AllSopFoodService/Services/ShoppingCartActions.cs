@@ -11,6 +11,7 @@ namespace AllSopFoodService.Services
     using System.Security.Claims;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
+    using System.Net.Http;
 
     public class ShoppingCartActions : IShoppingCartActions
     {
@@ -89,6 +90,118 @@ namespace AllSopFoodService.Services
             return total;
         }
 
+        public decimal GetTotalAfterDiscount(IEnumerable<CartItem> discountedCart)
+        {
+            var total = decimal.Zero;
+            foreach (var cartItem in discountedCart)
+            {
+                total += cartItem.Product.Price * cartItem.Quantity;
+            }
+
+            return total;
+        }
+
+        public bool CheckCodeExists(string code) => this._db.CouponCodes.Any(promo => promo.CouponCode == code);
+
+        public async Task<HttpResponseMessage> ApplyVoucherToCartAsync(string voucherCode)
+        {
+            var promotion = await this._db.CouponCodes.SingleOrDefaultAsync(promo => promo.CouponCode == voucherCode).ConfigureAwait(true);
+            var allCartItems = this.GetCartItems(); //Get all current items in the cart
+            var response = new HttpResponseMessage();
+            // processing the promotion logic here
+            switch (promotion.CouponCode)
+            {
+                case "10OFFPROMODRI":
+                    // Bool: True if there are 10 or more Drinks Item in Cart, False otherwise
+                    var quantityCondition = this.Is10orMoreDrinksItemInCart(allCartItems);
+                    if (!quantityCondition)
+                    {
+                        response.StatusCode = System.Net.HttpStatusCode.NotAcceptable;
+                        response.Headers.Add("Message", "You need to buy at least 10 or more Drinks Item!");
+                        return response;
+                    }
+
+                    foreach (var cartItem in allCartItems)
+                    {
+                        // mapping Product Object property for each CartItem
+                        var discountedProduct = new FoodProduct()
+                        {
+                            // might be using AutoMapper here
+                            Id = cartItem.ProductId,
+                            Name = cartItem.Product.Name,
+                            Price = cartItem.Product.Price - (cartItem.Product.Price * Convert.ToDecimal(0.1)),
+                            Quantity = cartItem.Product.Quantity,
+                            IsInCart = cartItem.Product.IsInCart,
+                            CategoryId = cartItem.Product.CategoryId
+                        };
+                        // use the newly updated Product Object of each CartItem
+                        cartItem.Product = discountedProduct;
+                        // update each CartItem in DB
+                        await this.UpdateCartItemAsync(cartItem.ItemId, cartItem).ConfigureAwait(true);
+                    }
+
+                    //mark this coupon as used
+                    promotion.IsClaimed = true;
+                    this._db.SaveChanges();
+                    break;
+                case "5OFFPROMOALL":
+
+
+                    break;
+                case "20OFFPROMOALL":
+
+
+                    break;
+                default:
+
+                    break;
+            }
+
+            return response;
+        }
+
+        public async Task<CartItem> UpdateCartItemAsync(string id, CartItem newItem)
+        {
+            newItem.ItemId = id;
+            //update database
+            if (newItem == null)
+            {
+                throw new ArgumentNullException(nameof(newItem));
+            }
+            var currentCartItem = await this._db.ShoppingCartItems.FindAsync(id).ConfigureAwait(true);
+            if (currentCartItem != null)
+            {
+                return null;
+            }
+            // remove the current CartItem
+            this._db.ShoppingCartItems.Remove(currentCartItem);
+            await this._db.SaveChangesAsync().ConfigureAwait(true);
+            //Add new CartItem
+            var updateCartItem = this._db.ShoppingCartItems.Add(newItem);
+            await this._db.SaveChangesAsync().ConfigureAwait(true);
+
+            return updateCartItem.Entity;
+        }
+
+        //True if there are 10 or more Drinks Item in Cart, False otherwise
+        public bool Is10orMoreDrinksItemInCart(List<CartItem> wholeCart)
+        {
+            var drinksList = new List<CartItem>();
+            foreach (var item in wholeCart)
+            {
+                if (item.Product.CategoryId == 3) // specifically checking for 'Drinks' Category
+                {
+                    drinksList.Add(item);
+                }
+            }
+            // count DrinksList
+            if (drinksList.Count < 10)
+            {
+                return false;
+            }
+
+            return true;
+        }
         //public void Dispose()
         //{
         //    if (_db != null)
@@ -123,6 +236,7 @@ namespace AllSopFoodService.Services
             //this.ShoppingCartId = GetCartId();
             var allCartItems = _db.ShoppingCartItems.ToList();
 
+            // assign the FoodProduct object to the list of returned results
             foreach (var item in allCartItems)
             {
                 item.Product = _db.FoodProducts.Find(item.ProductId);

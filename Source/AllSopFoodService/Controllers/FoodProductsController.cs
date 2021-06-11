@@ -25,10 +25,11 @@ namespace AllSopFoodService.Controllers
         // GET: api/FoodProducts
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<FoodProduct>>> GetFoodProductsAsync()
+        // or ---public async Task<ActionResult<IEnumerable<FoodProduct>>> GetFoodProductsAsync()--- is also correct!
+        public async Task<IActionResult> GetFoodProductsAsync()
         {
             //return await _context.FoodProducts.ToListAsync().ConfigureAwait(true);
-            var foodItems = await _context.FoodProducts
+            var foodItems = await this._context.FoodProducts
                                             .Select(fooditem => new
                                             {
                                                 id = fooditem.Id,
@@ -40,7 +41,7 @@ namespace AllSopFoodService.Controllers
                                             })
                                             .ToListAsync().ConfigureAwait(true);
 
-            return Ok(foodItems);
+            return this.Ok(foodItems); // if returned type was ActionResult<T>, then only need to 'return foodItems;' 
         }
 
         //PUT: api/FoodProducts/cart/5

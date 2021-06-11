@@ -9,6 +9,8 @@ namespace AllSopFoodService.Controllers
     using Microsoft.EntityFrameworkCore;
     using AllSopFoodService.Model;
     using AllSopFoodService.Services;
+    using System.Net.Http;
+    using AllSopFoodService.Controllers;
 
     [Route("api/ShoppingCart")]
     [ApiController]
@@ -27,19 +29,34 @@ namespace AllSopFoodService.Controllers
         //    return await _context.ShoppingCartItems.ToListAsync();
         //}
 
-        //// GET: api/CartItems/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<CartItem>> GetCartItem(string id)
-        //{
-        //    var cartItem = await _context.ShoppingCartItems.FindAsync(id);
+        //GET: api/ShoppingCart/applyCode/11
+        [HttpPut("applyCode/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<HttpResponseMessage>> ApplyVoucherAsync(string voucherCode)
+        {
+            var voucherCheck = this._usersShoppingCart.CheckCodeExists(voucherCode);
+            if (!voucherCheck)
+            {
+                return this.NotFound($"This Voucher Code is Invalid! Please try another one!");
+            }
 
-        //    if (cartItem == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return cartItem;
-        //}
+            var response = await this._usersShoppingCart.ApplyVoucherToCartAsync(voucherCode).ConfigureAwait(true);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                response.Headers.Add("Message", "Successfully applied Voucher to Cart!");
+                //response.StatusCode = System.Net.HttpStatusCode.OK;
+                return response;
+            }
+            else
+            {
+                //response.Headers.Add("Message", "This Voucher Code is already claimed! Please use another code!");
+                //response.StatusCode = (System.Net.HttpStatusCode)StatusCodes.Status204NoContent;
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Error applying this coupon");
+            }
+
+        }
 
         //GET: api/ShoppingCart/sum
         //to protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -47,7 +64,7 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public decimal GetTotalPrice() => this._usersShoppingCart.GetTotal();
 
-        // POST: api/ShoppingCart/add
+        // POST: api/ShoppingCart/add/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("add")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -64,7 +81,8 @@ namespace AllSopFoodService.Controllers
         //DELETE: api/ShoppingCart/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<CartItem>> DeleteCartItemAsync(int id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteCartItemAsync(int id)
         {
             try
             {
@@ -74,7 +92,7 @@ namespace AllSopFoodService.Controllers
                     return this.NotFound($"The Cart does not have any product with Id= {id} !");
                 }
 
-                return cartItem;
+                return this.Ok(cartItem);
             }
             catch (Exception)
             {
@@ -83,6 +101,5 @@ namespace AllSopFoodService.Controllers
 
         }
 
-        //private bool CartItemExists(int productID) => this._usersShoppingCart.IsThisProductExistInCart(productID);//return _context.ShoppingCartItem.Any(e => e.ProductId == productID);
     }
 }

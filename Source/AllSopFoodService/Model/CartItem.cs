@@ -8,9 +8,9 @@ namespace AllSopFoodService.Model
     using System.Linq;
     using System.Threading.Tasks;
 
+    // for the sake of this assignment, we will assume this store has only 1 cart
     public class CartItem
     {
-        //used for cart sessions
         //public string CartId { get; set; }
         [Key]
         public string ItemId { get; set; }

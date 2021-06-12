@@ -19,8 +19,14 @@ namespace AllSopFoodService.Controllers
         //private readonly FoodDBContext _context;
         //private readonly IHttpContextAccessor httpcontextaccessor;
         private readonly IShoppingCartActions _usersShoppingCart;
+        private readonly IFoodProductsService _foodCatalogService;
 
-        public CartItemsController(IShoppingCartActions usersShoppingCart) => this._usersShoppingCart = usersShoppingCart;
+        public CartItemsController(IShoppingCartActions usersShoppingCart, IFoodProductsService foodCatalogService)
+        {
+            this._usersShoppingCart = usersShoppingCart;
+            this._foodCatalogService = foodCatalogService;
+        }
+
 
         // GET: api/CartItems
         //[HttpGet]
@@ -30,6 +36,7 @@ namespace AllSopFoodService.Controllers
         //}
 
         //GET: api/ShoppingCart/applyCode/11
+        // This project assume only 1 coupon can be applied to the cart at a time
         [HttpPut("applyCode/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<HttpResponseMessage>> ApplyVoucherAsync(string voucherCode)
@@ -40,19 +47,18 @@ namespace AllSopFoodService.Controllers
                 return this.NotFound($"This Voucher Code is Invalid! Please try another one!");
             }
 
+            var response = new HttpResponseMessage();
 
-            var response = await this._usersShoppingCart.ApplyVoucherToCartAsync(voucherCode).ConfigureAwait(true);
+            var priceAfterDiscount = await this._usersShoppingCart.ApplyVoucherToCartAsync(voucherCode).ConfigureAwait(true);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            if (priceAfterDiscount >= 0)
             {
                 response.Headers.Add("Message", "Successfully applied Voucher to Cart!");
-                //response.StatusCode = System.Net.HttpStatusCode.OK;
+                response.StatusCode = System.Net.HttpStatusCode.OK;
                 return response;
             }
             else
             {
-                //response.Headers.Add("Message", "This Voucher Code is already claimed! Please use another code!");
-                //response.StatusCode = (System.Net.HttpStatusCode)StatusCodes.Status204NoContent;
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Error applying this coupon");
             }
 
@@ -62,7 +68,22 @@ namespace AllSopFoodService.Controllers
         //to protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpGet("sum")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public decimal GetTotalPrice() => this._usersShoppingCart.GetTotal();
+        public decimal GetTotalPrice()
+        {
+            var currentCartItems = this._usersShoppingCart.GetCartItems();
+            return this._usersShoppingCart.GetTotal(currentCartItems);
+        }
+
+        //GET: api/ShoppingCart/sum/discount
+        //to protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpGet("sum/discount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public KeyValuePair<string, decimal> GetTotalPricesAfterDiscount()
+        {
+            var discountedPrice = this._usersShoppingCart.GetTotalWithDiscount();
+            var res = new KeyValuePair<string, decimal>("Your total after discount", discountedPrice);
+            return res;
+        }
 
         // POST: api/ShoppingCart/add/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -70,8 +91,17 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult> AddToCartItemAsync(int productItem)
         {
-            //_context.ShoppingCartItems.Add(cartItem);
+            // Check if the product is available in Stock (FoodProduct DB) first thing first!
+            var isInStock = await this._foodCatalogService.IsFoodProductInStockAsync(productItem).ConfigureAwait(true);
+
+            if (!isInStock)
+            {
+                // cover the last user story
+                return this.NotFound($"This product is currently Out of Stock!");
+            }
+
             var newCartItem = await this._usersShoppingCart.AddToCartAsync(productItem).ConfigureAwait(true);
+            this._foodCatalogService.DecrementProductStockUnit(productItem);
 
             //return this.CreatedAtAction("GetCartItem", new { itemID = newCartItem.ItemId }, newCartItem);
             //return this.CreatedAtRoute("GetCartItem", new { itemID = newCartItem.ItemId }, newCartItem);

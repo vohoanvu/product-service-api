@@ -15,25 +15,19 @@ namespace AllSopFoodService.Services
 
     public class ShoppingCartActions : IShoppingCartActions
     {
-        //public string ShoppingCartId { get; set; } = default!;
         private readonly FoodDBContext _db;
-        //private readonly IHttpContextAccessor _httpContextAccessor;
-        //private ISession _session => this._httpContextAccessor.HttpContext.Session;
 
-        //public const string CartSessionKey = "CartId";
-
-        //public ShoppingCartActions(IHttpContextAccessor httpContextAccessor) => this._httpContextAccessor = httpContextAccessor;
+        //Assuming only 1 coupon can be used at a time
+        public bool IsCartDiscounted { get; set; } = default!; // false by default
 
         public ShoppingCartActions(FoodDBContext dbcontext) => this._db = dbcontext;
 
         public async Task<CartItem> AddToCartAsync(int productId)
         {
-            // Retrieve the product from the database.           
-            //this.ShoppingCartId = GetCartId();
+            // Retrieve the product from the Cart database.           
             var cartItem = await this._db.ShoppingCartItems.SingleOrDefaultAsync(ci => ci.ProductId == productId).ConfigureAwait(true);
-            //var cartItem = _db.ShoppingCartItems.SingleOrDefault(
-            //    c => c.CartId == this.ShoppingCartId
-            //    && c.ProductId == id);
+
+            // Check if the product is already in Cart
             if (cartItem == null)
             {
                 // Create a new cart item if no cart item exists.                 
@@ -63,15 +57,17 @@ namespace AllSopFoodService.Services
             return cartItem;
         }
 
-        public bool IsThisProductExistInCart(int productID) => this._db.ShoppingCartItems.Any(e => e.ProductId == productID);
+        public async Task<bool> IsThisProductExistInCartAsync(int productID) => await this._db.ShoppingCartItems.AnyAsync(e => e.ProductId == productID).ConfigureAwait(true);
 
         public async Task<CartItem> RemoveFromCartAsync(int productId)
         {
-            var isExisted = this.IsThisProductExistInCart(productId);
+            var isExisted = await this.IsThisProductExistInCartAsync(productId).ConfigureAwait(true);
+
             if (!isExisted)
             {
                 return null;
             }
+
             var cartItem = await this._db.ShoppingCartItems.FirstOrDefaultAsync(ci => ci.ProductId == productId).ConfigureAwait(true);
             this._db.ShoppingCartItems.Remove(cartItem);
             await this._db.SaveChangesAsync().ConfigureAwait(true);
@@ -79,21 +75,23 @@ namespace AllSopFoodService.Services
             return cartItem;
         }
 
-        public decimal GetTotal()
+        public decimal GetTotalWithDiscount()
         {
             var total = decimal.Zero;
-            foreach (var cartItem in this.GetCartItems())
-            {
-                total += cartItem.Product.Price * cartItem.Quantity;
-            }
+            var currentCart = this.GetCartItems();
 
+            if (this.IsCartDiscounted)
+            {
+                total = this.GetTotal(currentCart);
+            }
+            // otherwise return Zero
             return total;
         }
 
-        public decimal GetTotalAfterDiscount(IEnumerable<CartItem> discountedCart)
+        public decimal GetTotal(IEnumerable<CartItem> cart)
         {
             var total = decimal.Zero;
-            foreach (var cartItem in discountedCart)
+            foreach (var cartItem in cart)
             {
                 total += cartItem.Product.Price * cartItem.Quantity;
             }
@@ -103,12 +101,15 @@ namespace AllSopFoodService.Services
 
         public bool CheckCodeExists(string code) => this._db.CouponCodes.Any(promo => promo.CouponCode == code);
 
-        public async Task<HttpResponseMessage> ApplyVoucherToCartAsync(string voucherCode)
+        // this should return the total price of the cart after discount
+        public async Task<decimal> ApplyVoucherToCartAsync(string voucherCode)
         {
             var promotion = await this._db.CouponCodes.SingleOrDefaultAsync(promo => promo.CouponCode == voucherCode).ConfigureAwait(true);
             var allCartItems = this.GetCartItems(); //Get all current items in the cart
-            var response = new HttpResponseMessage();
+            //var response = new HttpResponseMessage();
             // processing the promotion logic here
+            decimal discountedPrice = decimal.Zero;
+
             switch (promotion.CouponCode)
             {
                 case "10OFFPROMODRI":
@@ -116,30 +117,37 @@ namespace AllSopFoodService.Services
                     var quantityCondition = this.Is10orMoreDrinksItemInCart(allCartItems);
                     if (!quantityCondition)
                     {
-                        response.StatusCode = System.Net.HttpStatusCode.NotAcceptable;
-                        response.Headers.Add("Message", "You need to buy at least 10 or more Drinks Item!");
-                        return response;
+                        //response.StatusCode = System.Net.HttpStatusCode.NotAcceptable;
+                        //response.Headers.Add("Message", "You need to buy at least 10 or more Drinks Item!");
+                        discountedPrice = -1;
                     }
 
                     foreach (var cartItem in allCartItems)
                     {
-                        // mapping Product Object property for each CartItem
-                        var discountedProduct = new FoodProduct()
+                        // check for Drinks category in each cart item (perhaps there should be a seperate service for this?)
+                        if (cartItem.Product.CategoryId == 3) // 'Drinks' Categories, perhaps another way to access this static entity?
                         {
-                            // might be using AutoMapper here
-                            Id = cartItem.ProductId,
-                            Name = cartItem.Product.Name,
-                            Price = cartItem.Product.Price - (cartItem.Product.Price * Convert.ToDecimal(0.1)),
-                            Quantity = cartItem.Product.Quantity,
-                            IsInCart = cartItem.Product.IsInCart,
-                            CategoryId = cartItem.Product.CategoryId
-                        };
-                        // use the newly updated Product Object of each CartItem
-                        cartItem.Product = discountedProduct;
-                        // update each CartItem in DB
-                        await this.UpdateCartItemAsync(cartItem.ItemId, cartItem).ConfigureAwait(true);
-                    }
+                            // mapping Product Object property for each CartItem
+                            var discountedProduct = new FoodProduct()
+                            {
+                                // might be using AutoMapper here
+                                Id = cartItem.ProductId,
+                                Name = cartItem.Product.Name,
+                                Price = cartItem.Product.Price - (cartItem.Product.Price * Convert.ToDecimal(0.1)),
+                                Quantity = cartItem.Product.Quantity,
+                                IsInCart = cartItem.Product.IsInCart,
+                                CategoryId = cartItem.Product.CategoryId
+                            };
+                            // use the newly updated Product Object of each CartItem
+                            cartItem.Product = discountedProduct;
+                            // update each CartItem in DB
+                            await this.UpdateCartItemAsync(cartItem.ItemId, cartItem).ConfigureAwait(true);
+                        }
 
+                    }
+                    // not really using this value
+                    discountedPrice = this.GetTotal(this.GetCartItems());
+                    this.IsCartDiscounted = true;
                     //mark this coupon as used
                     promotion.IsClaimed = true;
                     this._db.SaveChanges();
@@ -153,11 +161,10 @@ namespace AllSopFoodService.Services
 
                     break;
                 default:
-
-                    break;
+                    return discountedPrice;
             }
 
-            return response;
+            return discountedPrice;
         }
 
         public async Task<CartItem> UpdateCartItemAsync(string id, CartItem newItem)
@@ -246,5 +253,6 @@ namespace AllSopFoodService.Services
             //return _db.ShoppingCartItems.Where(
             //    c => c.CartId == ShoppingCartId).ToList();
         }
+
     }
 }

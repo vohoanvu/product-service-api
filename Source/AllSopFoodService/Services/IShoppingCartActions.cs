@@ -9,13 +9,15 @@ namespace AllSopFoodService.Services
 
     public interface IShoppingCartActions
     {
-        bool IsThisProductExistInCart(int productID);
+        Task<bool> IsThisProductExistInCartAsync(int productID);
         Task<CartItem> AddToCartAsync(int productId);
         Task<CartItem> RemoveFromCartAsync(int productId);
-        decimal GetTotal();
+        decimal GetTotal(IEnumerable<CartItem> cart);
         bool CheckCodeExists(string code);
-        Task<HttpResponseMessage> ApplyVoucherToCartAsync(string voucherCode);
+        Task<decimal> ApplyVoucherToCartAsync(string voucherCode);
         Task<CartItem> UpdateCartItemAsync(string id, CartItem newItem);
         bool Is10orMoreDrinksItemInCart(List<CartItem> wholeCart);
+        List<CartItem> GetCartItems();
+        decimal GetTotalWithDiscount();
     }
 }

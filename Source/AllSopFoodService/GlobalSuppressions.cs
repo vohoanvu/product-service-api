@@ -26,3 +26,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~F:AllSopFoodService.Services.ShoppingCartActions._httpContextAccessor")]
 [assembly: SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>", Scope = "member", Target = "~F:AllSopFoodService.Services.ShoppingCartActions._db")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~F:AllSopFoodService.Controllers.CartItemsController._usersShoppingCart")]
+[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~F:AllSopFoodService.Controllers.CartItemsController._foodCatalogService")]

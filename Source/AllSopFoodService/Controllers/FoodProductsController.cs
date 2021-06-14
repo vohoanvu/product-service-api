@@ -10,36 +10,31 @@ namespace AllSopFoodService.Controllers
     using AllSopFoodService.Model;
     using AllSopFoodService.Mappers;
     using Microsoft.AspNetCore.JsonPatch;
+    using AllSopFoodService.Services;
+    using AllSopFoodService.ViewModels;
 
     [Route("api/[controller]")]
     [ApiController]
     public class FoodProductsController : ControllerBase
     {
         private readonly FoodDBContext _context;
+        private readonly IFoodProductsService _foodItemService;
+        private readonly IShoppingCartActions _CartItemService;
 
-        public FoodProductsController(FoodDBContext context)
+        public FoodProductsController(IFoodProductsService foodProductsService, IShoppingCartActions cartItemService, FoodDBContext context)
         {
             this._context = context;
+            this._foodItemService = foodProductsService;
+            this._CartItemService = cartItemService;
         }
 
         // GET: api/FoodProducts
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        // or ---public async Task<ActionResult<IEnumerable<FoodProduct>>> GetFoodProductsAsync()--- is also correct!
+        // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
         public async Task<IActionResult> GetFoodProductsAsync()
         {
-            //return await _context.FoodProducts.ToListAsync().ConfigureAwait(true);
-            var foodItems = await this._context.FoodProducts
-                                            .Select(fooditem => new
-                                            {
-                                                id = fooditem.Id,
-                                                name = fooditem.Name,
-                                                price = fooditem.Price,
-                                                amount = fooditem.Quantity,
-                                                inCart = fooditem.IsInCart,
-                                                category = fooditem.Category.Label
-                                            })
-                                            .ToListAsync().ConfigureAwait(true);
+            var foodItems = await this._foodItemService.GetFoodProductsAsync().ConfigureAwait(true);
 
             return this.Ok(foodItems); // if returned type was ActionResult<T>, then only need to 'return foodItems;' 
         }
@@ -84,7 +79,7 @@ namespace AllSopFoodService.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FoodProduct>> GetFoodProduct(int id)
         {
-            var foodProduct = await _context.FoodProducts.FindAsync(id);
+            var foodProduct = await this._foodItemService.GetFoodProductByIdAsync(id);
 
             if (foodProduct == null)
             {
@@ -125,15 +120,19 @@ namespace AllSopFoodService.Controllers
             return NoContent();
         }
 
-        // POST: api/FoodProducts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //POST: api/FoodProducts
+        //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<FoodProduct>> PostFoodProduct(FoodProduct foodProduct)
+        public async Task<ActionResult<FoodProductDTO>> PostFoodProductAsync(FoodProductDTO foodProductDto)
         {
-            _context.FoodProducts.Add(foodProduct);
-            await _context.SaveChangesAsync();
+            if (foodProductDto == null)
+            {
+                return this.BadRequest();
+            }
 
-            return CreatedAtAction("GetFoodProduct", new { id = foodProduct.Id }, foodProduct);
+            var createdFoodProduct = await this._foodItemService.CreateFoodProductAsync(foodProductDto).ConfigureAwait(true);
+
+            return this.CreatedAtAction("GetFoodProduct", new { id = createdFoodProduct.Id }, createdFoodProduct);
         }
 
         // DELETE: api/FoodProducts/5

@@ -5,13 +5,34 @@ namespace AllSopFoodService.Services
     using System.Linq;
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
+    using AllSopFoodService.ViewModels;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
-    public class FoodProductsService
+    public class FoodProductsService : IFoodProductsService
     {
         private readonly FoodDBContext db;
 
         public FoodProductsService(FoodDBContext dbcontext) => this.db = dbcontext;
+
+        //Perhaps this should be placed at the repo layer?
+        public async Task<List<FoodProductDTO>> GetFoodProductsAsync()
+        {
+            // Query Data via EF core DbSet
+            // transform results to dto object (non-entity type)
+            var foodItems = await this.db.FoodProducts.AsNoTracking().Select(fooditem => new FoodProductDTO()
+            {
+                FoodId = fooditem.Id,
+                Name = fooditem.Name,
+                Price = fooditem.Price,
+                Quantity = fooditem.Quantity,
+                InCart = fooditem.IsInCart,
+                CategoryName = fooditem.Category.Label,
+                CategoryId = fooditem.CategoryId
+            }).ToListAsync().ConfigureAwait(true);
+
+            return foodItems;
+        }
 
         public async Task<FoodProduct> GetFoodProductByIdAsync(int id)
         {
@@ -19,6 +40,25 @@ namespace AllSopFoodService.Services
             var foodProduct = await this.db.FoodProducts.FindAsync(id).ConfigureAwait(true);
 
             return foodProduct;
+        }
+
+        public async Task<FoodProduct> CreateFoodProductAsync(FoodProductDTO foodProductDto)
+        {
+            var foodProduct = new FoodProduct()
+            {
+                Id = foodProductDto.FoodId,
+                Name = foodProductDto.Name,
+                Price = foodProductDto.Price,
+                Quantity = foodProductDto.Quantity,
+                IsInCart = foodProductDto.InCart,
+                CategoryId = foodProductDto.CategoryId
+            };
+
+            this.db.FoodProducts.Add(foodProduct);
+            await this.db.SaveChangesAsync().ConfigureAwait(true);
+
+            return foodProduct;
+            //return createdataction("getfoodproduct", new { id = foodproduct.id }, foodproduct);
         }
 
         public void DecrementProductStockUnit(int id)

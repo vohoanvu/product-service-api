@@ -79,7 +79,7 @@ namespace AllSopFoodService.Services
         {
             var total = decimal.Zero;
             var currentCart = this.GetCartItems();
-
+            // checking for any voucher applied already
             if (this.IsCartDiscounted)
             {
                 total = this.GetTotal(currentCart);

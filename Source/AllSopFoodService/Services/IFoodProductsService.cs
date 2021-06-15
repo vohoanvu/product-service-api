@@ -17,5 +17,7 @@ namespace AllSopFoodService.Services
         Task<bool> IsFoodProductInStockAsync(int id);
 
         void DecrementProductStockUnit(int id);
+
+        decimal GetOriginalCostbyFoodProductId(int id);
     }
 }

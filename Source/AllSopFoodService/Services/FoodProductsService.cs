@@ -46,7 +46,7 @@ namespace AllSopFoodService.Services
         {
             var foodProduct = new FoodProduct()
             {
-                Id = foodProductDto.FoodId,
+                //Id = foodProductDto.FoodId,
                 Name = foodProductDto.Name,
                 Price = foodProductDto.Price,
                 Quantity = foodProductDto.Quantity,
@@ -69,5 +69,7 @@ namespace AllSopFoodService.Services
         }
 
         public async Task<bool> IsFoodProductInStockAsync(int id) => await this.db.FoodProducts.AnyAsync(fp => fp.Id == id && fp.Quantity > 0).ConfigureAwait(true);
+
+        public decimal GetOriginalCostbyFoodProductId(int id) => this.db.FoodProducts.Find(id).Price;
     }
 }

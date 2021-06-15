@@ -16,11 +16,16 @@ namespace AllSopFoodService.Services
     public class ShoppingCartActions : IShoppingCartActions
     {
         private readonly FoodDBContext _db;
+        private readonly IFoodProductsService _foodProductService;
 
         //Assuming only 1 coupon can be used at a time
         public bool IsCartDiscounted { get; set; } = default!; // false by default
 
-        public ShoppingCartActions(FoodDBContext dbcontext) => this._db = dbcontext;
+        public ShoppingCartActions(FoodDBContext dbcontext, IFoodProductsService foodProductsService)
+        {
+            this._db = dbcontext;
+            this._foodProductService = foodProductsService;
+        }
 
         public async Task<CartItem> AddToCartAsync(int productId)
         {
@@ -75,19 +80,6 @@ namespace AllSopFoodService.Services
             return cartItem;
         }
 
-        public decimal GetTotalWithDiscount()
-        {
-            var total = decimal.Zero;
-            var currentCart = this.GetCartItems();
-            // checking for any voucher applied already
-            if (this.IsCartDiscounted)
-            {
-                total = this.GetTotal(currentCart);
-            }
-            // otherwise return Zero
-            return total;
-        }
-
         public decimal GetTotal(IEnumerable<CartItem> cart)
         {
             var total = decimal.Zero;
@@ -102,13 +94,15 @@ namespace AllSopFoodService.Services
         public bool CheckCodeExists(string code) => this._db.CouponCodes.Any(promo => promo.CouponCode == code);
 
         // this should return the total price of the cart after discount
-        public async Task<decimal> ApplyVoucherToCartAsync(string voucherCode)
+        public async Task<VoucherResponseModel> ApplyVoucherToCartAsync(string voucherCode)
         {
             var promotion = await this._db.CouponCodes.SingleOrDefaultAsync(promo => promo.CouponCode == voucherCode).ConfigureAwait(true);
             var allCartItems = this.GetCartItems(); //Get all current items in the cart
             //var response = new HttpResponseMessage();
             // processing the promotion logic here
-            decimal discountedPrice = decimal.Zero;
+            //decimal discountedPrice = decimal.Zero;
+            var result = new VoucherResponseModel();
+            var discountedCartPrice = decimal.Zero;
 
             switch (promotion.CouponCode)
             {
@@ -119,7 +113,8 @@ namespace AllSopFoodService.Services
                     {
                         //response.StatusCode = System.Net.HttpStatusCode.NotAcceptable;
                         //response.Headers.Add("Message", "You need to buy at least 10 or more Drinks Item!");
-                        discountedPrice = -1;
+                        result.Applied = false;
+                        result.FailedMessage = "You need to buy at least 10 or more Drinks Item!";
                     }
 
                     foreach (var cartItem in allCartItems)
@@ -127,44 +122,76 @@ namespace AllSopFoodService.Services
                         // check for Drinks category in each cart item (perhaps there should be a seperate service for this?)
                         if (cartItem.Product.CategoryId == 3) // 'Drinks' Categories, perhaps another way to access this static entity?
                         {
-                            // mapping Product Object property for each CartItem
-                            var discountedProduct = new FoodProduct()
-                            {
-                                // might be using AutoMapper here
-                                Id = cartItem.ProductId,
-                                Name = cartItem.Product.Name,
-                                Price = cartItem.Product.Price - (cartItem.Product.Price * Convert.ToDecimal(0.1)),
-                                Quantity = cartItem.Product.Quantity,
-                                IsInCart = cartItem.Product.IsInCart,
-                                CategoryId = cartItem.Product.CategoryId
-                            };
+                            //var discountedProduct = new FoodProduct()
+                            //{
+                            //    // might be using AutoMapper here
+                            //    Id = cartItem.ProductId,
+                            //    Name = cartItem.Product.Name,
+                            //    Price = cartItem.Product.Price - (cartItem.Product.Price * Convert.ToDecimal(0.1)),
+                            //    Quantity = cartItem.Product.Quantity,
+                            //    IsInCart = cartItem.Product.IsInCart,
+                            //    CategoryId = cartItem.Product.CategoryId
+                            //};
                             // use the newly updated Product Object of each CartItem
-                            cartItem.Product = discountedProduct;
+                            //cartItem.Product = discountedProduct;
                             // update each CartItem in DB
-                            await this.UpdateCartItemAsync(cartItem.ItemId, cartItem).ConfigureAwait(true);
+                            //await this.UpdateCartItemAsync(cartItem.ItemId, cartItem).ConfigureAwait(true);
+                            var originalCost = this._foodProductService.GetOriginalCostbyFoodProductId(cartItem.ProductId);
+                            var discountCostPerCartItem = (originalCost - (originalCost * Convert.ToDecimal(0.1))) * cartItem.Quantity;
+                            discountedCartPrice += discountCostPerCartItem;
                         }
 
                     }
-                    // not really using this value
-                    discountedPrice = this.GetTotal(this.GetCartItems());
+
                     this.IsCartDiscounted = true;
                     //mark this coupon as used
                     promotion.IsClaimed = true;
                     this._db.SaveChanges();
+
+                    result.Applied = true;
+                    result.FailedMessage = "Successfully applied Voucher to Cart!";
+                    result.DiscountedCartPrice = discountedCartPrice;
+
                     break;
-                case "5OFFPROMOALL":
-
-
+                case "5OFFBAKING":
+                    // conditions checking
+                    // fetch All Baking/Cooking Ingredient items from Cart
+                    var bakingCookingItems = this._db.ShoppingCartItems.Where(cartItem => cartItem.Product.CategoryId == 5);
+                    if (this.GetTotal(bakingCookingItems) < Convert.ToDecimal(50))
+                    {
+                        result.Applied = false;
+                        result.FailedMessage = "Failed to apply this coupon! You need to spend £50.00 or more on Baking/Cooking Ingredients";
+                        result.DiscountedCartPrice = 0;
+                    }
+                    // apply discount percentage
+                    result.Applied = true;
+                    result.FailedMessage = "Successfully applied Voucher to Cart!";
+                    result.DiscountedCartPrice = this.GetTotal(allCartItems) - Convert.ToDecimal(5);
                     break;
-                case "20OFFPROMOALL":
-
+                case "20OFFPROMO":
+                    // condition check, spending at least 100 pounds in total
+                    if (this.GetTotal(allCartItems) < Convert.ToDecimal(100))
+                    {
+                        result.Applied = false;
+                        result.FailedMessage = "Failed to apply this coupon! You need to spend at least £100.00 or more in total!";
+                        result.DiscountedCartPrice = 0;
+                    }
+                    else
+                    {
+                        result.Applied = true;
+                        result.FailedMessage = "Successfully applied Voucher to Cart!";
+                        result.DiscountedCartPrice = this.GetTotal(allCartItems) - Convert.ToDecimal(20);
+                    }
 
                     break;
                 default:
-                    return discountedPrice;
+                    result.Applied = false;
+                    result.FailedMessage = "Invalid Coupon Code";
+                    result.DiscountedCartPrice = 0;
+                    break;
             }
 
-            return discountedPrice;
+            return result;
         }
 
         public async Task<CartItem> UpdateCartItemAsync(string id, CartItem newItem)
@@ -175,7 +202,7 @@ namespace AllSopFoodService.Services
             {
                 throw new ArgumentNullException(nameof(newItem));
             }
-            var currentCartItem = await this._db.ShoppingCartItems.FindAsync(id).ConfigureAwait(true);
+            var currentCartItem = await this._db.ShoppingCartItems.AsNoTracking().FirstOrDefaultAsync(item => item.ItemId == id).ConfigureAwait(true);
             if (currentCartItem != null)
             {
                 return null;

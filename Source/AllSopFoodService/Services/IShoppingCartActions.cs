@@ -6,6 +6,7 @@ namespace AllSopFoodService.Services
     using System.Net.Http;
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
+    using Microsoft.AspNetCore.Mvc;
 
     public interface IShoppingCartActions
     {
@@ -14,10 +15,9 @@ namespace AllSopFoodService.Services
         Task<CartItem> RemoveFromCartAsync(int productId);
         decimal GetTotal(IEnumerable<CartItem> cart);
         bool CheckCodeExists(string code); // Really should refactor this
-        Task<decimal> ApplyVoucherToCartAsync(string voucherCode);
+        Task<VoucherResponseModel> ApplyVoucherToCartAsync(string voucherCode);
         Task<CartItem> UpdateCartItemAsync(string id, CartItem newItem);
         bool Is10orMoreDrinksItemInCart(List<CartItem> wholeCart); // Really should refactor this
         List<CartItem> GetCartItems(); // Really should refactor this
-        decimal GetTotalWithDiscount(); // Really should refactor this
     }
 }

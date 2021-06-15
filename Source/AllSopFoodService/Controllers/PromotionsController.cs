@@ -40,7 +40,7 @@ namespace AllSopFoodService.Controllers
         // PUT: api/Promotions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> PutPromotionAsync(int id, Promotion promotion)
         {
             if (id != promotion.Id)

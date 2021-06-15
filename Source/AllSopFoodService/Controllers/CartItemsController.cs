@@ -35,11 +35,11 @@ namespace AllSopFoodService.Controllers
         //    return await _context.ShoppingCartItems.ToListAsync();
         //}
 
-        //GET: api/ShoppingCart/applyCode/11
+        //GET: api/ShoppingCart/applyVoucher
         // This project assume only 1 coupon can be applied to the cart at a time
-        [HttpPut("applyCode/{id}")]
+        [HttpPut("applyVoucher")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<HttpResponseMessage>> ApplyVoucherAsync(string voucherCode)
+        public async Task<IActionResult> ApplyVoucherAsync(string voucherCode)
         {
             var voucherCheck = this._usersShoppingCart.CheckCodeExists(voucherCode);
             if (!voucherCheck)
@@ -47,20 +47,29 @@ namespace AllSopFoodService.Controllers
                 return this.NotFound($"This Voucher Code is Invalid! Please try another one!");
             }
 
-            var response = new HttpResponseMessage();
+            //var response = new HttpResponseMessage();
 
-            var priceAfterDiscount = await this._usersShoppingCart.ApplyVoucherToCartAsync(voucherCode).ConfigureAwait(true);
+            var voucherResponse = await this._usersShoppingCart.ApplyVoucherToCartAsync(voucherCode).ConfigureAwait(true);
 
-            if (priceAfterDiscount >= 0)
+            if (voucherResponse.Applied)
             {
-                response.Headers.Add("Message", "Successfully applied Voucher to Cart!");
-                response.StatusCode = System.Net.HttpStatusCode.OK;
-                return response;
+                //response.Headers.Add("Message", "Successfully applied Voucher to Cart!");
+                //response.StatusCode = System.Net.HttpStatusCode.OK;
+                return new ObjectResult(voucherResponse)
+                {
+                    StatusCode = StatusCodes.Status200OK,
+                    Value = voucherResponse
+                };
             }
-            else
+
+            //return this.StatusCode(StatusCodes.Status500InternalServerError, "Error applying this coupon");
+            //response.Headers.Add("Message", voucherResponse.FailedMessage);
+            //response.StatusCode = System.Net.HttpStatusCode.Accepted;
+            return new ObjectResult(voucherResponse)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Error applying this coupon");
-            }
+                StatusCode = StatusCodes.Status202Accepted,
+                Value = voucherResponse
+            };
 
         }
 
@@ -72,17 +81,6 @@ namespace AllSopFoodService.Controllers
         {
             var currentCartItems = this._usersShoppingCart.GetCartItems();
             return this._usersShoppingCart.GetTotal(currentCartItems);
-        }
-
-        //GET: api/ShoppingCart/sum/discount
-        //to protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpGet("sum/discount")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public KeyValuePair<string, decimal> GetTotalPricesAfterDiscount()
-        {
-            var discountedPrice = this._usersShoppingCart.GetTotalWithDiscount();
-            var res = new KeyValuePair<string, decimal>("Your total after discount", discountedPrice);
-            return res;
         }
 
         // POST: api/ShoppingCart/add/5

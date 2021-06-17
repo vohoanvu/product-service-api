@@ -92,32 +92,26 @@ namespace AllSopFoodService.Controllers
         // PUT: api/FoodProducts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFoodProductAsync(int id, FoodProduct foodProduct)
+        public async Task<IActionResult> UpdateFoodProductAsync(int id, FoodProductDTO foodProduct)
         {
-            if (id != foodProduct.Id)
+            if (id != foodProduct.FoodId)
             {
-                return BadRequest();
+                return this.BadRequest();
             }
 
-            _context.Entry(foodProduct).State = EntityState.Modified;
-
-            try
+            //_context.Entry(foodProduct).State = EntityState.Modified;
+            if (!this._foodItemService.FoodProductExists(id))
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FoodProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return this.NotFound();
             }
 
-            return NoContent();
+            var updatedFoodProduct = await this._foodItemService.UpdateFoodProductAsync(id, foodProduct).ConfigureAwait(true);
+            if (updatedFoodProduct == null)
+            {
+                return this.NoContent();
+            }
+
+            return new ObjectResult(updatedFoodProduct);
         }
 
         //POST: api/FoodProducts
@@ -137,23 +131,25 @@ namespace AllSopFoodService.Controllers
 
         // DELETE: api/FoodProducts/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteFoodProduct(int id)
         {
-            var foodProduct = await _context.FoodProducts.FindAsync(id);
+            var foodProduct = await this._foodItemService.GetFoodProductByIdAsync(id).ConfigureAwait(true);
             if (foodProduct == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            _context.FoodProducts.Remove(foodProduct);
-            await _context.SaveChangesAsync();
+            //_context.FoodProducts.Remove(foodProduct);
+            //await _context.SaveChangesAsync();
+            var deletedSuccess = await this._foodItemService.RemoveFoodProduct(foodProduct).ConfigureAwait(true);
+            if (!deletedSuccess)
+            {
+                return new ObjectResult("Failed to delete the Product!");
+            }
 
-            return NoContent();
-        }
+            return this.NoContent();
 
-        private bool FoodProductExists(int id)
-        {
-            return _context.FoodProducts.Any(e => e.Id == id);
         }
     }
 }

@@ -71,5 +71,43 @@ namespace AllSopFoodService.Services
         public async Task<bool> IsFoodProductInStockAsync(int id) => await this.db.FoodProducts.AnyAsync(fp => fp.Id == id && fp.Quantity > 0).ConfigureAwait(true);
 
         public decimal GetOriginalCostbyFoodProductId(int id) => this.db.FoodProducts.Find(id).Price;
+
+        public async Task<FoodProduct> UpdateFoodProductAsync(int id, FoodProductDTO foodProductDto)
+        {
+            var currentFood = await this.db.FoodProducts.FindAsync(id).ConfigureAwait(true);
+
+            this.db.Entry(currentFood).State = EntityState.Modified;
+
+            this.db.FoodProducts.Remove(currentFood);
+
+            var updatedfoodProduct = new FoodProduct()
+            {
+                //Id = foodProductDto.FoodId,
+                Name = foodProductDto.Name,
+                Price = foodProductDto.Price,
+                Quantity = foodProductDto.Quantity,
+                IsInCart = foodProductDto.InCart,
+                CategoryId = foodProductDto.CategoryId
+            };
+
+            var newUpdate = await this.db.FoodProducts.AddAsync(updatedfoodProduct).ConfigureAwait(true);
+            await this.db.SaveChangesAsync().ConfigureAwait(true);
+
+            return newUpdate.Entity;
+        }
+
+        public bool FoodProductExists(int id) => this.db.FoodProducts.Any(e => e.Id == id);
+
+        public async Task<bool> RemoveFoodProduct(FoodProduct foodProduct)
+        {
+            var entityEntry = this.db.Remove(foodProduct);
+            if (entityEntry.State != EntityState.Deleted)
+            {
+                return false;
+            }
+            await this.db.SaveChangesAsync().ConfigureAwait(true);
+
+            return true;
+        }
     }
 }

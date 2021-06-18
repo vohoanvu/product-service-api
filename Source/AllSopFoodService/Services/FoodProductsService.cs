@@ -16,48 +16,68 @@ namespace AllSopFoodService.Services
         public FoodProductsService(FoodDBContext dbcontext) => this.db = dbcontext;
 
         //Perhaps this should be placed at the repo layer?
-        public async Task<List<FoodProductDTO>> GetFoodProductsAsync()
+        public async Task<List<FoodProductVM>> GetFoodProductsAsync()
         {
             // Query Data via EF core DbSet
             // transform results to dto object (non-entity type)
-            var foodItems = await this.db.FoodProducts.AsNoTracking().Select(fooditem => new FoodProductDTO()
+            var foodItems = await this.db.FoodProducts.AsNoTracking().Select(fooditem => new FoodProductVM()
             {
-                FoodId = fooditem.Id,
                 Name = fooditem.Name,
                 Price = fooditem.Price,
                 Quantity = fooditem.Quantity,
                 InCart = fooditem.IsInCart,
                 CategoryName = fooditem.Category.Label,
-                CategoryId = fooditem.CategoryId
+                ShoppingCartNames = fooditem.FoodProduct_Carts.Select(n => n.ShoppingCart != null ? n.ShoppingCart.CartLabel : "empty").ToList()
             }).ToListAsync().ConfigureAwait(true);
 
             return foodItems;
         }
 
-        public async Task<FoodProduct> GetFoodProductByIdAsync(int id)
+        public FoodProductVM GetFoodProductById(int id)
         {
-            //var productInStock = await this._db.FoodProducts.FindAsync(productId).ConfigureAwait(true);
-            var foodProduct = await this.db.FoodProducts.FindAsync(id).ConfigureAwait(true);
+            //perhaps we can use FirstorDefaultAsync
+            var foodwithCategory = this.db.FoodProducts.Where(fp => fp.Id == id).Select(fp => new FoodProductVM()
+            {
+                Name = fp.Name,
+                Price = fp.Price,
+                Quantity = fp.Quantity,
+                InCart = fp.IsInCart,
+                CategoryName = fp.Category.Label,
+                ShoppingCartNames = fp.FoodProduct_Carts.Select(n => n.ShoppingCart != null ? n.ShoppingCart.CartLabel : "empty").ToList()
+            }).FirstOrDefault();
 
-            return foodProduct;
+#pragma warning disable CS8603 // Possible null reference return.
+            return foodwithCategory;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
-        public async Task<FoodProduct> CreateFoodProductAsync(FoodProductDTO foodProductDto)
+        public void CreateFoodProduct(FoodProductDTO foodProductDto)
         {
             var foodProduct = new FoodProduct()
             {
-                //Id = foodProductDto.FoodId,
                 Name = foodProductDto.Name,
                 Price = foodProductDto.Price,
                 Quantity = foodProductDto.Quantity,
                 IsInCart = foodProductDto.InCart,
-                CategoryId = foodProductDto.CategoryId
+                CategoryId = foodProductDto.CategoryId,
             };
 
             this.db.FoodProducts.Add(foodProduct);
-            await this.db.SaveChangesAsync().ConfigureAwait(true);
+            this.db.SaveChanges();
 
-            return foodProduct;
+            if (foodProductDto.ShoppingCartIds != null)
+            {
+                foreach (var id in foodProductDto.ShoppingCartIds)
+                {
+                    var food_Cart = new FoodProduct_ShoppingCart()
+                    {
+                        FoodProductId = foodProduct.Id,
+                        ShoppingCartId = id
+                    };
+                    this.db.FoodProducts_Carts.Add(food_Cart);
+                    this.db.SaveChanges();
+                }
+            }
             //return createdataction("getfoodproduct", new { id = foodproduct.id }, foodproduct);
         }
 
@@ -72,42 +92,40 @@ namespace AllSopFoodService.Services
 
         public decimal GetOriginalCostbyFoodProductId(int id) => this.db.FoodProducts.Find(id).Price;
 
-        public async Task<FoodProduct> UpdateFoodProductAsync(int id, FoodProductDTO foodProductDto)
+        public FoodProduct UpdateFoodProduct(int id, FoodProductDTO foodProductDto)
         {
-            var currentFood = await this.db.FoodProducts.FindAsync(id).ConfigureAwait(true);
+            var currentFood = this.db.FoodProducts.FirstOrDefault(foodItem => foodItem.Id == id);
 
-            this.db.Entry(currentFood).State = EntityState.Modified;
-
-            this.db.FoodProducts.Remove(currentFood);
-
-            var updatedfoodProduct = new FoodProduct()
+            if (currentFood != null)
             {
-                //Id = foodProductDto.FoodId,
-                Name = foodProductDto.Name,
-                Price = foodProductDto.Price,
-                Quantity = foodProductDto.Quantity,
-                IsInCart = foodProductDto.InCart,
-                CategoryId = foodProductDto.CategoryId
-            };
+                currentFood.Name = foodProductDto.Name;
+                currentFood.Price = foodProductDto.Price;
+                currentFood.Quantity = foodProductDto.Quantity;
+                currentFood.IsInCart = foodProductDto.InCart;
+                currentFood.CategoryId = foodProductDto.CategoryId;
 
-            var newUpdate = await this.db.FoodProducts.AddAsync(updatedfoodProduct).ConfigureAwait(true);
-            await this.db.SaveChangesAsync().ConfigureAwait(true);
+                this.db.SaveChanges();
+            }
 
-            return newUpdate.Entity;
+#pragma warning disable CS8603 // Possible null reference return.
+            return currentFood;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public bool FoodProductExists(int id) => this.db.FoodProducts.Any(e => e.Id == id);
 
-        public async Task<bool> RemoveFoodProduct(FoodProduct foodProduct)
+        public bool RemoveFoodProductById(int id)
         {
-            var entityEntry = this.db.Remove(foodProduct);
-            if (entityEntry.State != EntityState.Deleted)
+            var entity = this.db.FoodProducts.FirstOrDefault(food => food.Id == id);
+            if (entity != null)
             {
-                return false;
-            }
-            await this.db.SaveChangesAsync().ConfigureAwait(true);
+                this.db.FoodProducts.Remove(entity);
+                this.db.SaveChanges();
 
-            return true;
+                return true;
+            }
+
+            return false;
         }
     }
 }

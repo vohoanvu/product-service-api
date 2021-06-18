@@ -28,12 +28,10 @@ namespace AllSopFoodService.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
-            destination.FoodId = source.Id;
             destination.Name = source.Name;
             destination.Price = source.Price;
             destination.Quantity = source.Quantity;
             destination.InCart = source.IsInCart;
-            destination.CategoryName = source.Category.Label;
             destination.CategoryId = source.CategoryId;
         }
     }

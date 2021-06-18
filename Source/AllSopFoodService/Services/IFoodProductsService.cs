@@ -10,10 +10,10 @@ namespace AllSopFoodService.Services
 
     public interface IFoodProductsService
     {
-        Task<List<FoodProductDTO>> GetFoodProductsAsync();
-        Task<FoodProduct> GetFoodProductByIdAsync(int id);
-        Task<FoodProduct> UpdateFoodProductAsync(int id, FoodProductDTO foodProductDto);
-        Task<FoodProduct> CreateFoodProductAsync(FoodProductDTO foodProductDto);
+        Task<List<FoodProductVM>> GetFoodProductsAsync();
+        FoodProductVM GetFoodProductById(int id);
+        FoodProduct UpdateFoodProduct(int id, FoodProductDTO foodProductDto);
+        void CreateFoodProduct(FoodProductDTO foodProductDto);
 
         Task<bool> IsFoodProductInStockAsync(int id);
 
@@ -22,6 +22,6 @@ namespace AllSopFoodService.Services
         bool FoodProductExists(int id);
         decimal GetOriginalCostbyFoodProductId(int id);
 
-        Task<bool> RemoveFoodProduct(FoodProduct foodProduct);
+        bool RemoveFoodProductById(int id);
     }
 }

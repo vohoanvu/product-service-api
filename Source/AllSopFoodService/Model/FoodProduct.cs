@@ -19,10 +19,12 @@ namespace AllSopFoodService.Model
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public bool IsInCart { get; set; }
+        //Navigation Properties
         public int CategoryId { get; set; }
-
         [ForeignKey(nameof(CategoryId))]
         [InverseProperty("FoodProducts")]
         public virtual Category Category { get; set; }
+
+        public List<FoodProduct_ShoppingCart> FoodProduct_Carts { get; set; }
     }
 }

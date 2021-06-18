@@ -21,11 +21,24 @@ namespace AllSopFoodService.Model
         public virtual DbSet<FoodProduct> FoodProducts { get; set; }
         public virtual DbSet<CartItem> ShoppingCartItems { get; set; }
         public virtual DbSet<Promotion> CouponCodes { get; set; }
+        // Many-to-many relationship version of ShoppingCartItems
+        public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public virtual DbSet<FoodProduct_ShoppingCart> FoodProducts_Carts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
             this.OnModelCreatingPartial(modelBuilder);
+
+            modelBuilder.Entity<FoodProduct_ShoppingCart>()
+                .HasOne(foodCart => foodCart.FoodProduct)
+                .WithMany(foodItem => foodItem.FoodProduct_Carts)
+                .HasForeignKey(foodCartId => foodCartId.FoodProductId);
+
+            modelBuilder.Entity<FoodProduct_ShoppingCart>()
+                .HasOne(foodCart => foodCart.ShoppingCart)
+                .WithMany(cart => cart.FoodProduct_Carts)
+                .HasForeignKey(foodCartId => foodCartId.ShoppingCartId);
 
             modelBuilder.Entity<Promotion>().HasData(
             new Promotion

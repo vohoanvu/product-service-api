@@ -54,6 +54,8 @@ namespace AllSopFoodService
                     .AddSingleton<IActionContextAccessor, ActionContextAccessor>()
                     .AddScoped<IShoppingCartActions, ShoppingCartActions>()
                     .AddScoped<IFoodProductsService, FoodProductsService>()
+                    .AddScoped<ICartsService, CartsService>()
+                    .AddScoped<ICategoryService, CategoryService>()
                     .AddCustomApiVersioning()
                     .AddServerTiming()
                     .AddControllers()

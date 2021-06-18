@@ -27,3 +27,8 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>", Scope = "member", Target = "~F:AllSopFoodService.Services.ShoppingCartActions._db")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~F:AllSopFoodService.Controllers.CartItemsController._usersShoppingCart")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~F:AllSopFoodService.Controllers.CartItemsController._foodCatalogService")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>", Scope = "type", Target = "~T:AllSopFoodService.Model.FoodProduct_ShoppingCart")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>", Scope = "member", Target = "~P:AllSopFoodService.Model.ShoppingCart.Food_Cart")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>", Scope = "member", Target = "~P:AllSopFoodService.Model.ShoppingCart.FoodProduct_Carts")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>", Scope = "member", Target = "~P:AllSopFoodService.Model.FoodProduct.FoodProduct_Carts")]
+[assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>", Scope = "member", Target = "~P:AllSopFoodService.Model.FoodDBContext.FoodProducts_Carts")]

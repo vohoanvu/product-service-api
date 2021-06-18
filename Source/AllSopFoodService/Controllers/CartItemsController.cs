@@ -12,7 +12,7 @@ namespace AllSopFoodService.Controllers
     using System.Net.Http;
     using AllSopFoodService.Controllers;
 
-    [Route("api/ShoppingCart")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CartItemsController : ControllerBase
     {

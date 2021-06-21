@@ -25,6 +25,8 @@ namespace AllSopFoodService.Model
         public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public virtual DbSet<FoodProduct_ShoppingCart> FoodProducts_Carts { get; set; }
 
+        public virtual DbSet<Log> Logs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");

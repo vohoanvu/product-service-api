@@ -1,0 +1,8 @@
+06/21/2021 18:43:37 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+06/21/2021 18:43:38 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 155.5845 ms
+06/21/2021 18:43:38 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 218.0417 ms
+06/21/2021 18:45:02 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+06/21/2021 18:45:03 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 172.7821 ms
+06/21/2021 18:45:03 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 210.9892 ms
+06/21/2021 18:45:10 +07:00 [Information] - Message: This is a log test in GetAllFoodProducts Controller
+06/21/2021 18:45:12 +07:00 [Information] - Message: HTTP "GET" "/api/foodproducts?api-version=1.0" responded 200 in 1433.2790 ms

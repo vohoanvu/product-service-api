@@ -16,6 +16,23 @@ namespace AllSopFoodService.Controllers
 
         public CategoryController(ICategoryService categoryService) => this._categoryService = categoryService;
 
+        [HttpGet("get-all-categories")]
+        public IActionResult GetAllCategories(string? sortBy, string? searchString, int? pageNum)
+        {
+            try
+            {
+                var allCategories = this._categoryService.GetAllCategories(sortBy, searchString, pageNum);
+
+                return this.Ok(allCategories);
+            }
+            catch (Exception)
+            {
+
+                return this.BadRequest("Sorry, we could not load the Categories");
+            }
+
+        }
+
         [HttpPost("add-category")]
         public IActionResult AddCategory([FromBody] CategoryVM category)
         {

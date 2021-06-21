@@ -5,6 +5,7 @@ namespace AllSopFoodService.Services
     using System.Linq;
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
+    using AllSopFoodService.Model.Paging;
     using AllSopFoodService.ViewModels;
 
     public class CategoryService : ICategoryService
@@ -23,6 +24,34 @@ namespace AllSopFoodService.Services
 
             this._db.Categories.Add(newCategory);
             this._db.SaveChanges();
+        }
+
+        public List<Category> GetAllCategories(string? sortBy, string? searchString, int? pageNum)
+        {
+            var allCategories = this._db.Categories.OrderBy(n => n.Label).ToList();
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy)
+                {
+                    case "label_desc":
+                        allCategories = allCategories.OrderByDescending(n => n.Label).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                allCategories = allCategories.Where(n => n.Label.Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            }
+
+            //Paging
+            var pageSize = 3;
+            allCategories = PaginatedList<Category>.Create(allCategories.AsQueryable(), pageNum ?? 1, pageSize);
+
+            return allCategories;
         }
 
         public CategoryWithProductsAndCartsVM GetCategoryData(int categoryId)

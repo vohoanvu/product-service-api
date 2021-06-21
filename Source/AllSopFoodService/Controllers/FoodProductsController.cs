@@ -12,6 +12,7 @@ namespace AllSopFoodService.Controllers
     using Microsoft.AspNetCore.JsonPatch;
     using AllSopFoodService.Services;
     using AllSopFoodService.ViewModels;
+    using Microsoft.Extensions.Logging;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -19,22 +20,26 @@ namespace AllSopFoodService.Controllers
     {
         private readonly IFoodProductsService _foodItemService;
         private readonly IShoppingCartActions _CartItemService;
+        private readonly ILogger<FoodProductsController> _logger;
 
-        public FoodProductsController(IFoodProductsService foodProductsService, IShoppingCartActions cartItemService)
+        public FoodProductsController(IFoodProductsService foodProductsService, IShoppingCartActions cartItemService, ILogger<FoodProductsController> logger)
         {
             this._foodItemService = foodProductsService;
             this._CartItemService = cartItemService;
+            this._logger = logger;
         }
 
         // GET: api/FoodProducts
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
-        public async Task<IActionResult> GetFoodProductsAsync()
+        public async Task<IActionResult> GetFoodProductsAsync(string? sortBy, string? searchString, int? pageNum, int? pageSize)
         {
-            var foodItems = await this._foodItemService.GetFoodProductsAsync().ConfigureAwait(true);
+            this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
 
-            return this.Ok(foodItems); // if returned type was ActionResult<T>, then only need to 'return foodItems;' 
+            var foodItems = await this._foodItemService.GetFoodProductsAsync(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
+
+            return this.Ok(foodItems); // if returned type was ActionResult<T>, then only need to 'return foodItems;'
         }
 
         //PUT: api/FoodProducts/cart/5

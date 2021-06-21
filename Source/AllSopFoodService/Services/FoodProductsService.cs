@@ -5,6 +5,7 @@ namespace AllSopFoodService.Services
     using System.Linq;
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
+    using AllSopFoodService.Model.Paging;
     using AllSopFoodService.ViewModels;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace AllSopFoodService.Services
         public FoodProductsService(FoodDBContext dbcontext) => this.db = dbcontext;
 
         //Perhaps this should be placed at the repo layer?
-        public async Task<List<FoodProductVM>> GetFoodProductsAsync()
+        public async Task<List<FoodProductVM>> GetFoodProductsAsync(string? sortBy, string? searchString, int? pageNum, int? pageSize)
         {
             // Query Data via EF core DbSet
             // transform results to dto object (non-entity type)
@@ -29,6 +30,29 @@ namespace AllSopFoodService.Services
                 CategoryName = fooditem.Category.Label,
                 ShoppingCartNames = fooditem.FoodProduct_Carts.Select(n => n.ShoppingCart != null ? n.ShoppingCart.CartLabel : "empty").ToList()
             }).ToListAsync().ConfigureAwait(true);
+
+            // Server side sorting
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy)
+                {
+                    case "name_desc":
+                        foodItems = foodItems.OrderByDescending(n => n.Name).ToList();
+                        break;
+                    default:
+                        foodItems = foodItems.OrderBy(n => n.Name).ToList();
+                        break;
+                }
+            }
+            // server side Searching
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                foodItems = foodItems.Where(n => n.Name.Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            }
+
+            // server side Paging
+            // default pageNum = 1, pageSize = 5 if null
+            foodItems = PaginatedList<FoodProductVM>.Create(foodItems.AsQueryable(), pageNum ?? 1, pageSize ?? 5);
 
             return foodItems;
         }

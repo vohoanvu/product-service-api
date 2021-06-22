@@ -34,4 +34,10 @@ The prioritised list of user stories is as follows:
 
 
 
-I created this project template with .NET Core API Boxed template. These API are not yet published online since i'm still refactoring those APIs
+I created this project template with .NET Core API Boxed template. These API are not yet published online since i'm still refactoring them.
+
+List of possible code improvement:
+
+ServiceResponse<T> class implementation
+Repositories Layers
+Refactor according to .net core api Boxed template

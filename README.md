@@ -42,3 +42,4 @@ List of possible code improvement:
 - Repositories Layers
 - Refactor according to .net core api Boxed template
 - Use GetModelDto/AddModelDto for view models
+- Update Requests should not use AutoMapper

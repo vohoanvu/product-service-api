@@ -42,4 +42,5 @@ List of possible code improvement:
 - Repositories Layers
 - Refactor according to .net core api Boxed template
 - Use GetModelDto/AddModelDto for view models and possibly use AutoMapper()
-- Update Requests should not use AutoMapper
+- Update Requests should not use AutoMapper (map each property manually)
+- User Authentication (User Model and its equivalent relationships)

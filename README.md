@@ -41,5 +41,5 @@ List of possible code improvement:
 - ServiceResponse<T> class implementation
 - Repositories Layers
 - Refactor according to .net core api Boxed template
-- Use GetModelDto/AddModelDto for view models
+- Use GetModelDto/AddModelDto for view models and possibly use AutoMapper()
 - Update Requests should not use AutoMapper

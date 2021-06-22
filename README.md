@@ -39,7 +39,6 @@ I created this project template with .NET Core API Boxed template. These API are
 List of possible code improvement:
 
 - ServiceResponse<T> class implementation
-
 - Repositories Layers
-    
 - Refactor according to .net core api Boxed template
+- Use GetModelDto/AddModelDto for view models

@@ -13,8 +13,11 @@ The API that you develop should provide sufficient endpoints so that the clients
 
 
 There are also promotions that are currently running. These are as follows:
+
 • Get 10% off bulk drinks – any drinks are 10% off the listed price (including already reduced items) when buying 10 or more
+
 • £5.00 off your order when spending £50.00 or more on Baking/Cooking Ingredients
+
 • £20.00 off your total order value when spending £100.00 or more and using the code “20OFFPROMO”
 
 

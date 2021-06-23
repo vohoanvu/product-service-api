@@ -5,7 +5,8 @@
 [![GitHub Actions Build History](https://buildstats.info/github/chart/Username/Project?branch=main&includeBuildsFromPullRequest=false)](https://github.com/Username/Project/actions)
 
 Project Description
-You’ve been asked to develop a RESTful API for a B2B foodservice customer, to be consumed by both an Angular web app and a Xamarin mobile app.
+
+I’ve been asked to develop a RESTful API for a B2B foodservice customer, to be consumed by both an Angular web app and a Xamarin mobile app.
 
 The customer sells six different categories of items: Meat & Poultry, Fruit & Vegetables, Drinks, Confectionary & Desserts, Baking/Cooking Ingredients and Miscellaneous Items.
 
@@ -13,8 +14,11 @@ The API that you develop should provide sufficient endpoints so that the clients
 
 
 There are also promotions that are currently running. These are as follows:
+
 • Get 10% off bulk drinks – any drinks are 10% off the listed price (including already reduced items) when buying 10 or more
+
 • £5.00 off your order when spending £50.00 or more on Baking/Cooking Ingredients
+
 • £20.00 off your total order value when spending £100.00 or more and using the code “20OFFPROMO”
 
 
@@ -27,3 +31,17 @@ The prioritised list of user stories is as follows:
 6. As a User I can view the total price for the products in my shopping cart with discounts applied.
 7. As a User I am alerted when I apply an invalid voucher to my shopping cart.
 8. As a User I am unable to Out of Stock products to the shopping cart.
+
+
+
+I created this project template with .NET Core API Boxed template. These API are not yet published online since i'm still refactoring them.
+
+List of possible code improvement:
+
+- ServiceResponse<T> class implementation (done)
+- Repositories Layers
+- Refactor according to .net core api Boxed template
+- Use GetModelDto/AddModelDto for view models and possibly use AutoMapper() (not effective)
+- Update Requests should not use AutoMapper (map each property manually) (cannot yet update partial object properties)
+- User Authentication (User Model and its equivalent relationships)
+- Re-design Relational DB (relationship between FoodProducts and CartItems)

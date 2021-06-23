@@ -90,9 +90,9 @@ namespace AllSopFoodService.Controllers
         public async Task<ActionResult> AddToCartItemAsync(int productItem)
         {
             // Check if the product is available in Stock (FoodProduct DB) first thing first!
-            var isInStock = await this._foodCatalogService.IsFoodProductInStockAsync(productItem).ConfigureAwait(true);
+            var isInStock = this._foodCatalogService.IsFoodProductInStock(productItem);
 
-            if (!isInStock)
+            if (!isInStock.Success)
             {
                 // cover the last user story
                 return this.NotFound($"This product is currently Out of Stock!");

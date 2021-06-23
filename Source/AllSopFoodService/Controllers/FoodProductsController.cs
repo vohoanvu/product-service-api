@@ -33,13 +33,15 @@ namespace AllSopFoodService.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
-        public async Task<IActionResult> GetFoodProductsAsync(string? sortBy, string? searchString, int? pageNum, int? pageSize)
+        public async Task<IActionResult> GetFoodProducts(string? sortBy, string? searchString, int? pageNum, int? pageSize)
         {
-            this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
-
-            var foodItems = await this._foodItemService.GetFoodProductsAsync(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
-
-            return this.Ok(foodItems); // if returned type was ActionResult<T>, then only need to 'return foodItems;'
+            //this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
+            var response = await this._foodItemService.GetAllFoodProducts(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
+            if (response.Data == null)
+            {
+                return this.NotFound(response);
+            }
+            return this.Ok(response); // if returned type was ActionResult<T>, then only need to 'return foodItems;'
         }
 
         //PUT: api/FoodProducts/cart/5
@@ -79,68 +81,57 @@ namespace AllSopFoodService.Controllers
         //}
 
         // GET: api/FoodProducts/5
-        [HttpGet("get-product-by-id/{id}")]
-        public IActionResult GetFoodProductById(int id)
+        [HttpGet("get-single/{id}")]
+        public async Task<IActionResult> GetFoodProductById(int id)
         {
-            var foodProduct = this._foodItemService.GetFoodProductById(id);
-            if (foodProduct == null)
+            var response = await this._foodItemService.GetFoodProductById(id).ConfigureAwait(true);
+            if (!response.Success)
             {
-                return this.NotFound();
+                return this.NotFound(response);
             }
-
-            return this.Ok(foodProduct);
+            return this.Ok(response);
         }
 
         // PUT: api/FoodProducts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("update-product/{id}")]
-        public IActionResult UpdateFoodProduct(int id, [FromBody] FoodProductDTO foodProduct)
+        // This Update request might need refactoring
+        [HttpPut("update-product")]
+        public async Task<IActionResult> UpdateFoodProduct(int id, FoodProductDTO foodProduct)
         {
-            var updatedFoodProduct = this._foodItemService.UpdateFoodProduct(id, foodProduct);
-            if (updatedFoodProduct == null)
+            var response = await this._foodItemService.UpdateFoodProduct(id, foodProduct).ConfigureAwait(true);
+            if (response.Data == null)
             {
-                return this.NoContent();
+                return this.NotFound(response);
             }
 
-            return new ObjectResult(updatedFoodProduct); // or we can use Ok()
+            return this.Ok(response);
         }
 
         //POST: api/FoodProducts
         //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("add-product")]
-        public IActionResult AddFoodProduct([FromBody] FoodProductDTO foodProductDto)
+        public async Task<IActionResult> AddFoodProduct([FromBody] FoodProductDTO foodProductDto)
         {
             if (foodProductDto == null)
             {
                 return this.BadRequest(); // might be unecessary
             }
 
-            this._foodItemService.CreateFoodProduct(foodProductDto);
+            var response = await this._foodItemService.CreateFoodProduct(foodProductDto).ConfigureAwait(true);
 
-            return this.Ok();
-            //return this.CreatedAtAction("GetFoodProduct", new { id = createdFoodProduct.Id }, createdFoodProduct);
+            return this.Ok(response);
         }
 
         // DELETE: api/FoodProducts/5
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult DeleteFoodProduct(int id)
+        public async Task<IActionResult> DeleteFoodProduct(int id)
         {
-            //var foodProduct = this._foodItemService.GetFoodProductByIdAsync(id);
-            //if (foodProduct == null)
-            //{
-            //    return this.NotFound();
-            //}
-
-            //_context.FoodProducts.Remove(foodProduct);
-            //await _context.SaveChangesAsync();
-            var deletedSuccess = this._foodItemService.RemoveFoodProductById(id);
-            if (!deletedSuccess)
+            var response = await this._foodItemService.RemoveFoodProductById(id).ConfigureAwait(true);
+            if (response.Data == null)
             {
-                return new ObjectResult("Failed to delete the Product!"); // or use Ok()
+                return this.NotFound(response);
             }
 
-            return this.NoContent();
+            return this.Ok(response);
 
         }
     }

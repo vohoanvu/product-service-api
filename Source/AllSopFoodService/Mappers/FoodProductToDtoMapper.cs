@@ -7,16 +7,16 @@ namespace AllSopFoodService.Mappers
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
 
-    public class FoodProductToDtoMapper : IMapper<FoodProduct, FoodProductDTO>
+    public class FoodProductToVMMapper : IMapper<FoodProduct, FoodProductVM>
     {
         //private readonly IHttpContextAccessor httpContextAccessor;
         //private readonly LinkGenerator linkGenerator;
 
-        public FoodProductToDtoMapper()
+        public FoodProductToVMMapper()
         {
 
         }
-        public void Map(FoodProduct source, FoodProductDTO destination)
+        public void Map(FoodProduct source, FoodProductVM destination)
         {
             if (source is null)
             {
@@ -32,7 +32,8 @@ namespace AllSopFoodService.Mappers
             destination.Price = source.Price;
             destination.Quantity = source.Quantity;
             destination.InCart = source.IsInCart;
-            destination.CategoryId = source.CategoryId;
+            destination.CategoryName = source.Category.Label;
+            //destination.ShoppingCartNames = source.FoodProduct_Carts.Select(n => n.ShoppingCart != null ? n.ShoppingCart.CartLabel : "empty").ToList()
         }
     }
 }

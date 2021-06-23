@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="Package Versions">
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="coverlet.collector" PrivateAssets="all" Version="3.0.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

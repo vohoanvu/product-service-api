@@ -12,7 +12,6 @@ namespace AllSopFoodService.ViewModels
         public int Quantity { get; set; }
         public bool InCart { get; set; }
         public int CategoryId { get; set; }
-        public List<int> ShoppingCartIds { get; set; } = default!;
     }
 
     // this model has the Category and ShoppingCart Names
@@ -23,7 +22,5 @@ namespace AllSopFoodService.ViewModels
         public int Quantity { get; set; }
         public bool InCart { get; set; }
         public string CategoryName { get; set; } = default!;
-
-        public List<string> ShoppingCartNames { get; set; } = default!;
     }
 }

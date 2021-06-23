@@ -7,29 +7,41 @@ namespace AllSopFoodService.Services
     using AllSopFoodService.Model;
     using AllSopFoodService.Model.Paging;
     using AllSopFoodService.ViewModels;
+    using AllSopFoodService.Mappers;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using AutoMapper;
 
     public class FoodProductsService : IFoodProductsService
     {
         private readonly FoodDBContext db;
 
-        public FoodProductsService(FoodDBContext dbcontext) => this.db = dbcontext;
+        private readonly ICategoryService categoryService;
+        private readonly IMapper _mapper;
+
+        public FoodProductsService(FoodDBContext dbcontext, ICategoryService categoryService, IMapper mapper)
+        {
+            this.db = dbcontext;
+            this._mapper = mapper;
+            this.categoryService = categoryService;
+        }
 
         //Perhaps this should be placed at the repo layer?
-        public async Task<List<FoodProductVM>> GetFoodProductsAsync(string? sortBy, string? searchString, int? pageNum, int? pageSize)
+        public async Task<ServiceResponse<List<FoodProductVM>>> GetAllFoodProducts(string? sortBy, string? searchString, int? pageNum, int? pageSize)
         {
             // Query Data via EF core DbSet
-            // transform results to dto object (non-entity type)
-            var foodItems = await this.db.FoodProducts.AsNoTracking().Select(fooditem => new FoodProductVM()
+            var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
+            var dbProducts = await this.db.FoodProducts.ToListAsync().ConfigureAwait(true);
+            // transform results to dto object (non-entity type), possibly use AutoMapper here
+            serviceResponse.Data = dbProducts.Select(fooditem => new FoodProductVM()
             {
                 Name = fooditem.Name,
                 Price = fooditem.Price,
                 Quantity = fooditem.Quantity,
                 InCart = fooditem.IsInCart,
-                CategoryName = fooditem.Category.Label,
-                ShoppingCartNames = fooditem.FoodProduct_Carts.Select(n => n.ShoppingCart != null ? n.ShoppingCart.CartLabel : "empty").ToList()
-            }).ToListAsync().ConfigureAwait(true);
+                CategoryName = this.db.Categories.Find(fooditem.CategoryId).Label
+            }).ToList();
+            //serviceResponse.Data = dbProducts.Select(fp => this._mapper.Map<FoodProductVM>(fp)).ToList()
 
             // Server side sorting
             if (!string.IsNullOrEmpty(sortBy))
@@ -37,46 +49,54 @@ namespace AllSopFoodService.Services
                 switch (sortBy)
                 {
                     case "name_desc":
-                        foodItems = foodItems.OrderByDescending(n => n.Name).ToList();
+                        serviceResponse.Data = serviceResponse.Data.OrderByDescending(n => n.Name).ToList();
                         break;
                     default:
-                        foodItems = foodItems.OrderBy(n => n.Name).ToList();
+                        serviceResponse.Data = serviceResponse.Data.OrderBy(n => n.Name).ToList();
                         break;
                 }
             }
             // server side Searching
             if (!string.IsNullOrEmpty(searchString))
             {
-                foodItems = foodItems.Where(n => n.Name.Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                serviceResponse.Data = serviceResponse.Data.Where(n => n.Name.Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
             }
 
             // server side Paging
             // default pageNum = 1, pageSize = 5 if null
-            foodItems = PaginatedList<FoodProductVM>.Create(foodItems.AsQueryable(), pageNum ?? 1, pageSize ?? 5);
+            //serviceResponse.Data = PaginatedList<FoodProductVM>.Create(serviceResponse.Data.AsQueryable(), pageNum ?? 1, pageSize ?? 5);
 
-            return foodItems;
+            return serviceResponse;
         }
 
-        public FoodProductVM GetFoodProductById(int id)
+        public async Task<ServiceResponse<FoodProductVM>> GetFoodProductById(int id)
         {
-            //perhaps we can use FirstorDefaultAsync
-            var foodwithCategory = this.db.FoodProducts.Where(fp => fp.Id == id).Select(fp => new FoodProductVM()
+            var serviceResponse = new ServiceResponse<FoodProductVM>();
+            var dbProduct = await this.db.FoodProducts.FirstOrDefaultAsync(fp => fp.Id == id).ConfigureAwait(true);
+            if (dbProduct != null)
             {
-                Name = fp.Name,
-                Price = fp.Price,
-                Quantity = fp.Quantity,
-                InCart = fp.IsInCart,
-                CategoryName = fp.Category.Label,
-                ShoppingCartNames = fp.FoodProduct_Carts.Select(n => n.ShoppingCart != null ? n.ShoppingCart.CartLabel : "empty").ToList()
-            }).FirstOrDefault();
+                serviceResponse.Data = new FoodProductVM()
+                {
+                    Name = dbProduct.Name,
+                    Price = dbProduct.Price,
+                    Quantity = dbProduct.Quantity,
+                    InCart = dbProduct.IsInCart,
+                    CategoryName = this.categoryService.GetCategoryData(dbProduct.CategoryId).Label
+                };
+            }
+            else
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Cannot find a product with the given ID";
+            }
 
-#pragma warning disable CS8603 // Possible null reference return.
-            return foodwithCategory;
-#pragma warning restore CS8603 // Possible null reference return.
+            return serviceResponse;
         }
 
-        public void CreateFoodProduct(FoodProductDTO foodProductDto)
+        public async Task<ServiceResponse<List<FoodProductVM>>> CreateFoodProduct(FoodProductDTO foodProductDto)
         {
+            var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
+            //possibly use AutoMapper here
             var foodProduct = new FoodProduct()
             {
                 Name = foodProductDto.Name,
@@ -84,25 +104,37 @@ namespace AllSopFoodService.Services
                 Quantity = foodProductDto.Quantity,
                 IsInCart = foodProductDto.InCart,
                 CategoryId = foodProductDto.CategoryId,
+                FoodProduct_Carts = null
             };
 
             this.db.FoodProducts.Add(foodProduct);
-            this.db.SaveChanges();
+            await this.db.SaveChangesAsync().ConfigureAwait(true);
 
-            if (foodProductDto.ShoppingCartIds != null)
+            ////check if the newly created product is also going to be in any Cart
+            //if (foodProductDto.ShoppingCartIds != null)
+            //{
+            //    foreach (var id in foodProductDto.ShoppingCartIds)
+            //    {
+            //        var food_Cart = new FoodProduct_ShoppingCart()
+            //        {
+            //            FoodProductId = foodProduct.Id,
+            //            ShoppingCartId = id
+            //        };
+            //        this.db.FoodProducts_Carts.Add(food_Cart);
+            //        await this.db.SaveChangesAsync().ConfigureAwait(true);
+            //    }
+            //}
+            //Mapping all products to FoodProductVM
+            serviceResponse.Data = await this.db.FoodProducts.Select(fooditem => new FoodProductVM()
             {
-                foreach (var id in foodProductDto.ShoppingCartIds)
-                {
-                    var food_Cart = new FoodProduct_ShoppingCart()
-                    {
-                        FoodProductId = foodProduct.Id,
-                        ShoppingCartId = id
-                    };
-                    this.db.FoodProducts_Carts.Add(food_Cart);
-                    this.db.SaveChanges();
-                }
-            }
-            //return createdataction("getfoodproduct", new { id = foodproduct.id }, foodproduct);
+                Name = fooditem.Name,
+                Price = fooditem.Price,
+                Quantity = fooditem.Quantity,
+                InCart = fooditem.IsInCart,
+                CategoryName = this.categoryService.GetCategoryData(fooditem.CategoryId).Label
+            }).ToListAsync().ConfigureAwait(true);
+
+            return serviceResponse;
         }
 
         public void DecrementProductStockUnit(int id)
@@ -112,44 +144,93 @@ namespace AllSopFoodService.Services
             currentFoodProd.Quantity--;
         }
 
-        public async Task<bool> IsFoodProductInStockAsync(int id) => await this.db.FoodProducts.AnyAsync(fp => fp.Id == id && fp.Quantity > 0).ConfigureAwait(true);
+        public ServiceResponse<FoodProduct> IsFoodProductInStock(int id)
+        {
+            var serviceResponse = new ServiceResponse<FoodProduct>();
+
+            if (this.db.FoodProducts.Any(fp => fp.Id == id && fp.Quantity > 0))
+            {
+                serviceResponse.Data = this.db.FoodProducts.Find(id);
+                serviceResponse.Success = true;
+                serviceResponse.Message = "This product is stil in stock!";
+            }
+            else
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "This product is Out Of Stock!";
+            }
+
+            return serviceResponse;
+        }
+
 
         public decimal GetOriginalCostbyFoodProductId(int id) => this.db.FoodProducts.Find(id).Price;
 
-        public FoodProduct UpdateFoodProduct(int id, FoodProductDTO foodProductDto)
+        public async Task<ServiceResponse<FoodProductVM>> UpdateFoodProduct(int id, FoodProductDTO foodProductDto)
         {
-            var currentFood = this.db.FoodProducts.FirstOrDefault(foodItem => foodItem.Id == id);
-
-            if (currentFood != null)
+            //At the moment, the update request is not returning product Id upon successful update
+            var serviceResponse = new ServiceResponse<FoodProductVM>();
+            try
             {
+                var currentFood = await this.db.FoodProducts.FirstOrDefaultAsync(foodItem => foodItem.Id == id).ConfigureAwait(true);
+
                 currentFood.Name = foodProductDto.Name;
                 currentFood.Price = foodProductDto.Price;
                 currentFood.Quantity = foodProductDto.Quantity;
                 currentFood.IsInCart = foodProductDto.InCart;
                 currentFood.CategoryId = foodProductDto.CategoryId;
 
-                this.db.SaveChanges();
+                await this.db.SaveChangesAsync().ConfigureAwait(true);
+
+                //var mapper = new FoodProductToVMMapper();
+                //mapper.Map(currentFood, serviceResponse.Data);
+                //manuall mapping
+                serviceResponse.Data = new FoodProductVM()
+                {
+                    Name = currentFood.Name,
+                    Price = currentFood.Price,
+                    Quantity = currentFood.Quantity,
+                    InCart = currentFood.IsInCart,
+                    CategoryName = this.categoryService.GetCategoryData(currentFood.CategoryId).Label
+                };
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
             }
 
-#pragma warning disable CS8603 // Possible null reference return.
-            return currentFood;
-#pragma warning restore CS8603 // Possible null reference return.
+            return serviceResponse;
         }
 
         public bool FoodProductExists(int id) => this.db.FoodProducts.Any(e => e.Id == id);
 
-        public bool RemoveFoodProductById(int id)
+        public async Task<ServiceResponse<List<FoodProductVM>>> RemoveFoodProductById(int id)
         {
-            var entity = this.db.FoodProducts.FirstOrDefault(food => food.Id == id);
-            if (entity != null)
+            var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
+            try
             {
-                this.db.FoodProducts.Remove(entity);
-                this.db.SaveChanges();
+                var foodProduct = await this.db.FoodProducts.FirstAsync(food => food.Id == id).ConfigureAwait(true);
+                this.db.FoodProducts.Remove(foodProduct);
+                await this.db.SaveChangesAsync().ConfigureAwait(true);
 
-                return true;
+                //manuall mapping
+                serviceResponse.Data = this.db.FoodProducts.Select(fooditem => new FoodProductVM()
+                {
+                    Name = fooditem.Name,
+                    Price = fooditem.Price,
+                    Quantity = fooditem.Quantity,
+                    InCart = fooditem.IsInCart,
+                    CategoryName = this.categoryService.GetCategoryData(fooditem.CategoryId).Label
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
             }
 
-            return false;
+            return serviceResponse;
         }
     }
 }

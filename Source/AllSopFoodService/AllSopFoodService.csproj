@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Package References">
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Boxed.AspNetCore" Version="7.0.0" />
     <PackageReference Include="Boxed.AspNetCore.Swagger" Version="9.1.0" />
     <PackageReference Include="Boxed.Mapping" Version="5.3.0" />

@@ -18,9 +18,9 @@ namespace AllSopFoodService.Controllers
         public ShoppingCartController(ICartsService cartService) => this._cartService = cartService;
 
         [HttpPost("add-new-cart")]
-        public IActionResult AddBook([FromBody] CartVM author)
+        public IActionResult CreateNewCart([FromBody] CartVM cart)
         {
-            this._cartService.CreateShoppingCart(author);
+            this._cartService.CreateShoppingCart(cart);
             return this.Ok();
         }
 

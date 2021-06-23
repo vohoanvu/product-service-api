@@ -13,6 +13,7 @@ namespace AllSopFoodService
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using AllSopFoodService.Mappers;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -64,6 +65,7 @@ namespace AllSopFoodService
                     .AddCustomMvcOptions(this.configuration)
                     .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                     .Services
+                    .AddAutoMapper(typeof(Startup))
                     .AddProjectCommands()
                     .AddProjectMappers()
                     .AddProjectRepositories()

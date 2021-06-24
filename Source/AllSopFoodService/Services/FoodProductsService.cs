@@ -38,7 +38,6 @@ namespace AllSopFoodService.Services
                 Name = fooditem.Name,
                 Price = fooditem.Price,
                 Quantity = fooditem.Quantity,
-                InCart = fooditem.IsInCart,
                 CategoryName = this.db.Categories.Find(fooditem.CategoryId).Label
             }).ToList();
             //serviceResponse.Data = dbProducts.Select(fp => this._mapper.Map<FoodProductVM>(fp)).ToList()
@@ -80,7 +79,6 @@ namespace AllSopFoodService.Services
                     Name = dbProduct.Name,
                     Price = dbProduct.Price,
                     Quantity = dbProduct.Quantity,
-                    InCart = dbProduct.IsInCart,
                     CategoryName = this.categoryService.GetCategoryData(dbProduct.CategoryId).Label
                 };
             }
@@ -102,7 +100,6 @@ namespace AllSopFoodService.Services
                 Name = foodProductDto.Name,
                 Price = foodProductDto.Price,
                 Quantity = foodProductDto.Quantity,
-                IsInCart = foodProductDto.InCart,
                 CategoryId = foodProductDto.CategoryId,
                 FoodProduct_Carts = null
             };
@@ -130,7 +127,6 @@ namespace AllSopFoodService.Services
                 Name = fooditem.Name,
                 Price = fooditem.Price,
                 Quantity = fooditem.Quantity,
-                InCart = fooditem.IsInCart,
                 CategoryName = this.categoryService.GetCategoryData(fooditem.CategoryId).Label
             }).ToListAsync().ConfigureAwait(true);
 
@@ -177,7 +173,6 @@ namespace AllSopFoodService.Services
                 currentFood.Name = foodProductDto.Name;
                 currentFood.Price = foodProductDto.Price;
                 currentFood.Quantity = foodProductDto.Quantity;
-                currentFood.IsInCart = foodProductDto.InCart;
                 currentFood.CategoryId = foodProductDto.CategoryId;
 
                 await this.db.SaveChangesAsync().ConfigureAwait(true);
@@ -190,7 +185,6 @@ namespace AllSopFoodService.Services
                     Name = currentFood.Name,
                     Price = currentFood.Price,
                     Quantity = currentFood.Quantity,
-                    InCart = currentFood.IsInCart,
                     CategoryName = this.categoryService.GetCategoryData(currentFood.CategoryId).Label
                 };
             }
@@ -220,7 +214,6 @@ namespace AllSopFoodService.Services
                     Name = fooditem.Name,
                     Price = fooditem.Price,
                     Quantity = fooditem.Quantity,
-                    InCart = fooditem.IsInCart,
                     CategoryName = this.categoryService.GetCategoryData(fooditem.CategoryId).Label
                 }).ToList();
             }

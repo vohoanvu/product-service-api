@@ -18,10 +18,10 @@ namespace AllSopFoodService.Controllers
     {
         //private readonly FoodDBContext _context;
         //private readonly IHttpContextAccessor httpcontextaccessor;
-        private readonly IShoppingCartActions _usersShoppingCart;
+        private readonly ICartItemService _usersShoppingCart;
         private readonly IFoodProductsService _foodCatalogService;
 
-        public CartItemsController(IShoppingCartActions usersShoppingCart, IFoodProductsService foodCatalogService)
+        public CartItemsController(ICartItemService usersShoppingCart, IFoodProductsService foodCatalogService)
         {
             this._usersShoppingCart = usersShoppingCart;
             this._foodCatalogService = foodCatalogService;

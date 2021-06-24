@@ -13,13 +13,10 @@ namespace AllSopFoodService.Model
     {
         //public string CartId { get; set; }
         [Key]
-        public string ItemId { get; set; }
+        public int ItemId { get; set; }
 
         public int Quantity { get; set; }
-
         public string Description { get; set; }
-
-        public DateTime DateCreated { get; set; }
 
         public int ProductId { get; set; }
 

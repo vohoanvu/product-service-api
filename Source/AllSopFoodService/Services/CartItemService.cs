@@ -13,7 +13,7 @@ namespace AllSopFoodService.Services
     using Microsoft.AspNetCore.Mvc;
     using System.Net.Http;
 
-    public class ShoppingCartActions : IShoppingCartActions
+    public class CartItemService : ICartItemService
     {
         private readonly FoodDBContext _db;
         private readonly IFoodProductsService _foodProductService;
@@ -21,7 +21,7 @@ namespace AllSopFoodService.Services
         //Assuming only 1 coupon can be used at a time
         public bool IsCartDiscounted { get; set; } = default!; // false by default
 
-        public ShoppingCartActions(FoodDBContext dbcontext, IFoodProductsService foodProductsService)
+        public CartItemService(FoodDBContext dbcontext, IFoodProductsService foodProductsService)
         {
             this._db = dbcontext;
             this._foodProductService = foodProductsService;
@@ -38,15 +38,13 @@ namespace AllSopFoodService.Services
                 // Create a new cart item if no cart item exists.                 
                 cartItem = new CartItem
                 {
-                    ItemId = Guid.NewGuid().ToString(),
                     ProductId = productId,
                     //CartId = ShoppingCartId,
                     Product = this._db.FoodProducts.SingleOrDefault(
                     p => p.Id == productId),
                     Quantity = 1,
                     Description = this._db.FoodProducts.SingleOrDefault(
-                    p => p.Id == productId).Name,
-                    DateCreated = DateTime.Now
+                    p => p.Id == productId).Name
                 };
 
                 this._db.ShoppingCartItems.Add(cartItem);
@@ -194,7 +192,7 @@ namespace AllSopFoodService.Services
             return result;
         }
 
-        public async Task<CartItem> UpdateCartItemAsync(string id, CartItem newItem)
+        public async Task<CartItem> UpdateCartItemAsync(int id, CartItem newItem)
         {
             newItem.ItemId = id;
             //update database

@@ -19,10 +19,10 @@ namespace AllSopFoodService.Controllers
     public class FoodProductsController : ControllerBase
     {
         private readonly IFoodProductsService _foodItemService;
-        private readonly IShoppingCartActions _CartItemService;
+        private readonly ICartItemService _CartItemService;
         private readonly ILogger<FoodProductsController> _logger;
 
-        public FoodProductsController(IFoodProductsService foodProductsService, IShoppingCartActions cartItemService, ILogger<FoodProductsController> logger)
+        public FoodProductsController(IFoodProductsService foodProductsService, ICartItemService cartItemService, ILogger<FoodProductsController> logger)
         {
             this._foodItemService = foodProductsService;
             this._CartItemService = cartItemService;

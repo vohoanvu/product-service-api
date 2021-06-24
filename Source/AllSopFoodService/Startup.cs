@@ -14,6 +14,7 @@ namespace AllSopFoodService
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using AllSopFoodService.Mappers;
+    using AllSopFoodService.Services.Interfaces;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -54,10 +55,11 @@ namespace AllSopFoodService
                     .AddHttpContextAccessor()
                     // Add useful interface for accessing the ActionContext outside a controller.
                     .AddSingleton<IActionContextAccessor, ActionContextAccessor>()
-                    .AddScoped<IShoppingCartActions, ShoppingCartActions>()
+                    .AddScoped<ICartItemService, CartItemService>()
                     .AddScoped<IFoodProductsService, FoodProductsService>()
                     .AddScoped<ICartsService, CartsService>()
                     .AddScoped<ICategoryService, CategoryService>()
+                    .AddScoped<IProductsInCartsService, ProductsInCartsService>()
                     .AddCustomApiVersioning()
                     .AddServerTiming()
                     .AddControllers()

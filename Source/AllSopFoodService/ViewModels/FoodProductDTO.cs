@@ -10,17 +10,16 @@ namespace AllSopFoodService.ViewModels
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }
         public int Quantity { get; set; }
-        public bool InCart { get; set; }
         public int CategoryId { get; set; }
     }
 
-    // this model has the Category and ShoppingCart Names
+    // this model has the Category Label
     public class FoodProductVM
     {
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }
         public int Quantity { get; set; }
-        public bool InCart { get; set; }
         public string CategoryName { get; set; } = default!;
+        public int? CartItemId { get; set; }
     }
 }

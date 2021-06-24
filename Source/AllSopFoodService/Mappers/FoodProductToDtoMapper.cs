@@ -31,7 +31,6 @@ namespace AllSopFoodService.Mappers
             destination.Name = source.Name;
             destination.Price = source.Price;
             destination.Quantity = source.Quantity;
-            destination.InCart = source.IsInCart;
             destination.CategoryName = source.Category.Label;
             //destination.ShoppingCartNames = source.FoodProduct_Carts.Select(n => n.ShoppingCart != null ? n.ShoppingCart.CartLabel : "empty").ToList()
         }

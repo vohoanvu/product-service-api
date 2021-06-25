@@ -8,6 +8,7 @@ namespace AllSopFoodService.ViewModels
     public class CartVM
     {
         public string CartLabel { get; set; } = default!;
+        public List<ProductsInCartsVM> Products { get; set; } = default!;
     }
 
     public class CartWithProductsVM

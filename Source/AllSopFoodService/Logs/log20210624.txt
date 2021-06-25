@@ -6,3 +6,6 @@
 06/24/2021 19:37:05 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 282.0761 ms
 06/24/2021 19:37:25 +07:00 [Warning] - Message: The relationship was separated into two relationships because the [ForeignKey] attribute specified on the navigation '"CartItem"."Product"' doesn't match the [ForeignKey] attribute specified on the property '"FoodProduct"."CartItemId"'.
 06/24/2021 20:03:25 +07:00 [Warning] - Message: The relationship was separated into two relationships because the [ForeignKey] attribute specified on the navigation '"CartItem"."Product"' doesn't match the [ForeignKey] attribute specified on the property '"FoodProduct"."CartItemId"'.
+06/24/2021 20:45:06 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+06/24/2021 20:45:07 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 160.0339 ms
+06/24/2021 20:45:07 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 241.8258 ms

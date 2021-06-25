@@ -20,6 +20,5 @@ namespace AllSopFoodService.ViewModels
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public string CategoryName { get; set; } = default!;
-        public int? CartItemId { get; set; }
     }
 }

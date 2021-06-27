@@ -19,7 +19,6 @@ namespace AllSopFoodService.Model
 
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<FoodProduct> FoodProducts { get; set; }
-        public virtual DbSet<CartItem> ShoppingCartItems { get; set; }
         public virtual DbSet<Promotion> CouponCodes { get; set; }
         // Many-to-many relationship version of ShoppingCartItems
         public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
@@ -29,8 +28,10 @@ namespace AllSopFoodService.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
-            this.OnModelCreatingPartial(modelBuilder);
+            modelBuilder.Entity<FoodProduct>()
+                .HasOne(fp => fp.Category)
+                .WithMany(c => c.FoodProducts)
+                .HasForeignKey(fp => fp.CategoryId);
 
             modelBuilder.Entity<FoodProduct_ShoppingCart>()
                 .HasOne(foodCart => foodCart.FoodProduct)
@@ -42,27 +43,50 @@ namespace AllSopFoodService.Model
                 .WithMany(cart => cart.FoodProduct_Carts)
                 .HasForeignKey(foodCartId => foodCartId.ShoppingCartId);
 
-            modelBuilder.Entity<Promotion>().HasData(
-            new Promotion
-            {
-                Id = new Random().Next(1, 50),
-                CouponCode = "10OFFPROMODRI",
-                IsClaimed = false
-            },
-            new Promotion
-            {
-                Id = new Random().Next(1, 50),
-                CouponCode = "5OFFPROMOALL",
-                IsClaimed = false
-            },
-            new Promotion
-            {
-                Id = new Random().Next(1, 50),
-                CouponCode = "20OFFPROMOALL",
-                IsClaimed = false
-            });
+            modelBuilder.Entity<ShoppingCart>()
+                .HasOne(p => p.VoucherCode)
+                .WithMany(c => c.DiscountedCarts)
+                .HasForeignKey(p => p.VoucherId);
+
+
+            modelBuilder.Entity<Category>().HasData(
+                    new Category()
+                    {
+                        Id = 1,
+                        Label = "Meat & Poultry",
+                        IsAvailable = true
+                    },
+                    new Category()
+                    {
+                        Id = 2,
+                        Label = "Fruit & Vegetables",
+                        IsAvailable = true
+                    },
+                    new Category()
+                    {
+                        Id = 3,
+                        Label = "Drinks",
+                        IsAvailable = true
+                    }, new Category()
+                    {
+                        Id = 4,
+                        Label = "Confectionary & Desserts",
+                        IsAvailable = true
+                    },
+                    new Category()
+                    {
+                        Id = 5,
+                        Label = "Baking/Cooking Ingredients",
+                        IsAvailable = true
+                    },
+                    new Category()
+                    {
+                        Id = 6,
+                        Label = "Miscellaneous Items",
+                        IsAvailable = true
+                    }
+                );
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

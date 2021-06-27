@@ -11,11 +11,11 @@ namespace AllSopFoodService.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class ShoppingCartController : Controller
+    public class CartsController : Controller
     {
         private readonly ICartsService _cartService;
 
-        public ShoppingCartController(ICartsService cartService) => this._cartService = cartService;
+        public CartsController(ICartsService cartService) => this._cartService = cartService;
 
         [HttpPost("add-new-cart")]
         public IActionResult CreateNewCart([FromBody] CartVM cart)

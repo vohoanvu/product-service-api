@@ -15,33 +15,9 @@ namespace AllSopFoodService.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.6")
+                .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("AllSopFoodService.Model.CartItem", b =>
-                {
-                    b.Property<int>("ItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("ItemId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ShoppingCartItems");
-                });
 
             modelBuilder.Entity("AllSopFoodService.Model.Category", b =>
                 {
@@ -54,12 +30,49 @@ namespace AllSopFoodService.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Label")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("categories");
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsAvailable = true,
+                            Label = "Meat & Poultry"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsAvailable = true,
+                            Label = "Fruit & Vegetables"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsAvailable = true,
+                            Label = "Drinks"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsAvailable = true,
+                            Label = "Confectionary & Desserts"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsAvailable = true,
+                            Label = "Baking/Cooking Ingredients"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsAvailable = true,
+                            Label = "Miscellaneous Items"
+                        });
                 });
 
             modelBuilder.Entity("AllSopFoodService.Model.FoodProduct", b =>
@@ -73,7 +86,6 @@ namespace AllSopFoodService.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
@@ -84,7 +96,7 @@ namespace AllSopFoodService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "CategoryId" }, "IX_FoodProducts_CategoryId");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("FoodProducts");
                 });
@@ -170,26 +182,6 @@ namespace AllSopFoodService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CouponCodes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 31,
-                            CouponCode = "10OFFPROMODRI",
-                            IsClaimed = false
-                        },
-                        new
-                        {
-                            Id = 46,
-                            CouponCode = "5OFFPROMOALL",
-                            IsClaimed = false
-                        },
-                        new
-                        {
-                            Id = 20,
-                            CouponCode = "20OFFPROMOALL",
-                            IsClaimed = false
-                        });
                 });
 
             modelBuilder.Entity("AllSopFoodService.Model.ShoppingCart", b =>
@@ -203,24 +195,21 @@ namespace AllSopFoodService.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDiscounted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("VoucherId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("VoucherId");
+
                     b.ToTable("ShoppingCarts");
-                });
-
-            modelBuilder.Entity("AllSopFoodService.Model.CartItem", b =>
-                {
-                    b.HasOne("AllSopFoodService.Model.FoodProduct", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("AllSopFoodService.Model.FoodProduct", b =>
@@ -253,6 +242,15 @@ namespace AllSopFoodService.Migrations
                     b.Navigation("ShoppingCart");
                 });
 
+            modelBuilder.Entity("AllSopFoodService.Model.ShoppingCart", b =>
+                {
+                    b.HasOne("AllSopFoodService.Model.Promotion", "VoucherCode")
+                        .WithMany("DiscountedCarts")
+                        .HasForeignKey("VoucherId");
+
+                    b.Navigation("VoucherCode");
+                });
+
             modelBuilder.Entity("AllSopFoodService.Model.Category", b =>
                 {
                     b.Navigation("FoodProducts");
@@ -261,6 +259,11 @@ namespace AllSopFoodService.Migrations
             modelBuilder.Entity("AllSopFoodService.Model.FoodProduct", b =>
                 {
                     b.Navigation("FoodProduct_Carts");
+                });
+
+            modelBuilder.Entity("AllSopFoodService.Model.Promotion", b =>
+                {
+                    b.Navigation("DiscountedCarts");
                 });
 
             modelBuilder.Entity("AllSopFoodService.Model.ShoppingCart", b =>

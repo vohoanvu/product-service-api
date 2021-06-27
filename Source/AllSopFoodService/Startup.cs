@@ -15,6 +15,8 @@ namespace AllSopFoodService
     using Microsoft.Extensions.Logging;
     using AllSopFoodService.Mappers;
     using AllSopFoodService.Services.Interfaces;
+    using AllSopFoodService.Repositories;
+    using static System.Net.Mime.MediaTypeNames;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -55,7 +57,6 @@ namespace AllSopFoodService
                     .AddHttpContextAccessor()
                     // Add useful interface for accessing the ActionContext outside a controller.
                     .AddSingleton<IActionContextAccessor, ActionContextAccessor>()
-                    .AddScoped<ICartItemService, CartItemService>()
                     .AddScoped<IFoodProductsService, FoodProductsService>()
                     .AddScoped<ICartsService, CartsService>()
                     .AddScoped<ICategoryService, CategoryService>()
@@ -80,34 +81,38 @@ namespace AllSopFoodService
         /// called by the ASP.NET runtime.
         /// </summary>
         /// <param name="application">The application builder.</param>
-        public virtual void Configure(IApplicationBuilder application) =>
-            application
-                .UseIf(
-                    this.webHostEnvironment.IsDevelopment(),
-                    x => x.UseServerTiming())
-                .UseForwardedHeaders()
-                .UseRouting()
-                .UseCors(CorsPolicyName.AllowAny)
-                .UseResponseCaching()
-                .UseResponseCompression()
-                .UseIf(
-                    this.webHostEnvironment.IsDevelopment(),
-                    x => x.UseDeveloperExceptionPage())
-                .UseStaticFilesWithCacheControl()
-                .UseCustomSerilogRequestLogging()
-                .UseEndpoints(
-                    builder =>
-                    {
-                        builder.MapControllers().RequireCors(CorsPolicyName.AllowAny);
-                        builder
-                            .MapHealthChecks("/status")
-                            .RequireCors(CorsPolicyName.AllowAny);
-                        builder
-                            .MapHealthChecks("/status/self", new HealthCheckOptions() { Predicate = _ => false })
-                            .RequireCors(CorsPolicyName.AllowAny);
-                    })
-                .UseSwagger()
-                .UseCustomSwaggerUI()
-                .UseSession();
+        public virtual void Configure(IApplicationBuilder application)
+        {
+            application.UseIf(
+                        this.webHostEnvironment.IsDevelopment(),
+                        x => x.UseServerTiming())
+                    .UseForwardedHeaders()
+                    .UseRouting()
+                    .UseCors(CorsPolicyName.AllowAny)
+                    .UseResponseCaching()
+                    .UseResponseCompression()
+                    .UseIf(
+                        this.webHostEnvironment.IsDevelopment(),
+                        x => x.UseDeveloperExceptionPage())
+                    .UseStaticFilesWithCacheControl()
+                    .UseCustomSerilogRequestLogging()
+                    .UseEndpoints(
+                        builder =>
+                        {
+                            builder.MapControllers().RequireCors(CorsPolicyName.AllowAny);
+                            builder
+                                .MapHealthChecks("/status")
+                                .RequireCors(CorsPolicyName.AllowAny);
+                            builder
+                                .MapHealthChecks("/status/self", new HealthCheckOptions() { Predicate = _ => false })
+                                .RequireCors(CorsPolicyName.AllowAny);
+                        })
+                    .UseSwagger()
+                    .UseCustomSwaggerUI()
+                    .UseSession();
+
+            AppDbInitializer.Seed(application);
+        }
+
     }
 }

@@ -35,6 +35,7 @@ namespace AllSopFoodService.Services
             // transform results to dto object (non-entity type), possibly use AutoMapper here
             serviceResponse.Data = dbProducts.Select(fooditem => new FoodProductVM()
             {
+                ProductId = fooditem.Id,
                 Name = fooditem.Name,
                 Price = fooditem.Price,
                 Quantity = fooditem.Quantity,
@@ -76,6 +77,7 @@ namespace AllSopFoodService.Services
             {
                 serviceResponse.Data = new FoodProductVM()
                 {
+                    ProductId = dbProduct.Id,
                     Name = dbProduct.Name,
                     Price = dbProduct.Price,
                     Quantity = dbProduct.Quantity,
@@ -124,6 +126,7 @@ namespace AllSopFoodService.Services
             //Mapping all products to FoodProductVM
             serviceResponse.Data = await this.db.FoodProducts.Select(fooditem => new FoodProductVM()
             {
+                ProductId = fooditem.Id,
                 Name = fooditem.Name,
                 Price = fooditem.Price,
                 Quantity = fooditem.Quantity,
@@ -135,9 +138,12 @@ namespace AllSopFoodService.Services
 
         public void DecrementProductStockUnit(int id)
         {
-            var currentFoodProd = this.db.FoodProducts.Find(id);
+            var currentFoodProd = this.db.FoodProducts.First(p => p.Id == id);
 
             currentFoodProd.Quantity--;
+            //could use Update() if the changes take places far away from the context, Or use Entry().State = Modified
+            //this.db.FoodProducts.Update(currentFoodProd);
+            this.db.SaveChanges();
         }
 
         public ServiceResponse<FoodProduct> IsFoodProductInStock(int id)
@@ -182,6 +188,7 @@ namespace AllSopFoodService.Services
                 //manuall mapping
                 serviceResponse.Data = new FoodProductVM()
                 {
+                    ProductId = currentFood.Id,
                     Name = currentFood.Name,
                     Price = currentFood.Price,
                     Quantity = currentFood.Quantity,
@@ -211,6 +218,7 @@ namespace AllSopFoodService.Services
                 //manuall mapping
                 serviceResponse.Data = this.db.FoodProducts.Select(fooditem => new FoodProductVM()
                 {
+                    ProductId = fooditem.Id,
                     Name = fooditem.Name,
                     Price = fooditem.Price,
                     Quantity = fooditem.Quantity,

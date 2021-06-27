@@ -8,23 +8,15 @@ namespace AllSopFoodService.Model
     using System.ComponentModel.DataAnnotations.Schema;
     using Microsoft.EntityFrameworkCore;
 
-    [Index(nameof(CategoryId), Name = "IX_FoodProducts_CategoryId")]
     public partial class FoodProduct
     {
-        [Key]
         public int Id { get; set; }
-        [Required]
         public string Name { get; set; }
-        [Column(TypeName = "decimal(18, 2)")]
         public decimal Price { get; set; }
         public int Quantity { get; set; }
-
         //Navigation Properties
         public int CategoryId { get; set; }
-        [ForeignKey(nameof(CategoryId))]
-        [InverseProperty("FoodProducts")]
-        public virtual Category Category { get; set; }
-
+        public Category Category { get; set; }
         public List<FoodProduct_ShoppingCart> FoodProduct_Carts { get; set; }
     }
 }

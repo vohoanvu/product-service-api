@@ -28,6 +28,7 @@ namespace AllSopFoodService.Mappers
                 throw new ArgumentNullException(nameof(destination));
             }
 
+            destination.ProductId = source.Id;
             destination.Name = source.Name;
             destination.Price = source.Price;
             destination.Quantity = source.Quantity;

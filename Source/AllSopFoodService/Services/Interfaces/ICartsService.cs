@@ -11,6 +11,8 @@ namespace AllSopFoodService.Services
     {
         void CreateShoppingCart(CartVM cart);
 
+        ServiceResponse<ShoppingCart> GetCartById(int cartId);
+
         CartWithProductsVM GetCartWithProducts(int cartId);
     }
 }

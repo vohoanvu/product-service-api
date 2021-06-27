@@ -19,13 +19,11 @@ namespace AllSopFoodService.Controllers
     public class FoodProductsController : ControllerBase
     {
         private readonly IFoodProductsService _foodItemService;
-        private readonly ICartItemService _CartItemService;
         private readonly ILogger<FoodProductsController> _logger;
 
-        public FoodProductsController(IFoodProductsService foodProductsService, ICartItemService cartItemService, ILogger<FoodProductsController> logger)
+        public FoodProductsController(IFoodProductsService foodProductsService, ILogger<FoodProductsController> logger)
         {
             this._foodItemService = foodProductsService;
-            this._CartItemService = cartItemService;
             this._logger = logger;
         }
 
@@ -35,50 +33,15 @@ namespace AllSopFoodService.Controllers
         // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
         public async Task<IActionResult> GetFoodProducts(string? sortBy, string? searchString, int? pageNum, int? pageSize)
         {
-            //this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
+            this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
             var response = await this._foodItemService.GetAllFoodProducts(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
             if (response.Data == null)
             {
                 return this.NotFound(response);
             }
+            response.Message = $"There are a total of {response.Data.Count} product records";
             return this.Ok(response); // if returned type was ActionResult<T>, then only need to 'return foodItems;'
         }
-
-        //PUT: api/FoodProducts/cart/5
-        // adding a product to the shopping cart
-        //[HttpPut("/cart/{id}")]
-        //public async Task<ActionResult> AddToCartAsync(int id)
-        //{
-        //    var entity = await _context.FoodProducts.FindAsync(id).ConfigureAwait(true);
-
-        //    if (entity == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    entity.IsInCart = true;
-        //    await _context.SaveChangesAsync().ConfigureAwait(true);
-
-        //    return Ok(entity);
-        //}
-
-        //DELETE: api/FoodProducts/cart/5
-        //removing a product from the shopping cart
-        //[HttpDelete("/cart/{id}")]
-        //public async Task<ActionResult> RemoveFromAsync(int id)
-        //{
-        //    var entity = await _context.FoodProducts.FindAsync(id).ConfigureAwait(true);
-
-        //    if (entity == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    entity.IsInCart = false;
-        //    await _context.SaveChangesAsync().ConfigureAwait(true);
-
-        //    return Ok(entity);
-        //}
 
         // GET: api/FoodProducts/5
         [HttpGet("get-single/{id}")]

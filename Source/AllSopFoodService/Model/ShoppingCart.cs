@@ -9,9 +9,11 @@ namespace AllSopFoodService.Model
     {
         public int Id { get; set; }
         public string CartLabel { get; set; } = default!;
-        public string UserName { get; set; } = default!;
+        public string UserName { get; set; } = "Default User";
         public bool IsDiscounted { get; set; } = default!;
         // Navigation Properties
-        public List<FoodProduct_ShoppingCart>? FoodProduct_Carts { get; set; }
+        public int? VoucherId { get; set; }
+        public Promotion? VoucherCode { get; set; } //assuming each Cart can only claim one Voucher at a time
+        public List<FoodProduct_ShoppingCart> FoodProduct_Carts { get; set; } = default!;
     }
 }

@@ -17,11 +17,30 @@ namespace AllSopFoodService.Services
         {
             var newcart = new ShoppingCart()
             {
-                CartLabel = cart.CartLabel
+                CartLabel = cart.CartLabel,
+                UserName = cart.User,
+                IsDiscounted = cart.IsDiscounted
             };
 
             this._db.ShoppingCarts.Add(newcart);
             this._db.SaveChanges();
+        }
+
+        public ServiceResponse<ShoppingCart> GetCartById(int cartId)
+        {
+            var response = new ServiceResponse<ShoppingCart>();
+            var cart = this._db.ShoppingCarts.First(c => c.Id == cartId);
+            if (cart != null)
+            {
+                response.Data = cart;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Cannot find a Cart with this ID";
+            }
+
+            return response;
         }
 
         public CartWithProductsVM GetCartWithProducts(int cartId)
@@ -29,6 +48,7 @@ namespace AllSopFoodService.Services
             var cart = this._db.ShoppingCarts.Where(c => c.Id == cartId).Select(c => new CartWithProductsVM()
             {
                 CartLabel = c.CartLabel,
+                IsDiscounted = c.IsDiscounted,
                 ProductNames = c.FoodProduct_Carts != null ? c.FoodProduct_Carts
                                 .Select(foodcart => foodcart.FoodProduct != null ? foodcart.FoodProduct.Name : "empty")
                                 .ToList() : new List<string>()

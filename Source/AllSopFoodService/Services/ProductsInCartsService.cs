@@ -13,14 +13,16 @@ namespace AllSopFoodService.Services
     {
         private readonly FoodDBContext _db;
         private readonly IFoodProductsService _foodProductService;
+        private readonly ICartsService _cartService;
 
         //Assuming only 1 coupon can be used at a time
         public bool IsCartDiscounted { get; set; } = default!; // false by default
 
-        public ProductsInCartsService(FoodDBContext context, IFoodProductsService foodProductsService)
+        public ProductsInCartsService(FoodDBContext context, IFoodProductsService foodProductsService, ICartsService cartService)
         {
             this._db = context;
             this._foodProductService = foodProductsService;
+            this._cartService = cartService;
         }
 
         public async Task<ServiceResponse<List<ProductsInCartsVM>>> GetProductsByCartId(int cartId)
@@ -33,7 +35,8 @@ namespace AllSopFoodService.Services
             {
                 ProductDescription = record.FoodProduct.Name,
                 QuantityInCart = record.QuantityInCart,
-                OriginalPrice = record.FoodProduct.Price
+                OriginalPrice = record.FoodProduct.Price,
+                CartId = record.ShoppingCartId
             }).ToList();
 
             serviceResponse.Data = allProductsInACart;
@@ -41,270 +44,256 @@ namespace AllSopFoodService.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CartVM>> AddToCartAsync(int productId, int cartId)
+        public async Task<ServiceResponse<ProductsInCartsVM>> AddToCartAsync(int productId, int cartId)
         {
-            var serviceResponse = new ServiceResponse<CartVM>();
+            // assuming productId and cartId are both valid, validation are executed in controller
+            var serviceResponse = new ServiceResponse<ProductsInCartsVM>();
             // Retrieve the all items in a cart by cart ID           
-            var cartItems = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).ToListAsync().ConfigureAwait(true);
+            //var cartItems = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).ToListAsync().ConfigureAwait(true);
 
-            //Check if this Product exists in this Cart
-            var productAlreadyInCart = cartItems.FirstOrDefault(record => record.FoodProductId == productId);
-
-            if (productAlreadyInCart != null)
+            try
             {
-                var productInCartVM = new ProductsInCartsVM()
+                var productInACart = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).FirstOrDefaultAsync(record => record.FoodProductId == productId).ConfigureAwait(true);
+                //Check if this Product exists in this Cart
+                if (productInACart != null)
                 {
-                    ProductDescription = productAlreadyInCart.FoodProduct.Name,
-                    QuantityInCart = productAlreadyInCart.QuantityInCart,
-                    OriginalPrice = productAlreadyInCart.FoodProduct.Price
-                };
+                    //Increment quantity in cart
+                    productInACart.QuantityInCart++;
+                    await this._db.SaveChangesAsync().ConfigureAwait(true);
 
-                var newCartVM = new CartVM()
+                    serviceResponse.Data = new ProductsInCartsVM()
+                    {
+                        ProductDescription = productInACart.FoodProduct.Name,
+                        QuantityInCart = productInACart.QuantityInCart,
+                        OriginalPrice = productInACart.FoodProduct.Price,
+                        CartId = productInACart.ShoppingCartId
+                    };
+                    serviceResponse.Success = true;
+                    serviceResponse.Message = "This product already existed in your cart! The quantity has been increased!";
+                }
+
+                // if this product was not already in this cart then add new entry into Products_In_Cart joint entity
+                var newProductInACart = new FoodProduct_ShoppingCart()
                 {
-                    CartLabel = productAlreadyInCart.ShoppingCart.CartLabel,
-                    Products = new List<ProductsInCartsVM>() { productInCartVM }
+                    FoodProductId = productId,
+                    ShoppingCartId = cartId,
+                    QuantityInCart = 1
                 };
+                this._db.FoodProducts_Carts.Add(newProductInACart);
+                this._db.SaveChanges();
+                serviceResponse.Data = new ProductsInCartsVM()
+                {
+                    ProductDescription = newProductInACart.FoodProduct.Name, //might cause error here
+                    QuantityInCart = newProductInACart.QuantityInCart,
+                    OriginalPrice = newProductInACart.FoodProduct.Price, //might cause error here
+                    CartId = newProductInACart.ShoppingCartId
+                };
+            }
+            catch (Exception ex)
+            {
                 serviceResponse.Success = false;
-                serviceResponse.Message = "This product has already existed in your cart!";
+                serviceResponse.Message = ex.Message;
             }
 
-            // if this product was not already in this cart then do something here...
-
-
-
-
-            // Check if the product is already in Cart
-            //if (cartItem == null)
-            //{
-            //    // Create a new cart item if no cart item exists.                 
-            //    cartItem = new CartItem
-            //    {
-            //        ProductId = productId,
-            //        //CartId = ShoppingCartId,
-            //        Product = this._db.FoodProducts.SingleOrDefault(
-            //        p => p.Id == productId),
-            //        Quantity = 1,
-            //        Description = this._db.FoodProducts.SingleOrDefault(
-            //        p => p.Id == productId).Name
-            //    };
-
-            //    this._db.ShoppingCartItems.Add(cartItem);
-            //}
-            //else
-            //{
-            //    // If the item does exist in the cart,                  
-            //    // then add one to the quantity.                 
-            //    cartItem.Quantity++;
-            //}
-            //await this._db.SaveChangesAsync().ConfigureAwait(true);
-
-            //return cartItem;
             return serviceResponse;
         }
 
-        public async Task<CartItem> RemoveFromCartAsync(int productId)
+        public async Task<ServiceResponse<List<FoodProduct_ShoppingCart>>> RemoveFromCart(int productId, int cartId)
         {
-            var isExisted = await this.IsThisProductExistInCartAsync(productId).ConfigureAwait(true);
-
-            if (!isExisted)
+            // Again, assuming both productId and cartId are valid, the validation took place in controller
+            var response = new ServiceResponse<List<FoodProduct_ShoppingCart>>();
+            try
             {
-                return null;
+                var listProductInACart = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).ToListAsync().ConfigureAwait(true);
+                //var productInACart = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).FirstOrDefaultAsync(record => record.FoodProductId == productId).ConfigureAwait(true);
+                var productInACart = listProductInACart.First(record => record.FoodProductId == productId);
+                this._db.FoodProducts_Carts.Remove(productInACart);
+                await this._db.SaveChangesAsync().ConfigureAwait(true);
+
+                response.Data = this._db.FoodProducts_Carts.ToList();
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
             }
 
-            var cartItem = await this._db.ShoppingCartItems.FirstOrDefaultAsync(ci => ci.ProductId == productId).ConfigureAwait(true);
-            this._db.ShoppingCartItems.Remove(cartItem);
-            await this._db.SaveChangesAsync().ConfigureAwait(true);
-
-            return cartItem;
+            return response;
         }
 
-        public decimal GetTotal(IEnumerable<CartItem> cart)
+        public ServiceResponse<decimal> GetTotal(int cartId)
         {
-            var total = decimal.Zero;
-            foreach (var cartItem in cart)
+            var response = new ServiceResponse<decimal>();
+            try
             {
-                total += cartItem.Product.Price * cartItem.Quantity;
-            }
+                var currentCart = this._db.ShoppingCarts.First(c => c.Id == cartId);
 
-            return total;
-        }
-
-         //this should return the total price of the cart after discount
-        public async Task<VoucherResponseModel> ApplyVoucherToCartAsync(string voucherCode)
-        {
-            var promotion = await this._db.CouponCodes.SingleOrDefaultAsync(promo => promo.CouponCode == voucherCode).ConfigureAwait(true);
-            var allCartItems = this.GetCartItems(); //Get all current items in the cart
-            //var response = new HttpResponseMessage();
-            // processing the promotion logic here
-            //decimal discountedPrice = decimal.Zero;
-            var result = new VoucherResponseModel();
-            var discountedCartPrice = decimal.Zero;
-
-            switch (promotion.CouponCode)
-            {
-                case "10OFFPROMODRI":
-                    // Bool: True if there are 10 or more Drinks Item in Cart, False otherwise
-                    var quantityCondition = this.Is10orMoreDrinksItemInCart(allCartItems);
-                    if (!quantityCondition)
-                    {
-                        //response.StatusCode = System.Net.HttpStatusCode.NotAcceptable;
-                        //response.Headers.Add("Message", "You need to buy at least 10 or more Drinks Item!");
-                        result.Applied = false;
-                        result.FailedMessage = "You need to buy at least 10 or more Drinks Item!";
-                    }
-
-                    foreach (var cartItem in allCartItems)
-                    {
-                        // check for Drinks category in each cart item (perhaps there should be a seperate service for this?)
-                        if (cartItem.Product.CategoryId == 3) // 'Drinks' Categories, perhaps another way to access this static entity?
-                        {
-                            //var discountedProduct = new FoodProduct()
-                            //{
-                            //    // might be using AutoMapper here
-                            //    Id = cartItem.ProductId,
-                            //    Name = cartItem.Product.Name,
-                            //    Price = cartItem.Product.Price - (cartItem.Product.Price * Convert.ToDecimal(0.1)),
-                            //    Quantity = cartItem.Product.Quantity,
-                            //    IsInCart = cartItem.Product.IsInCart,
-                            //    CategoryId = cartItem.Product.CategoryId
-                            //};
-                            // use the newly updated Product Object of each CartItem
-                            //cartItem.Product = discountedProduct;
-                            // update each CartItem in DB
-                            //await this.UpdateCartItemAsync(cartItem.ItemId, cartItem).ConfigureAwait(true);
-                            var originalCost = this._foodProductService.GetOriginalCostbyFoodProductId(cartItem.ProductId);
-                            var discountCostPerCartItem = (originalCost - (originalCost * Convert.ToDecimal(0.1))) * cartItem.Quantity;
-                            discountedCartPrice += discountCostPerCartItem;
-                        }
-
-                    }
-
-                    this.IsCartDiscounted = true;
-                    //mark this coupon as used
-                    promotion.IsClaimed = true;
-                    this._db.SaveChanges();
-
-                    result.Applied = true;
-                    result.FailedMessage = "Successfully applied Voucher to Cart!";
-                    result.DiscountedCartPrice = discountedCartPrice;
-
-                    break;
-                case "5OFFBAKING":
-                    // conditions checking
-                    // fetch All Baking/Cooking Ingredient items from Cart
-                    var bakingCookingItems = this._db.ShoppingCartItems.Where(cartItem => cartItem.Product.CategoryId == 5);
-                    if (this.GetTotal(bakingCookingItems) < Convert.ToDecimal(50))
-                    {
-                        result.Applied = false;
-                        result.FailedMessage = "Failed to apply this coupon! You need to spend £50.00 or more on Baking/Cooking Ingredients";
-                        result.DiscountedCartPrice = 0;
-                    }
-                    // apply discount percentage
-                    result.Applied = true;
-                    result.FailedMessage = "Successfully applied Voucher to Cart!";
-                    result.DiscountedCartPrice = this.GetTotal(allCartItems) - Convert.ToDecimal(5);
-                    break;
-                case "20OFFPROMO":
-                    // condition check, spending at least 100 pounds in total
-                    if (this.GetTotal(allCartItems) < Convert.ToDecimal(100))
-                    {
-                        result.Applied = false;
-                        result.FailedMessage = "Failed to apply this coupon! You need to spend at least £100.00 or more in total!";
-                        result.DiscountedCartPrice = 0;
-                    }
-                    else
-                    {
-                        result.Applied = true;
-                        result.FailedMessage = "Successfully applied Voucher to Cart!";
-                        result.DiscountedCartPrice = this.GetTotal(allCartItems) - Convert.ToDecimal(20);
-                    }
-
-                    break;
-                default:
-                    result.Applied = false;
-                    result.FailedMessage = "Invalid Coupon Code";
-                    result.DiscountedCartPrice = 0;
-                    break;
-            }
-
-            return result;
-        }
-
-        //public async Task<CartItem> UpdateCartItemAsync(int id, CartItem newItem)
-        //{
-        //    newItem.ItemId = id;
-        //    //update database
-        //    if (newItem == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(newItem));
-        //    }
-        //    var currentCartItem = await this._db.ShoppingCartItems.AsNoTracking().FirstOrDefaultAsync(item => item.ItemId == id).ConfigureAwait(true);
-        //    if (currentCartItem != null)
-        //    {
-        //        return null;
-        //    }
-        //    // remove the current CartItem
-        //    this._db.ShoppingCartItems.Remove(currentCartItem);
-        //    await this._db.SaveChangesAsync().ConfigureAwait(true);
-        //    //Add new CartItem
-        //    var updateCartItem = this._db.ShoppingCartItems.Add(newItem);
-        //    await this._db.SaveChangesAsync().ConfigureAwait(true);
-
-        //    return updateCartItem.Entity;
-        //}
-
-        //True if there are 10 or more Drinks Item in Cart, False otherwise
-        public bool Is10orMoreDrinksItemInCart(List<CartItem> wholeCart)
-        {
-            var drinksList = new List<CartItem>();
-            foreach (var item in wholeCart)
-            {
-                if (item.Product.CategoryId == 3) // specifically checking for 'Drinks' Category
+                var total = decimal.Zero;
+                foreach (var item in currentCart.FoodProduct_Carts)
                 {
-                    drinksList.Add(item);
+                    total += item.FoodProduct.Price * item.QuantityInCart;
+                }
+                response.Data = total;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        //this should return the total price of the cart after discount
+        public async Task<ServiceResponse<VoucherResponseModel>> ApplyVoucherToCart(string voucherCode, int cardId)
+        {
+            // assuming cartId is valid
+            var response = new ServiceResponse<VoucherResponseModel>();
+            try
+            {
+                // check if this cart is already discounted
+                var currentCart = this._cartService.GetCartById(cardId);
+                var beforeDiscountTotal = this.GetTotal(cardId).Data;
+                if (!currentCart.Data.IsDiscounted)
+                {
+                    response.Success = false;
+                    response.Message = "Sorry! your cart is already discounted with another voucher!";
+                }
+
+
+                if (this.CheckVoucherExists(voucherCode))
+                {
+                    // voucherCode is real
+                    var allCartItems = currentCart.Data.FoodProduct_Carts.ToList();
+                    var result = new VoucherResponseModel();
+                    var discountedCartPrice = decimal.Zero;
+
+                    switch (voucherCode)
+                    {
+                        case "10OFFPROMODRI":
+                            // Bool: True if there are 10 or more Drinks Item in Cart, False otherwise, PromotionService worthy
+                            var quantityCondition = this.Is10orMoreDrinksItemInCart(cardId);
+                            if (!quantityCondition)
+                            {
+                                result.Applied = false;
+                                result.FailedMessage = "You need to buy at least 10 or more Drinks Item!";
+                            }
+
+                            foreach (var cartItem in allCartItems)
+                            {
+                                // check for Drinks category in each cart item (perhaps there should be a seperate service for this?)
+                                if (cartItem.FoodProduct.CategoryId == 3) // 'Drinks' Categories, perhaps another way to access this static entity?
+                                {
+                                    //var originalCost = this._foodProductService.GetOriginalCostbyFoodProductId(cartItem.FoodProductId);
+                                    var originalCost = cartItem.FoodProduct.Price;
+                                    var discountCostPerItem = (originalCost - (originalCost * Convert.ToDecimal(0.1))) * cartItem.QuantityInCart;
+                                    discountedCartPrice += discountCostPerItem;
+                                }
+
+                            }
+
+                            // mark the current cart as already discounted
+                            currentCart.Data.IsDiscounted = true;
+                            this._db.ShoppingCarts.Update(currentCart.Data);
+                            //mark this coupon as used, PromotionService worthy
+                            this._db.CouponCodes.First(c => c.CouponCode == voucherCode).IsClaimed = true;
+                            await this._db.SaveChangesAsync().ConfigureAwait(true);
+
+                            result.Applied = true;
+                            result.FailedMessage = "Successfully applied Voucher to Cart!";
+                            result.DiscountedCartPrice = discountedCartPrice;
+
+                            response.Data = result;
+                            break;
+                        case "5OFFBAKING":
+                            // conditions checking
+                            // fetch All Baking/Cooking Ingredient items from Cart
+                            var bakingCookingItems = currentCart.Data.FoodProduct_Carts.Where(cartItem => cartItem.FoodProduct.CategoryId == 5).ToList();
+                            var bakingCookingTotal = bakingCookingItems.Sum(each => each.FoodProduct.Price * each.QuantityInCart);
+                            if (bakingCookingTotal < Convert.ToDecimal(50))
+                            {
+                                result.Applied = false;
+                                result.FailedMessage = "Failed to apply this coupon! You need to spend £50.00 or more on Baking/Cooking Ingredients";
+                                result.DiscountedCartPrice = 0;
+                            }
+                            // apply discount percentage
+                            result.Applied = true;
+                            result.FailedMessage = "Successfully applied Voucher to Cart!";
+                            result.DiscountedCartPrice = beforeDiscountTotal - Convert.ToDecimal(5);
+
+                            response.Data = result;
+                            break;
+                        case "20OFFPROMO":
+                            // condition check, spending at least 100 pounds in total
+                            if (beforeDiscountTotal < Convert.ToDecimal(100))
+                            {
+                                result.Applied = false;
+                                result.FailedMessage = "Failed to apply this coupon! You need to spend at least £100.00 or more in total!";
+                                result.DiscountedCartPrice = 0;
+                            }
+                            else
+                            {
+                                result.Applied = true;
+                                result.FailedMessage = "Successfully applied Voucher to Cart!";
+                                result.DiscountedCartPrice = beforeDiscountTotal - Convert.ToDecimal(20);
+                            }
+
+                            response.Data = result;
+                            break;
+                        default:
+                            result.Applied = false;
+                            result.FailedMessage = "Invalid Coupon Code";
+                            result.DiscountedCartPrice = 0;
+                            response.Data = result;
+                            break;
+                    }
+                }
+                else
+                {
+                    // voucherCode is invalid
+                    response.Success = false;
+                    response.Message = "This voucher code is Invalid! Please use another code!";
                 }
             }
-            // count DrinksList
-            if (drinksList.Count < 10)
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        //True if there are 10 or more Drinks Item in Cart, False otherwise
+        public bool Is10orMoreDrinksItemInCart(int cartId)
+        {
+            var currentCart = this._cartService.GetCartById(cartId).Data;
+
+            if (currentCart.FoodProduct_Carts.Where(p => p.FoodProduct.CategoryId == 3).Count() < 10)
             {
                 return false;
             }
-
             return true;
         }
-
-
-        //public string GetCartId()
-        //{
-        //    if (_session.GetString(CartSessionKey) == null)
-        //    {
-        //        if (!string.IsNullOrWhiteSpace(this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value))
-        //        {
-        //            _session.SetString(CartSessionKey, this._httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name).Value);
-        //        }
-        //        else
-        //        {
-        //            // Generate a new random GUID using System.Guid class.     
-        //            var tempCartId = Guid.NewGuid();
-        //            _session.SetString(CartSessionKey, tempCartId.ToString());
-        //            //HttpContext.Current.Session[CartSessionKey] = tempCartId.ToString();
-        //        }
-        //    }
-        //    //return HttpContext.Current.Session[CartSessionKey].ToString();
-        //    return _session.GetString(CartSessionKey);
-        //}
 
         public async Task<ServiceResponse<List<FoodProduct_ShoppingCart>>> GetAllProductsInCarts()
         {
             var serviceResponse = new ServiceResponse<List<FoodProduct_ShoppingCart>>();
-            var allCartItems = await this._db.FoodProducts_Carts.ToListAsync().ConfigureAwait(true);
+            try
+            {
+                var allCartItems = await this._db.FoodProducts_Carts.ToListAsync().ConfigureAwait(true);
 
-            serviceResponse.Data = allCartItems;
+                serviceResponse.Data = allCartItems;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
 
             return serviceResponse;
         }
 
-        public async Task<bool> IsThisProductExistInCartAsync(int productID) => await this._db.ShoppingCartItems.AnyAsync(e => e.ProductId == productID).ConfigureAwait(true);
-        public bool CheckCodeExists(string code) => this._db.CouponCodes.Any(promo => promo.CouponCode == code);
+        public bool CheckVoucherExists(string code) => this._db.CouponCodes.Any(promo => promo.CouponCode == code);
     }
 }

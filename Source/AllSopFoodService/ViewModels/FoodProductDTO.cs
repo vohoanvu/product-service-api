@@ -16,6 +16,7 @@ namespace AllSopFoodService.ViewModels
     // this model has the Category Label
     public class FoodProductVM
     {
+        public int ProductId { get; set; }
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }
         public int Quantity { get; set; }

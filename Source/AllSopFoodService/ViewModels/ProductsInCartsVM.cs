@@ -12,6 +12,8 @@ namespace AllSopFoodService.ViewModels
         public int QuantityInCart { get; set; }
 
         public decimal OriginalPrice { get; set; }
+        // could be cartLabel
+        public int CartId { get; set; }
     }
 
 

@@ -9,10 +9,12 @@ namespace AllSopFoodService.Services
 
     public interface ICartsService
     {
-        void CreateShoppingCart(CartVM cart);
+        Task<ServiceResponse<List<CartVM>>> GetAllCarts();
+        ServiceResponse<List<CartVM>> CreateShoppingCart(AddCartDto cart);
 
-        ServiceResponse<ShoppingCart> GetCartById(int cartId);
+        ServiceResponse<CartVM> GetCartById(int cartId);
 
+        //ServiceResponse<ShoppingCart> RemoveAProductFromCart(int productId, int cartId);
         CartWithProductsVM GetCartWithProducts(int cartId);
     }
 }

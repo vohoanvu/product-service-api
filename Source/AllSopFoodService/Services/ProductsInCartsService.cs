@@ -70,6 +70,8 @@ namespace AllSopFoodService.Services
                     };
                     serviceResponse.Success = true;
                     serviceResponse.Message = "This product already existed in your cart! The quantity has been increased!";
+
+                    return serviceResponse;
                 }
 
                 // if this product was not already in this cart then add new entry into Products_In_Cart joint entity
@@ -98,10 +100,10 @@ namespace AllSopFoodService.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<FoodProduct_ShoppingCart>>> RemoveFromCart(int productId, int cartId)
+        public async Task<ServiceResponse<CartWithProductsVM>> RemoveFromCart(int productId, int cartId)
         {
             // Again, assuming both productId and cartId are valid, the validation took place in controller
-            var response = new ServiceResponse<List<FoodProduct_ShoppingCart>>();
+            var response = new ServiceResponse<CartWithProductsVM>();
             try
             {
                 var listProductInACart = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).ToListAsync().ConfigureAwait(true);
@@ -110,7 +112,10 @@ namespace AllSopFoodService.Services
                 this._db.FoodProducts_Carts.Remove(productInACart);
                 await this._db.SaveChangesAsync().ConfigureAwait(true);
 
-                response.Data = this._db.FoodProducts_Carts.ToList();
+                //response.Data = this._db.FoodProducts_Carts.ToList();
+                response.Data = this._cartService.GetCartWithProducts(cartId);
+                response.Success = true;
+                response.Message = $"The product with ID={productId} has been removed from your cart!";
             }
             catch (Exception ex)
             {
@@ -126,12 +131,18 @@ namespace AllSopFoodService.Services
             var response = new ServiceResponse<decimal>();
             try
             {
-                var currentCart = this._db.ShoppingCarts.First(c => c.Id == cartId);
+                var currentCart = this._cartService.GetCartWithProducts(cartId);
+                var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.ShoppingCartId == cartId).ToList();
 
                 var total = decimal.Zero;
-                foreach (var item in currentCart.FoodProduct_Carts)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                foreach (var item in currentCart.ProductNames)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 {
-                    total += item.FoodProduct.Price * item.QuantityInCart;
+                    var currentProduct = allProductsInCart.FirstOrDefault(p => p.FoodProductId == item.ProductId);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                    total += item.Price * currentProduct.QuantityInCart;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 }
                 response.Data = total;
             }
@@ -145,26 +156,30 @@ namespace AllSopFoodService.Services
         }
 
         //this should return the total price of the cart after discount
-        public async Task<ServiceResponse<VoucherResponseModel>> ApplyVoucherToCart(string voucherCode, int cardId)
+        public async Task<ServiceResponse<VoucherResponseModel>> ApplyVoucherToCart(string voucherCode, int cartId)
         {
             // assuming cartId is valid
             var response = new ServiceResponse<VoucherResponseModel>();
             try
             {
                 // check if this cart is already discounted
-                var currentCart = this._cartService.GetCartById(cardId);
-                var beforeDiscountTotal = this.GetTotal(cardId).Data;
-                if (!currentCart.Data.IsDiscounted)
+                //var currentCart = this._cartService.GetCartById(cardId);
+                var currentCart = this._db.ShoppingCarts.Where(c => c.Id == cartId).FirstOrDefault();
+                var beforeDiscountTotal = this.GetTotal(cartId).Data;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                if (currentCart.IsDiscounted)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 {
                     response.Success = false;
                     response.Message = "Sorry! your cart is already discounted with another voucher!";
+                    return response;
                 }
 
 
                 if (this.CheckVoucherExists(voucherCode))
                 {
                     // voucherCode is real
-                    var allCartItems = currentCart.Data.FoodProduct_Carts.ToList();
+                    var allCartItems = currentCart.FoodProduct_Carts.ToList();
                     var result = new VoucherResponseModel();
                     var discountedCartPrice = decimal.Zero;
 
@@ -172,7 +187,7 @@ namespace AllSopFoodService.Services
                     {
                         case "10OFFPROMODRI":
                             // Bool: True if there are 10 or more Drinks Item in Cart, False otherwise, PromotionService worthy
-                            var quantityCondition = this.Is10orMoreDrinksItemInCart(cardId);
+                            var quantityCondition = this.Is10orMoreDrinksItemInCart(cartId);
                             if (!quantityCondition)
                             {
                                 result.Applied = false;
@@ -193,8 +208,8 @@ namespace AllSopFoodService.Services
                             }
 
                             // mark the current cart as already discounted
-                            currentCart.Data.IsDiscounted = true;
-                            this._db.ShoppingCarts.Update(currentCart.Data);
+                            currentCart.IsDiscounted = true;
+                            this._db.ShoppingCarts.Update(currentCart);
                             //mark this coupon as used, PromotionService worthy
                             this._db.CouponCodes.First(c => c.CouponCode == voucherCode).IsClaimed = true;
                             await this._db.SaveChangesAsync().ConfigureAwait(true);
@@ -208,7 +223,7 @@ namespace AllSopFoodService.Services
                         case "5OFFBAKING":
                             // conditions checking
                             // fetch All Baking/Cooking Ingredient items from Cart
-                            var bakingCookingItems = currentCart.Data.FoodProduct_Carts.Where(cartItem => cartItem.FoodProduct.CategoryId == 5).ToList();
+                            var bakingCookingItems = currentCart.FoodProduct_Carts.Where(cartItem => cartItem.FoodProduct.CategoryId == 5).ToList();
                             var bakingCookingTotal = bakingCookingItems.Sum(each => each.FoodProduct.Price * each.QuantityInCart);
                             if (bakingCookingTotal < Convert.ToDecimal(50))
                             {
@@ -269,7 +284,9 @@ namespace AllSopFoodService.Services
         {
             var currentCart = this._cartService.GetCartById(cartId).Data;
 
-            if (currentCart.FoodProduct_Carts.Where(p => p.FoodProduct.CategoryId == 3).Count() < 10)
+            var products = currentCart.Products.Select(item => this._db.FoodProducts.First(p => p.Id == item)).ToList();
+
+            if (products.Where(fp => fp.CategoryId == 3).Count() < 10)
             {
                 return false;
             }

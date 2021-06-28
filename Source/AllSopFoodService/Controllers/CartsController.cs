@@ -17,11 +17,23 @@ namespace AllSopFoodService.Controllers
 
         public CartsController(ICartsService cartService) => this._cartService = cartService;
 
-        [HttpPost("add-new-cart")]
-        public IActionResult CreateNewCart([FromBody] CartVM cart)
+        [HttpGet("get-all-user-carts")]
+        public async Task<IActionResult> GetAllCarts()
         {
-            this._cartService.CreateShoppingCart(cart);
-            return this.Ok();
+            var response = await this._cartService.GetAllCarts().ConfigureAwait(true);
+            if (response.Data == null)
+            {
+                return this.NotFound(response);
+            }
+
+            return this.Ok(response);
+        }
+
+        [HttpPost("add-new-cart")]
+        public IActionResult CreateNewCart([FromBody] AddCartDto cart)
+        {
+            var res = this._cartService.CreateShoppingCart(cart);
+            return this.Ok(res);
         }
 
         [HttpGet("get-cart-with-products-by-id/{id}")]
@@ -29,6 +41,18 @@ namespace AllSopFoodService.Controllers
         {
             var response = this._cartService.GetCartWithProducts(id);
             return this.Ok(response);
+        }
+
+        [HttpGet("get-cart-by-id")]
+        public IActionResult GetCartById(int id)
+        {
+            var res = this._cartService.GetCartById(id);
+            if (res.Data == null)
+            {
+                return this.NotFound(res);
+            }
+
+            return this.Ok(res);
         }
     }
 }

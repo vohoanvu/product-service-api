@@ -16,10 +16,7 @@ namespace AllSopFoodService.Services
         Task<ServiceResponse<List<FoodProductVM>>> CreateFoodProduct(FoodProductDTO foodProductDto);
         Task<ServiceResponse<List<FoodProductVM>>> RemoveFoodProductById(int id);
         ServiceResponse<FoodProduct> IsFoodProductInStock(int id);
-
         void DecrementProductStockUnit(int id);
-
-        bool FoodProductExists(int id);
         decimal GetOriginalCostbyFoodProductId(int id);
     }
 }

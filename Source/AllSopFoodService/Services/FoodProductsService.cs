@@ -149,15 +149,26 @@ namespace AllSopFoodService.Services
         public ServiceResponse<FoodProduct> IsFoodProductInStock(int id)
         {
             var serviceResponse = new ServiceResponse<FoodProduct>();
-
-            if (this.db.FoodProducts.Any(fp => fp.Id == id && fp.Quantity > 0))
+            //Check if product is real first
+            if (!this.db.FoodProducts.Any(p => p.Id == id))
             {
-                serviceResponse.Data = this.db.FoodProducts.Find(id);
+                serviceResponse.Success = this.db.FoodProducts.Any(p => p.Id == id);
+                serviceResponse.Message = "Cannot find a product with this ID! Please check again!";
+                return serviceResponse;
+            }
+
+            var thisProduct = this.db.FoodProducts.FirstOrDefault(p => p.Id == id);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            if (thisProduct.Quantity > 0)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            {
+                serviceResponse.Data = thisProduct;
                 serviceResponse.Success = true;
                 serviceResponse.Message = "This product is stil in stock!";
             }
             else
             {
+                serviceResponse.Data = thisProduct;
                 serviceResponse.Success = false;
                 serviceResponse.Message = "This product is Out Of Stock!";
             }
@@ -203,8 +214,6 @@ namespace AllSopFoodService.Services
 
             return serviceResponse;
         }
-
-        public bool FoodProductExists(int id) => this.db.FoodProducts.Any(e => e.Id == id);
 
         public async Task<ServiceResponse<List<FoodProductVM>>> RemoveFoodProductById(int id)
         {

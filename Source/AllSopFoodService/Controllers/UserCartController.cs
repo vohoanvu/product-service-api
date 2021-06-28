@@ -12,6 +12,7 @@ namespace AllSopFoodService.Controllers
     using System.Net.Http;
     using AllSopFoodService.Controllers;
     using AllSopFoodService.Services.Interfaces;
+    using AllSopFoodService.ViewModels;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -45,18 +46,27 @@ namespace AllSopFoodService.Controllers
         // POST: api/CartItems/
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("add-to-cart")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AddToCartItemAsync(int productId, int cartId)
         {
-            // Check if the product is available in Stock (FoodProduct DB) first thing first!
-            var isInStock = this._foodCatalogService.IsFoodProductInStock(productId);
-            // Still need to perform validation check for both product Id and cart Id
-
-
-            if (!isInStock.Success)
+            // Still need to perform validation check for cart Id
+            var isCartLegit = this._cartService.GetCartById(cartId);
+            if (isCartLegit.Data == null)
             {
-                // cover the last user story
-                return this.NotFound($"This product is currently Out of Stock!");
+                return this.NotFound(isCartLegit);
+            }
+            // Check if the product is available in Stock (FoodProduct DB) first thing first!
+            var stockCheck = this._foodCatalogService.IsFoodProductInStock(productId);
+            if (stockCheck.Data == null)
+            {
+                // The product does not exist
+                return this.NotFound(stockCheck);
+            }
+            if (!stockCheck.Success)
+            {
+                // The product exists, but out of stock
+                return this.NotFound(stockCheck);
             }
 
             var response = await this._productInCartService.AddToCartAsync(productId, cartId).ConfigureAwait(true);
@@ -64,19 +74,34 @@ namespace AllSopFoodService.Controllers
             {
                 return this.NotFound(response);
             }
-
             //this._foodCatalogService.DecrementProductStockUnit(productId);
 
             return this.Ok(response);
         }
 
         //DELETE: api/CartItems/5
-        [HttpDelete("{id}")]
+        [HttpDelete("remove-from-cart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteCartItemAsync(int productId, int cartId)
         {
             // Still need to perform validation check for both product Id and cart Id
+            var isCartLegit = this._cartService.GetCartById(cartId);
+            if (isCartLegit.Data == null)
+            {
+                return this.NotFound(isCartLegit);
+            }
+            var stockCheck = this._foodCatalogService.IsFoodProductInStock(productId);
+            if (stockCheck.Data == null)
+            {
+                // The product does not exist
+                return this.NotFound(stockCheck);
+            }
+            if (!stockCheck.Success)
+            {
+                // The product exists, but out of stock
+                return this.NotFound(stockCheck);
+            }
 
             var response = await this._productInCartService.RemoveFromCart(productId, cartId).ConfigureAwait(true);
             if (response.Data == null)

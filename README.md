@@ -43,3 +43,5 @@ List of possible code improvement:
 - Use GetModelDto/AddModelDto for view models and possibly use AutoMapper() (not effective)
 - User Authentication (User Model and its equivalent relationships)
 - Eager Loading and Explicit Loading for optimized DB queries:
+- context.Entry(entity).Reference(u => u.RelatedEntity).Load();
+- context.Entity.Include(u => u.RelatedEntity).ThenInclude(re => re.SubRelatedEntity)

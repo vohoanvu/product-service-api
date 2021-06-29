@@ -8,14 +8,14 @@ namespace AllSopFoodService.Services
     using AllSopFoodService.ViewModels;
     using Microsoft.AspNetCore.Mvc;
 
-    public interface IFoodProductsService
+    public interface IProductsService
     {
-        Task<ServiceResponse<List<FoodProductVM>>> GetAllFoodProducts(string? sortBy, string? searchString, int? pageNum, int? pageSize);
+        Task<ServiceResponse<List<FoodProductVM>>> GetAllProducts(string? sortBy, string? searchString, int? pageNum, int? pageSize);
         Task<ServiceResponse<FoodProductVM>> GetFoodProductById(int id);
         Task<ServiceResponse<FoodProductVM>> UpdateFoodProduct(int id, FoodProductDTO foodProductDto);
         Task<ServiceResponse<List<FoodProductVM>>> CreateFoodProduct(FoodProductDTO foodProductDto);
         Task<ServiceResponse<List<FoodProductVM>>> RemoveFoodProductById(int id);
-        ServiceResponse<FoodProduct> IsFoodProductInStock(int id);
+        ServiceResponse<Product> IsFoodProductInStock(int id);
         void DecrementProductStockUnit(int id);
         decimal GetOriginalCostbyFoodProductId(int id);
     }

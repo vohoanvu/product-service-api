@@ -8,8 +8,8 @@ namespace AllSopFoodService.Mappers
     {
         public AutoMapperProfile()
         {
-            this.CreateMap<FoodProduct, FoodProductVM>();
-            this.CreateMap<FoodProductDTO, FoodProduct>();
+            this.CreateMap<Product, FoodProductVM>();
+            this.CreateMap<FoodProductDTO, Product>();
         }
     }
 }

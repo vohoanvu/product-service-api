@@ -47,9 +47,9 @@ namespace AllSopFoodService.Services
                 allCategories = allCategories.Where(n => n.Label.Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
             }
 
-            //Paging
-            var pageSize = 3;
-            allCategories = PaginatedList<Category>.Create(allCategories.AsQueryable(), pageNum ?? 1, pageSize);
+            //Server Side Paging
+            //var pageSize = 3;
+            //allCategories = PaginatedList<Category>.Create(allCategories.AsQueryable(), pageNum ?? 1, pageSize);
 
             return allCategories;
         }

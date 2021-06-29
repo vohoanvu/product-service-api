@@ -20,9 +20,9 @@ namespace AllSopFoodService.Controllers
     {
         private readonly ICartsService _cartService;
         private readonly IProductsInCartsService _productInCartService;
-        private readonly IFoodProductsService _foodCatalogService;
+        private readonly IProductsService _foodCatalogService;
 
-        public UserCartController(ICartsService cartService, IFoodProductsService foodCatalogService, IProductsInCartsService productInCartService)
+        public UserCartController(ICartsService cartService, IProductsService foodCatalogService, IProductsInCartsService productInCartService)
         {
             this._cartService = cartService;
             this._foodCatalogService = foodCatalogService;

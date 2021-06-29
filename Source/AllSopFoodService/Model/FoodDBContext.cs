@@ -18,7 +18,7 @@ namespace AllSopFoodService.Model
         }
 
         public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<FoodProduct> FoodProducts { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Promotion> CouponCodes { get; set; }
         // Many-to-many relationship version of ShoppingCartItems
         public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
@@ -28,7 +28,8 @@ namespace AllSopFoodService.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<FoodProduct>()
+            //configuring DB relations through Fluent API
+            modelBuilder.Entity<Product>()
                 .HasOne(fp => fp.Category)
                 .WithMany(c => c.FoodProducts)
                 .HasForeignKey(fp => fp.CategoryId);
@@ -36,19 +37,20 @@ namespace AllSopFoodService.Model
             modelBuilder.Entity<FoodProduct_ShoppingCart>()
                 .HasOne(foodCart => foodCart.FoodProduct)
                 .WithMany(foodItem => foodItem.FoodProduct_Carts)
-                .HasForeignKey(foodCartId => foodCartId.FoodProductId);
+                .HasForeignKey(foodCartId => foodCartId.ProductId);
 
             modelBuilder.Entity<FoodProduct_ShoppingCart>()
                 .HasOne(foodCart => foodCart.ShoppingCart)
                 .WithMany(cart => cart.FoodProduct_Carts)
-                .HasForeignKey(foodCartId => foodCartId.ShoppingCartId);
+                .HasForeignKey(foodCartId => foodCartId.CartId);
 
             modelBuilder.Entity<ShoppingCart>()
                 .HasOne(p => p.VoucherCode)
                 .WithMany(c => c.DiscountedCarts)
                 .HasForeignKey(p => p.VoucherId);
+            //Possible to configure the Composite Key for Products_Carts table, using fluent api, with a combination of ProductId + CartId
 
-
+            //Seeding Category Data, need a solution to check if Categories table exist?
             modelBuilder.Entity<Category>().HasData(
                     new Category()
                     {

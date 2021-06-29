@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AllSopFoodService.Migrations
 {
-    public partial class DBSchemaRefactored : Migration
+    public partial class ProductsCartsRecreated : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,20 +19,6 @@ namespace AllSopFoodService.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CouponCodes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CouponCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsClaimed = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CouponCodes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,21 +41,35 @@ namespace AllSopFoodService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FoodProducts",
+                name: "Vouchers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VoucherCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsClaimed = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vouchers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FoodProducts", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FoodProducts_Categories_CategoryId",
+                        name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
@@ -91,9 +91,9 @@ namespace AllSopFoodService.Migrations
                 {
                     table.PrimaryKey("PK_ShoppingCarts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ShoppingCarts_CouponCodes_VoucherId",
+                        name: "FK_ShoppingCarts_Vouchers_VoucherId",
                         column: x => x.VoucherId,
-                        principalTable: "CouponCodes",
+                        principalTable: "Vouchers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -104,41 +104,54 @@ namespace AllSopFoodService.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FoodProductId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     QuantityInCart = table.Column<int>(type: "int", nullable: false),
-                    ShoppingCartId = table.Column<int>(type: "int", nullable: false)
+                    CartId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FoodProducts_Carts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FoodProducts_Carts_FoodProducts_FoodProductId",
-                        column: x => x.FoodProductId,
-                        principalTable: "FoodProducts",
+                        name: "FK_FoodProducts_Carts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FoodProducts_Carts_ShoppingCarts_ShoppingCartId",
-                        column: x => x.ShoppingCartId,
+                        name: "FK_FoodProducts_Carts_ShoppingCarts_CartId",
+                        column: x => x.CartId,
                         principalTable: "ShoppingCarts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "Id", "IsAvailable", "Label" },
+                values: new object[,]
+                {
+                    { 1, true, "Meat & Poultry" },
+                    { 2, true, "Fruit & Vegetables" },
+                    { 3, true, "Drinks" },
+                    { 4, true, "Confectionary & Desserts" },
+                    { 5, true, "Baking/Cooking Ingredients" },
+                    { 6, true, "Miscellaneous Items" }
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_FoodProducts_CategoryId",
-                table: "FoodProducts",
+                name: "IX_FoodProducts_Carts_CartId",
+                table: "FoodProducts_Carts",
+                column: "CartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FoodProducts_Carts_ProductId",
+                table: "FoodProducts_Carts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
                 column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FoodProducts_Carts_FoodProductId",
-                table: "FoodProducts_Carts",
-                column: "FoodProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FoodProducts_Carts_ShoppingCartId",
-                table: "FoodProducts_Carts",
-                column: "ShoppingCartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShoppingCarts_VoucherId",
@@ -155,7 +168,7 @@ namespace AllSopFoodService.Migrations
                 name: "Logs");
 
             migrationBuilder.DropTable(
-                name: "FoodProducts");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "ShoppingCarts");
@@ -164,7 +177,7 @@ namespace AllSopFoodService.Migrations
                 name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "CouponCodes");
+                name: "Vouchers");
         }
     }
 }

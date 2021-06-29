@@ -4,6 +4,7 @@ namespace AllSopFoodService.ViewModels
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AllSopFoodService.Model;
 
     public class ProductsInCartsVM
     {
@@ -16,5 +17,11 @@ namespace AllSopFoodService.ViewModels
         public int CartId { get; set; }
     }
 
+    //public class ProductCartVM
+    //{
+    //    public FoodProduct_ShoppingCart ProductCart { get; set; } = default!;
 
+    //    public Product Product { get; set; } = default!;
+    //    public List<FoodProduct_ShoppingCart> ProductCartList { get; set; } = default!;
+    //}
 }

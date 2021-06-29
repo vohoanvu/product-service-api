@@ -12,14 +12,14 @@ namespace AllSopFoodService.Services
     using Microsoft.EntityFrameworkCore;
     using AutoMapper;
 
-    public class FoodProductsService : IFoodProductsService
+    public class ProductsService : IProductsService
     {
         private readonly FoodDBContext db;
 
         private readonly ICategoryService categoryService;
         private readonly IMapper _mapper;
 
-        public FoodProductsService(FoodDBContext dbcontext, ICategoryService categoryService, IMapper mapper)
+        public ProductsService(FoodDBContext dbcontext, ICategoryService categoryService, IMapper mapper)
         {
             this.db = dbcontext;
             this._mapper = mapper;
@@ -27,11 +27,11 @@ namespace AllSopFoodService.Services
         }
 
         //Perhaps this should be placed at the repo layer?
-        public async Task<ServiceResponse<List<FoodProductVM>>> GetAllFoodProducts(string? sortBy, string? searchString, int? pageNum, int? pageSize)
+        public async Task<ServiceResponse<List<FoodProductVM>>> GetAllProducts(string? sortBy, string? searchString, int? pageNum, int? pageSize)
         {
             // Query Data via EF core DbSet
             var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
-            var dbProducts = await this.db.FoodProducts.ToListAsync().ConfigureAwait(true);
+            var dbProducts = await this.db.Products.ToListAsync().ConfigureAwait(true);
             // transform results to dto object (non-entity type), possibly use AutoMapper here
             serviceResponse.Data = dbProducts.Select(fooditem => new FoodProductVM()
             {
@@ -72,7 +72,7 @@ namespace AllSopFoodService.Services
         public async Task<ServiceResponse<FoodProductVM>> GetFoodProductById(int id)
         {
             var serviceResponse = new ServiceResponse<FoodProductVM>();
-            var dbProduct = await this.db.FoodProducts.FirstOrDefaultAsync(fp => fp.Id == id).ConfigureAwait(true);
+            var dbProduct = await this.db.Products.FirstOrDefaultAsync(fp => fp.Id == id).ConfigureAwait(true);
             if (dbProduct != null)
             {
                 serviceResponse.Data = new FoodProductVM()
@@ -97,7 +97,7 @@ namespace AllSopFoodService.Services
         {
             var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
             //possibly use AutoMapper here
-            var foodProduct = new FoodProduct()
+            var foodProduct = new Product()
             {
                 Name = foodProductDto.Name,
                 Price = foodProductDto.Price,
@@ -106,7 +106,7 @@ namespace AllSopFoodService.Services
                 FoodProduct_Carts = null
             };
 
-            this.db.FoodProducts.Add(foodProduct);
+            this.db.Products.Add(foodProduct);
             await this.db.SaveChangesAsync().ConfigureAwait(true);
 
             ////check if the newly created product is also going to be in any Cart
@@ -119,12 +119,12 @@ namespace AllSopFoodService.Services
             //            FoodProductId = foodProduct.Id,
             //            ShoppingCartId = id
             //        };
-            //        this.db.FoodProducts_Carts.Add(food_Cart);
+            //        this.db.Products_Carts.Add(food_Cart);
             //        await this.db.SaveChangesAsync().ConfigureAwait(true);
             //    }
             //}
             //Mapping all products to FoodProductVM
-            serviceResponse.Data = await this.db.FoodProducts.Select(fooditem => new FoodProductVM()
+            serviceResponse.Data = await this.db.Products.Select(fooditem => new FoodProductVM()
             {
                 ProductId = fooditem.Id,
                 Name = fooditem.Name,
@@ -138,26 +138,26 @@ namespace AllSopFoodService.Services
 
         public void DecrementProductStockUnit(int id)
         {
-            var currentFoodProd = this.db.FoodProducts.First(p => p.Id == id);
+            var currentFoodProd = this.db.Products.First(p => p.Id == id);
 
             currentFoodProd.Quantity--;
             //could use Update() if the changes take places far away from the context, Or use Entry().State = Modified
-            //this.db.FoodProducts.Update(currentFoodProd);
+            //this.db.Products.Update(currentFoodProd);
             this.db.SaveChanges();
         }
 
-        public ServiceResponse<FoodProduct> IsFoodProductInStock(int id)
+        public ServiceResponse<Product> IsFoodProductInStock(int id)
         {
-            var serviceResponse = new ServiceResponse<FoodProduct>();
+            var serviceResponse = new ServiceResponse<Product>();
             //Check if product is real first
-            if (!this.db.FoodProducts.Any(p => p.Id == id))
+            if (!this.db.Products.Any(p => p.Id == id))
             {
-                serviceResponse.Success = this.db.FoodProducts.Any(p => p.Id == id);
+                serviceResponse.Success = this.db.Products.Any(p => p.Id == id);
                 serviceResponse.Message = "Cannot find a product with this ID! Please check again!";
                 return serviceResponse;
             }
 
-            var thisProduct = this.db.FoodProducts.FirstOrDefault(p => p.Id == id);
+            var thisProduct = this.db.Products.FirstOrDefault(p => p.Id == id);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             if (thisProduct.Quantity > 0)
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -177,7 +177,7 @@ namespace AllSopFoodService.Services
         }
 
 
-        public decimal GetOriginalCostbyFoodProductId(int id) => this.db.FoodProducts.Find(id).Price;
+        public decimal GetOriginalCostbyFoodProductId(int id) => this.db.Products.Find(id).Price;
 
         public async Task<ServiceResponse<FoodProductVM>> UpdateFoodProduct(int id, FoodProductDTO foodProductDto)
         {
@@ -185,7 +185,7 @@ namespace AllSopFoodService.Services
             var serviceResponse = new ServiceResponse<FoodProductVM>();
             try
             {
-                var currentFood = await this.db.FoodProducts.FirstOrDefaultAsync(foodItem => foodItem.Id == id).ConfigureAwait(true);
+                var currentFood = await this.db.Products.FirstOrDefaultAsync(foodItem => foodItem.Id == id).ConfigureAwait(true);
 
                 currentFood.Name = foodProductDto.Name;
                 currentFood.Price = foodProductDto.Price;
@@ -220,12 +220,12 @@ namespace AllSopFoodService.Services
             var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
             try
             {
-                var foodProduct = await this.db.FoodProducts.FirstAsync(food => food.Id == id).ConfigureAwait(true);
-                this.db.FoodProducts.Remove(foodProduct);
+                var foodProduct = await this.db.Products.FirstAsync(food => food.Id == id).ConfigureAwait(true);
+                this.db.Products.Remove(foodProduct);
                 await this.db.SaveChangesAsync().ConfigureAwait(true);
 
                 //manuall mapping
-                serviceResponse.Data = this.db.FoodProducts.Select(fooditem => new FoodProductVM()
+                serviceResponse.Data = this.db.Products.Select(fooditem => new FoodProductVM()
                 {
                     ProductId = fooditem.Id,
                     Name = fooditem.Name,

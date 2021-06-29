@@ -12,13 +12,13 @@ namespace AllSopFoodService.Services
     public class ProductsInCartsService : IProductsInCartsService
     {
         private readonly FoodDBContext _db;
-        private readonly IFoodProductsService _foodProductService;
+        private readonly IProductsService _foodProductService;
         private readonly ICartsService _cartService;
 
         //Assuming only 1 coupon can be used at a time
         public bool IsCartDiscounted { get; set; } = default!; // false by default
 
-        public ProductsInCartsService(FoodDBContext context, IFoodProductsService foodProductsService, ICartsService cartService)
+        public ProductsInCartsService(FoodDBContext context, IProductsService foodProductsService, ICartsService cartService)
         {
             this._db = context;
             this._foodProductService = foodProductsService;
@@ -29,14 +29,14 @@ namespace AllSopFoodService.Services
         {
             var serviceResponse = new ServiceResponse<List<ProductsInCartsVM>>();
 
-            var listDBProductsInACart = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).ToListAsync().ConfigureAwait(true);
+            var listDBProductsInACart = await this._db.FoodProducts_Carts.Where(record => record.CartId == cartId).ToListAsync().ConfigureAwait(true);
 
             var allProductsInACart = listDBProductsInACart.Select(record => new ProductsInCartsVM()
             {
                 ProductDescription = record.FoodProduct.Name,
                 QuantityInCart = record.QuantityInCart,
                 OriginalPrice = record.FoodProduct.Price,
-                CartId = record.ShoppingCartId
+                CartId = record.CartId
             }).ToList();
 
             serviceResponse.Data = allProductsInACart;
@@ -53,7 +53,7 @@ namespace AllSopFoodService.Services
 
             try
             {
-                var productInACart = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).FirstOrDefaultAsync(record => record.FoodProductId == productId).ConfigureAwait(true);
+                var productInACart = await this._db.FoodProducts_Carts.Where(record => record.CartId == cartId).FirstOrDefaultAsync(record => record.ProductId == productId).ConfigureAwait(true);
                 //Check if this Product exists in this Cart
                 if (productInACart != null)
                 {
@@ -66,7 +66,7 @@ namespace AllSopFoodService.Services
                         ProductDescription = productInACart.FoodProduct.Name,
                         QuantityInCart = productInACart.QuantityInCart,
                         OriginalPrice = productInACart.FoodProduct.Price,
-                        CartId = productInACart.ShoppingCartId
+                        CartId = productInACart.CartId
                     };
                     serviceResponse.Success = true;
                     serviceResponse.Message = "This product already existed in your cart! The quantity has been increased!";
@@ -77,8 +77,8 @@ namespace AllSopFoodService.Services
                 // if this product was not already in this cart then add new entry into Products_In_Cart joint entity
                 var newProductInACart = new FoodProduct_ShoppingCart()
                 {
-                    FoodProductId = productId,
-                    ShoppingCartId = cartId,
+                    ProductId = productId,
+                    CartId = cartId,
                     QuantityInCart = 1
                 };
                 this._db.FoodProducts_Carts.Add(newProductInACart);
@@ -88,7 +88,7 @@ namespace AllSopFoodService.Services
                     ProductDescription = newProductInACart.FoodProduct.Name, //might cause error here
                     QuantityInCart = newProductInACart.QuantityInCart,
                     OriginalPrice = newProductInACart.FoodProduct.Price, //might cause error here
-                    CartId = newProductInACart.ShoppingCartId
+                    CartId = newProductInACart.CartId
                 };
             }
             catch (Exception ex)
@@ -106,9 +106,9 @@ namespace AllSopFoodService.Services
             var response = new ServiceResponse<CartWithProductsVM>();
             try
             {
-                var listProductInACart = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).ToListAsync().ConfigureAwait(true);
+                var listProductInACart = await this._db.FoodProducts_Carts.Where(record => record.CartId == cartId).ToListAsync().ConfigureAwait(true);
                 //var productInACart = await this._db.FoodProducts_Carts.Where(record => record.ShoppingCartId == cartId).FirstOrDefaultAsync(record => record.FoodProductId == productId).ConfigureAwait(true);
-                var productInACart = listProductInACart.First(record => record.FoodProductId == productId);
+                var productInACart = listProductInACart.First(record => record.ProductId == productId);
                 this._db.FoodProducts_Carts.Remove(productInACart);
                 await this._db.SaveChangesAsync().ConfigureAwait(true);
 
@@ -132,14 +132,14 @@ namespace AllSopFoodService.Services
             try
             {
                 var currentCart = this._cartService.GetCartWithProducts(cartId);
-                var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.ShoppingCartId == cartId).ToList();
+                var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.CartId == cartId).ToList();
 
                 var total = decimal.Zero;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                 foreach (var item in currentCart.ProductNames)
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 {
-                    var currentProduct = allProductsInCart.FirstOrDefault(p => p.FoodProductId == item.ProductId);
+                    var currentProduct = allProductsInCart.FirstOrDefault(p => p.ProductId == item.ProductId);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                     total += item.Price * currentProduct.QuantityInCart;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -284,7 +284,7 @@ namespace AllSopFoodService.Services
         {
             var currentCart = this._cartService.GetCartById(cartId).Data;
 
-            var products = currentCart.Products.Select(item => this._db.FoodProducts.First(p => p.Id == item)).ToList();
+            var products = currentCart.Products.Select(item => this._db.Products.First(p => p.Id == item)).ToList();
 
             if (products.Where(fp => fp.CategoryId == 3).Count() < 10)
             {

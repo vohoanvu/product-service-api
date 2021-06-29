@@ -75,32 +75,6 @@ namespace AllSopFoodService.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AllSopFoodService.Model.FoodProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("FoodProducts");
-                });
-
             modelBuilder.Entity("AllSopFoodService.Model.FoodProduct_ShoppingCart", b =>
                 {
                     b.Property<int>("Id")
@@ -108,20 +82,20 @@ namespace AllSopFoodService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("FoodProductId")
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("QuantityInCart")
                         .HasColumnType("int");
 
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("FoodProductId");
+                    b.HasIndex("CartId");
 
-                    b.HasIndex("ShoppingCartId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("FoodProducts_Carts");
                 });
@@ -165,6 +139,33 @@ namespace AllSopFoodService.Migrations
                     b.ToTable("Logs");
                 });
 
+            modelBuilder.Entity("AllSopFoodService.Model.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Products");
+                });
+
             modelBuilder.Entity("AllSopFoodService.Model.Promotion", b =>
                 {
                     b.Property<int>("Id")
@@ -174,14 +175,15 @@ namespace AllSopFoodService.Migrations
 
                     b.Property<string>("CouponCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("VoucherCode");
 
                     b.Property<bool>("IsClaimed")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.ToTable("CouponCodes");
+                    b.ToTable("Vouchers");
                 });
 
             modelBuilder.Entity("AllSopFoodService.Model.ShoppingCart", b =>
@@ -212,7 +214,26 @@ namespace AllSopFoodService.Migrations
                     b.ToTable("ShoppingCarts");
                 });
 
-            modelBuilder.Entity("AllSopFoodService.Model.FoodProduct", b =>
+            modelBuilder.Entity("AllSopFoodService.Model.FoodProduct_ShoppingCart", b =>
+                {
+                    b.HasOne("AllSopFoodService.Model.ShoppingCart", "ShoppingCart")
+                        .WithMany("FoodProduct_Carts")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AllSopFoodService.Model.Product", "FoodProduct")
+                        .WithMany("FoodProduct_Carts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FoodProduct");
+
+                    b.Navigation("ShoppingCart");
+                });
+
+            modelBuilder.Entity("AllSopFoodService.Model.Product", b =>
                 {
                     b.HasOne("AllSopFoodService.Model.Category", "Category")
                         .WithMany("FoodProducts")
@@ -221,25 +242,6 @@ namespace AllSopFoodService.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("AllSopFoodService.Model.FoodProduct_ShoppingCart", b =>
-                {
-                    b.HasOne("AllSopFoodService.Model.FoodProduct", "FoodProduct")
-                        .WithMany("FoodProduct_Carts")
-                        .HasForeignKey("FoodProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AllSopFoodService.Model.ShoppingCart", "ShoppingCart")
-                        .WithMany("FoodProduct_Carts")
-                        .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FoodProduct");
-
-                    b.Navigation("ShoppingCart");
                 });
 
             modelBuilder.Entity("AllSopFoodService.Model.ShoppingCart", b =>
@@ -256,7 +258,7 @@ namespace AllSopFoodService.Migrations
                     b.Navigation("FoodProducts");
                 });
 
-            modelBuilder.Entity("AllSopFoodService.Model.FoodProduct", b =>
+            modelBuilder.Entity("AllSopFoodService.Model.Product", b =>
                 {
                     b.Navigation("FoodProduct_Carts");
                 });

@@ -18,143 +18,143 @@ namespace AllSopFoodService.Repositories
 
                 //seeding Products data
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                if (!context.FoodProducts.Any())
+                if (!context.Products.Any())
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 {
-                    context.FoodProducts.AddRange(new FoodProduct()
+                    context.Products.AddRange(new Product()
                     {
                         Name = "Chicken Fillets, 6 x 100g",
                         Price = Convert.ToDecimal(4.50),
                         Quantity = 12,
                         CategoryId = 1
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Sirloin Steaks, 4 x 6-8oz",
                         Price = Convert.ToDecimal(45.70),
                         Quantity = 6,
                         CategoryId = 1
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Whole Free-Range Turkey, 1 x 16-18lbs",
                         Price = Convert.ToDecimal(43.20),
                         Quantity = 8,
                         CategoryId = 1
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Granny Smith Apples, 4 x 16 each",
                         Price = Convert.ToDecimal(3.75),
                         Quantity = 0,
                         CategoryId = 2
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Loose Carrots, 4 x 20 each",
                         Price = Convert.ToDecimal(2.67),
                         Quantity = 2,
                         CategoryId = 2
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Mandarin Oranges, 6 x 10 x 12 ",
                         Price = Convert.ToDecimal(12.23),
                         Quantity = 8,
                         CategoryId = 2
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Cauliflower Florets, 10 x 500g",
                         Price = Convert.ToDecimal(5.00),
                         Quantity = 5,
                         CategoryId = 2
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Coca-Cola, 6 x 2L",
                         Price = Convert.ToDecimal(8.30),
                         Quantity = 6,
                         CategoryId = 3
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Still Mineral Water, 6 x 24 x 500ml",
                         Price = Convert.ToDecimal(21.75),
                         Quantity = 9,
                         CategoryId = 3
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Sparkling Mineral Water, 6 x 24 x 500ml",
                         Price = Convert.ToDecimal(25.83),
                         Quantity = 16,
                         CategoryId = 3
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Mars Bar, 6 x 24 x 50g",
                         Price = Convert.ToDecimal(42.82),
                         Quantity = 4,
                         CategoryId = 4
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Peppermint Chewing Gum, 6 x 50 x 30g ",
                         Price = Convert.ToDecimal(35.70),
                         Quantity = 6,
                         CategoryId = 4
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Strawberry Cheesecake, 4 x 12 portions",
                         Price = Convert.ToDecimal(8.52),
                         Quantity = 0,
                         CategoryId = 4
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Vanilla Ice Cream, 6 x 4L ",
                         Price = Convert.ToDecimal(3.80),
                         Quantity = 2,
                         CategoryId = 4
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Plain Flour, 10 x 1kg",
                         Price = Convert.ToDecimal(6.21),
                         Quantity = 4,
                         CategoryId = 5
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Icing Sugar, 12 x 500g",
                         Price = Convert.ToDecimal(9.38),
                         Quantity = 6,
                         CategoryId = 5
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Free-Range Eggs, 10 x 12 each",
                         Price = Convert.ToDecimal(9.52),
                         Quantity = 9,
                         CategoryId = 5
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Caster Sugar, 16 x 750g",
                         Price = Convert.ToDecimal(12.76),
                         Quantity = 13,
                         CategoryId = 5
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Kitchen Roll, 100 x 300 sheets",
                         Price = Convert.ToDecimal(43.92),
                         Quantity = 19,
                         CategoryId = 6
                     },
-                    new FoodProduct()
+                    new Product()
                     {
                         Name = "Paper Plates, 10 x 200 each",
                         Price = Convert.ToDecimal(16.19),

@@ -34,7 +34,7 @@ namespace AllSopFoodService.Services
                     CartLabel = c.CartLabel,
                     IsDiscounted = c.IsDiscounted,
                     User = c.UserName,
-                    Products = c.FoodProduct_Carts != null ? c.FoodProduct_Carts.Select(fp => fp.FoodProductId).ToList() : new List<int>()
+                    Products = c.FoodProduct_Carts != null ? c.FoodProduct_Carts.Select(fp => fp.ProductId).ToList() : new List<int>()
                 }).ToList()
             };
 
@@ -55,7 +55,7 @@ namespace AllSopFoodService.Services
                     CartLabel = c.CartLabel,
                     IsDiscounted = c.IsDiscounted,
                     User = c.UserName,
-                    Products = c.FoodProduct_Carts != null ? c.FoodProduct_Carts.Select(fp => fp.FoodProductId).ToList() : new List<int>()
+                    Products = c.FoodProduct_Carts != null ? c.FoodProduct_Carts.Select(fp => fp.ProductId).ToList() : new List<int>()
                 }).ToList();
             }
             catch (Exception ex)
@@ -94,27 +94,23 @@ namespace AllSopFoodService.Services
 
         public CartWithProductsVM GetCartWithProducts(int cartId)
         {
-            var cart = this._db.ShoppingCarts.Where(c => c.Id == cartId);
-
-            var newCart = cart.Select(c => new CartWithProductsVM()
+            var cart = this._db.ShoppingCarts.Where(c => c.Id == cartId).Select(c => new CartWithProductsVM()
             {
                 CartLabel = c.CartLabel,
                 IsDiscounted = c.IsDiscounted,
                 ProductNames = c.FoodProduct_Carts != null ? c.FoodProduct_Carts
                                 .Select(foodcart => new FoodProductVM()
                                 {
-                                    ProductId = foodcart.FoodProductId,
+                                    ProductId = foodcart.ProductId,
                                     Name = foodcart.FoodProduct.Name,
                                     Price = foodcart.FoodProduct.Price,
                                     CategoryName = foodcart.FoodProduct.Category.Label,
                                     Quantity = foodcart.FoodProduct.Quantity
                                 }).ToList() : new List<FoodProductVM>()
-            });
-
-            var finalCart = newCart.FirstOrDefault();
+            }).FirstOrDefault();
 
 #pragma warning disable CS8603 // Possible null reference return.
-            return finalCart;
+            return cart;
 #pragma warning restore CS8603 // Possible null reference return.
         }
 

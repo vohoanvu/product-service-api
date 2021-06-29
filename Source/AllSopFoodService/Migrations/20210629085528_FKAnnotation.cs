@@ -2,7 +2,7 @@
 
 namespace AllSopFoodService.Migrations
 {
-    public partial class FoodDBSchemaRefactored : Migration
+    public partial class FKAnnotation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

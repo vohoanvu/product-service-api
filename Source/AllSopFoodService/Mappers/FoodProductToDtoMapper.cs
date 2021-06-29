@@ -7,7 +7,7 @@ namespace AllSopFoodService.Mappers
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
 
-    public class FoodProductToVMMapper : IMapper<FoodProduct, FoodProductVM>
+    public class FoodProductToVMMapper : IMapper<Product, FoodProductVM>
     {
         //private readonly IHttpContextAccessor httpContextAccessor;
         //private readonly LinkGenerator linkGenerator;
@@ -16,7 +16,7 @@ namespace AllSopFoodService.Mappers
         {
 
         }
-        public void Map(FoodProduct source, FoodProductVM destination)
+        public void Map(Product source, FoodProductVM destination)
         {
             if (source is null)
             {

@@ -57,7 +57,7 @@ namespace AllSopFoodService
                     .AddHttpContextAccessor()
                     // Add useful interface for accessing the ActionContext outside a controller.
                     .AddSingleton<IActionContextAccessor, ActionContextAccessor>()
-                    .AddScoped<IFoodProductsService, FoodProductsService>()
+                    .AddScoped<IProductsService, ProductsService>()
                     .AddScoped<ICartsService, CartsService>()
                     .AddScoped<ICategoryService, CategoryService>()
                     .AddScoped<IProductsInCartsService, ProductsInCartsService>()

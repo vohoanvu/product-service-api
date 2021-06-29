@@ -8,12 +8,12 @@ namespace AllSopFoodService.Model
     using System.ComponentModel.DataAnnotations.Schema;
     using Microsoft.EntityFrameworkCore;
 
-    public partial class Category
+    public class Category
     {
         public int Id { get; set; }
         public string Label { get; set; }
         public bool IsAvailable { get; set; } = default!;
 
-        public List<FoodProduct> FoodProducts { get; set; }
+        public List<Product> FoodProducts { get; set; }
     }
 }

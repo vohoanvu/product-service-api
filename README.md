@@ -38,10 +38,8 @@ I created this project template with .NET Core API Boxed template. These API are
 
 List of possible code improvement:
 
-- ServiceResponse<T> class implementation (done)
 - Repositories Layers
 - Refactor according to .net core api Boxed template
 - Use GetModelDto/AddModelDto for view models and possibly use AutoMapper() (not effective)
-- Update Requests should not use AutoMapper (map each property manually) (cannot yet update partial object properties)
 - User Authentication (User Model and its equivalent relationships)
-- Re-design Relational DB (relationship between FoodProducts and CartItems)
+- Eager Loading and Explicit Loading for optimized DB queries:

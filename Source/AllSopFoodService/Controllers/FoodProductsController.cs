@@ -1,3 +1,4 @@
+#nullable disable
 namespace AllSopFoodService.Controllers
 {
     using System;
@@ -31,7 +32,7 @@ namespace AllSopFoodService.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
-        public async Task<IActionResult> GetFoodProducts(string? sortBy, string? searchString, int? pageNum, int? pageSize)
+        public async Task<IActionResult> GetFoodProducts(string sortBy, string searchString, int pageNum, int pageSize)
         {
             this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
             var response = await this._foodItemService.GetAllProducts(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
@@ -58,28 +59,30 @@ namespace AllSopFoodService.Controllers
         // PUT: api/FoodProducts/5
         // This Update request might need refactoring
         [HttpPut("update-product")]
-        public async Task<IActionResult> UpdateFoodProduct(int id, FoodProductDTO foodProduct)
+        public async Task<IActionResult> UpdateFoodProduct(int id, ProductSaves foodProduct)
         {
             var response = await this._foodItemService.UpdateFoodProduct(id, foodProduct).ConfigureAwait(true);
             if (response.Data == null)
             {
                 return this.NotFound(response);
             }
-
+            response.Success = true;
+            response.Message = "This product has been updated successfully";
             return this.Ok(response);
         }
 
         //POST: api/FoodProducts
         //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("add-product")]
-        public async Task<IActionResult> AddFoodProduct([FromBody] FoodProductDTO foodProductDto)
+        public async Task<IActionResult> AddFoodProduct([FromBody] ProductSaves foodProduct)
         {
-            if (foodProductDto == null)
+            if (foodProduct == null)
             {
                 return this.BadRequest(); // might be unecessary
             }
 
-            var response = await this._foodItemService.CreateFoodProduct(foodProductDto).ConfigureAwait(true);
+            var response = await this._foodItemService.CreateFoodProduct(foodProduct).ConfigureAwait(true);
+            response.Message = $"There are a total of {response.Data.Count} product records";
 
             return this.Ok(response);
         }
@@ -93,6 +96,7 @@ namespace AllSopFoodService.Controllers
             {
                 return this.NotFound(response);
             }
+            response.Message = $"There are a total of {response.Data.Count} product records";
 
             return this.Ok(response);
 

@@ -18,7 +18,7 @@ namespace AllSopFoodService.Services.Interfaces
         // Add a product into a cart
         Task<ServiceResponse<ProductsInCartsVM>> AddToCartAsync(int productId, int cartId);
         // Remove a product from a cart
-        Task<ServiceResponse<CartWithProductsVM>> RemoveFromCart(int productId, int cartId);
+        Task<ServiceResponse<CartVM>> RemoveFromCart(int productId, int cartId);
         // Apply a voucher code to a cart
         Task<ServiceResponse<VoucherResponseModel>> ApplyVoucherToCart(string voucherCode, int cartId);
         //Task<ServiceResponse<List<FoodProduct_ShoppingCart>>> UpdateCartAsync(int cartId); // unnecessary

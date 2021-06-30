@@ -9,7 +9,7 @@ namespace AllSopFoodService.Mappers
         public AutoMapperProfile()
         {
             this.CreateMap<Product, FoodProductVM>();
-            this.CreateMap<FoodProductDTO, Product>();
+            this.CreateMap<ProductSaves, Product>();
         }
     }
 }

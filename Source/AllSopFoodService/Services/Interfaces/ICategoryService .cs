@@ -13,7 +13,7 @@ namespace AllSopFoodService.Services
 
         List<Category> GetAllCategories(string? sortBy, string? searchString, int? pageNum);
 
-        CategoryWithProductsAndCartsVM GetCategoryData(int categoryId);
+        CategoryWithProducts GetCategoryData(int categoryId);
 
         void DeleteCategoryById(int id);
     }

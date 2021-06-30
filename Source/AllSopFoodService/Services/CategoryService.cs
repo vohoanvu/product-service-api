@@ -7,12 +7,20 @@ namespace AllSopFoodService.Services
     using AllSopFoodService.Model;
     using AllSopFoodService.Model.Paging;
     using AllSopFoodService.ViewModels;
+    using Boxed.Mapping;
+    using Microsoft.EntityFrameworkCore;
 
     public class CategoryService : ICategoryService
     {
         private readonly FoodDBContext _db;
+        private readonly IMapper<Product, FoodProductVM> productMapper;
 
-        public CategoryService(FoodDBContext dbcontext) => this._db = dbcontext;
+        public CategoryService(FoodDBContext dbcontext, IMapper<Product, FoodProductVM> productMapper)
+        {
+            this._db = dbcontext;
+            this.productMapper = productMapper;
+        }
+
 
         public void CreateCategory(CategoryVM cartegory)
         {
@@ -54,17 +62,13 @@ namespace AllSopFoodService.Services
             return allCategories;
         }
 
-        public CategoryWithProductsAndCartsVM GetCategoryData(int categoryId)
+        public CategoryWithProducts GetCategoryData(int categoryId)
         {
-            var categoryData = this._db.Categories.Where(c => c.Id == categoryId)
-                                                    .Select(c => new CategoryWithProductsAndCartsVM()
+            var categoryData = this._db.Categories.Include(c => c.FoodProducts.Where(p => p.CategoryId == categoryId)).ThenInclude(fp => fp.Category)
+                                                    .Select(c => new CategoryWithProducts()
                                                     {
                                                         Label = c.Label,
-                                                        ProductCarts = c.FoodProducts.Select(fp => new Product_CartVM()
-                                                        {
-                                                            ProductName = fp.Name,
-                                                            ProductCartLabels = fp.FoodProduct_Carts.Select(n => n.ShoppingCart.CartLabel).ToList()
-                                                        }).ToList()
+                                                        Products = c.FoodProducts.Select(fp => this.productMapper.Map(fp)).ToList()
                                                     }).FirstOrDefault();
 
 #pragma warning disable CS8603 // Possible null reference return.

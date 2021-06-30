@@ -1,11 +1,12 @@
+#nullable disable
 namespace AllSopFoodService.ViewModels
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
-    public class FoodProductDTO
+    // This model is used to create/update product record
+    public class ProductSaves
     {
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }

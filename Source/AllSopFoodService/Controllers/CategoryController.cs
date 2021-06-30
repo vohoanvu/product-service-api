@@ -40,7 +40,7 @@ namespace AllSopFoodService.Controllers
             return this.Ok();
         }
 
-        [HttpGet("get-categories-with-products-incart/{id}")]
+        [HttpGet("get-category-data/{id}")]
         public IActionResult GetCategoryData(int id)
         {
             var response = this._categoryService.GetCategoryData(id);

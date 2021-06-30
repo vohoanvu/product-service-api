@@ -30,7 +30,7 @@ namespace AllSopFoodService.Controllers
         }
 
         [HttpPost("add-new-cart")]
-        public IActionResult CreateNewCart([FromBody] AddCartDto cart)
+        public IActionResult CreateNewCart([FromBody] CartSaves cart)
         {
             var res = this._cartService.CreateShoppingCart(cart);
             return this.Ok(res);
@@ -40,6 +40,10 @@ namespace AllSopFoodService.Controllers
         public IActionResult GetCartWithProducts(int id)
         {
             var response = this._cartService.GetCartWithProducts(id);
+            if (response.Data == null)
+            {
+                this.NotFound(response);
+            }
             return this.Ok(response);
         }
 

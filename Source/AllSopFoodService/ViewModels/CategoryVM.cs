@@ -12,16 +12,16 @@ namespace AllSopFoodService.ViewModels
         public bool IsAvailable { get; set; }
     }
 
-    public class CategoryWithProductsAndCartsVM
+    public class CategoryWithProducts
     {
         public string Label { get; set; } = default!;
 
-        public List<Product_CartVM> ProductCarts { get; set; } = default!;
+        public List<FoodProductVM> Products { get; set; } = default!;
     }
 
-    public class Product_CartVM
-    {
-        public string ProductName { get; set; } = default!;
-        public List<string> ProductCartLabels { get; set; } = default!;
-    }
+    //public class Product_CartVM
+    //{
+    //    public string ProductName { get; set; } = default!;
+    //    public List<string> ProductCartLabels { get; set; } = default!;
+    //}
 }

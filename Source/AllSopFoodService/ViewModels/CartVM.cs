@@ -1,9 +1,11 @@
+#nullable disable
 namespace AllSopFoodService.ViewModels
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AllSopFoodService.Model;
 
     public class CartVM
     {
@@ -11,20 +13,24 @@ namespace AllSopFoodService.ViewModels
         public string CartLabel { get; set; } = default!;
         public bool IsDiscounted { get; set; }
         public string User { get; set; } = default!;
-        public List<int> Products { get; set; } = default!;
+        public List<ProductsInCartsVM> ProductsInCart { get; set; }
     }
 
-    public class AddCartDto
+    public class CartSaves
     {
         public string CartLabel { get; set; } = default!;
         public bool IsDiscounted { get; set; }
         public string User { get; set; } = default!;
     }
 
-    public class CartWithProductsVM
+    public class ProductsInCartsVM
     {
-        public string CartLabel { get; set; } = default!;
-        public bool IsDiscounted { get; set; }
-        public List<FoodProductVM>? ProductNames { get; set; }
+        public string ProductDescription { get; set; } = default!;
+
+        public int QuantityInCart { get; set; }
+
+        public decimal OriginalPrice { get; set; }
+        // could be cartLabel
+        public int CartId { get; set; }
     }
 }

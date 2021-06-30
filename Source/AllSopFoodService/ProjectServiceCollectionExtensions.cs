@@ -2,6 +2,7 @@ namespace AllSopFoodService
 {
     using AllSopFoodService.Commands;
     using AllSopFoodService.Mappers;
+    using AllSopFoodService.Model;
     using AllSopFoodService.Repositories;
     using AllSopFoodService.Services;
     using AllSopFoodService.ViewModels;
@@ -31,7 +32,9 @@ namespace AllSopFoodService
             services
                 .AddSingleton<IMapper<Models.Car, Car>, CarToCarMapper>()
                 .AddSingleton<IMapper<Models.Car, SaveCar>, CarToSaveCarMapper>()
-                .AddSingleton<IMapper<SaveCar, Models.Car>, CarToSaveCarMapper>();
+                .AddSingleton<IMapper<SaveCar, Models.Car>, CarToSaveCarMapper>()
+                .AddSingleton<IMapper<Product, FoodProductVM>, FoodProductToVMMapper>()
+                .AddSingleton<IMapper<ShoppingCart, CartVM>, ShoppingCartToCartVM>();
 
         public static IServiceCollection AddProjectRepositories(this IServiceCollection services) =>
             services

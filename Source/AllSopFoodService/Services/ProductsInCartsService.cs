@@ -1,3 +1,4 @@
+#nullable disable
 namespace AllSopFoodService.Services
 {
     using System;
@@ -100,10 +101,10 @@ namespace AllSopFoodService.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<CartWithProductsVM>> RemoveFromCart(int productId, int cartId)
+        public async Task<ServiceResponse<CartVM>> RemoveFromCart(int productId, int cartId)
         {
             // Again, assuming both productId and cartId are valid, the validation took place in controller
-            var response = new ServiceResponse<CartWithProductsVM>();
+            var response = new ServiceResponse<CartVM>();
             try
             {
                 var listProductInACart = await this._db.FoodProducts_Carts.Where(record => record.CartId == cartId).ToListAsync().ConfigureAwait(true);
@@ -112,8 +113,8 @@ namespace AllSopFoodService.Services
                 this._db.FoodProducts_Carts.Remove(productInACart);
                 await this._db.SaveChangesAsync().ConfigureAwait(true);
 
-                //response.Data = this._db.FoodProducts_Carts.ToList();
-                response.Data = this._cartService.GetCartWithProducts(cartId);
+                var cartResponse = this._cartService.GetCartWithProducts(cartId);
+                response.Data = cartResponse.Data;
                 response.Success = true;
                 response.Message = $"The product with ID={productId} has been removed from your cart!";
             }
@@ -131,18 +132,16 @@ namespace AllSopFoodService.Services
             var response = new ServiceResponse<decimal>();
             try
             {
-                var currentCart = this._cartService.GetCartWithProducts(cartId);
+                var currentCart = this._cartService.GetCartById(cartId).Data;
                 var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.CartId == cartId).ToList();
+                //var productsInCart = currentCart.FoodProduct_Carts.Select(u => u.ProductId).ToList();
 
                 var total = decimal.Zero;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                foreach (var item in currentCart.ProductNames)
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+                foreach (var item in allProductsInCart)
                 {
-                    var currentProduct = allProductsInCart.FirstOrDefault(p => p.ProductId == item.ProductId);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                    total += item.Price * currentProduct.QuantityInCart;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    var currentProduct = this._db.Products.First(fp => fp.Id == item.ProductId);
+                    total += currentProduct.Price * item.QuantityInCart;
                 }
                 response.Data = total;
             }
@@ -283,8 +282,8 @@ namespace AllSopFoodService.Services
         public bool Is10orMoreDrinksItemInCart(int cartId)
         {
             var currentCart = this._cartService.GetCartById(cartId).Data;
-
-            var products = currentCart.Products.Select(item => this._db.Products.First(p => p.Id == item)).ToList();
+            var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.CartId == cartId).ToList();
+            var products = allProductsInCart.Select(u => u.FoodProduct).ToList();
 
             if (products.Where(fp => fp.CategoryId == 3).Count() < 10)
             {

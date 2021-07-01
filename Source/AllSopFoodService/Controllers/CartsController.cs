@@ -58,5 +58,11 @@ namespace AllSopFoodService.Controllers
 
             return this.Ok(res);
         }
+
+        //[HttpGet]
+        //public IActionResult GetCartByUserId(int userId)
+        //{
+        //    var id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+        //}
     }
 }

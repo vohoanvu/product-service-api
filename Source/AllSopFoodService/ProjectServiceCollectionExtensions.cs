@@ -8,6 +8,10 @@ namespace AllSopFoodService
     using AllSopFoodService.ViewModels;
     using Boxed.Mapping;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.IdentityModel.Tokens;
+    using Microsoft.Extensions.Configuration;
 
     /// <summary>
     /// <see cref="IServiceCollection"/> extension methods add project services.
@@ -42,6 +46,7 @@ namespace AllSopFoodService
 
         public static IServiceCollection AddProjectServices(this IServiceCollection services) =>
             services
-                .AddSingleton<IClockService, ClockService>();
+                .AddSingleton<IClockService, ClockService>()
+                .AddScoped<IAuthRepository, AuthRepository>();
     }
 }

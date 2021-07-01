@@ -19,7 +19,7 @@ namespace AllSopFoodService.Model
         public int Quantity { get; set; }
         //Navigation Properties
         public int CategoryId { get; set; }
-        public Category Category { get; set; } // this line is enough to automatically set up a relationship
-        public List<FoodProduct_ShoppingCart> FoodProduct_Carts { get; set; }
+        public virtual Category Category { get; set; } // this line is enough to automatically set up a relationship
+        public virtual List<FoodProduct_ShoppingCart> FoodProduct_Carts { get; set; }
     }
 }

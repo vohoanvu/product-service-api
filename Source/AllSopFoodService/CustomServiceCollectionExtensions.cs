@@ -19,6 +19,8 @@ namespace AllSopFoodService
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using Swashbuckle.AspNetCore.Filters;
+    using Microsoft.OpenApi.Models;
 
     /// <summary>
     /// <see cref="IServiceCollection"/> extension methods which extend ASP.NET Core services.
@@ -143,6 +145,17 @@ namespace AllSopFoodService
         public static IServiceCollection AddCustomSwagger(this IServiceCollection services) =>
             services
                 .AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>()
-                .AddSwaggerGen();
+                .AddSwaggerGen(c =>
+                {
+                    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme()
+                    {
+                        Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\" ",
+                        In = ParameterLocation.Header,
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey
+                    });
+                    c.OperationFilter<SecurityRequirementsOperationFilter>();
+
+                });
     }
 }

@@ -15,6 +15,6 @@ namespace AllSopFoodService.Model
         public string CouponCode { get; set; } = default!;
 
         public bool IsClaimed { get; set; }
-        public List<ShoppingCart>? DiscountedCarts { get; set; } = default!;
+        public virtual List<ShoppingCart>? DiscountedCarts { get; set; } = default!;
     }
 }

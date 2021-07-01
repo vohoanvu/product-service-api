@@ -28,6 +28,6 @@ namespace AllSopFoodService.Services.Interfaces
         bool CheckVoucherExists(string code); // PromotionService worthy
 
         //bool Is10orMoreDrinksItemInCart(List<FoodProduct_ShoppingCart> wholeCart); // Really should refactor this
-        bool Is10orMoreDrinksItemInCart(int cartId);
+        bool Is10orMoreDrinksItemInCart(List<FoodProduct_ShoppingCart> productsIncart);
     }
 }

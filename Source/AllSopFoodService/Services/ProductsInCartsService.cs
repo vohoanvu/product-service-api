@@ -162,12 +162,11 @@ namespace AllSopFoodService.Services
             try
             {
                 // check if this cart is already discounted
-                //var currentCart = this._cartService.GetCartById(cardId);
-                var currentCart = this._db.ShoppingCarts.Where(c => c.Id == cartId).FirstOrDefault();
+                var currentCart = this._cartService.GetCartById(cartId).Data;
+                //var currentCart = this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts).Where(c => c.Id == cartId).FirstOrDefault();
                 var beforeDiscountTotal = this.GetTotal(cartId).Data;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
                 if (currentCart.IsDiscounted)
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 {
                     response.Success = false;
                     response.Message = "Sorry! your cart is already discounted with another voucher!";
@@ -186,11 +185,13 @@ namespace AllSopFoodService.Services
                     {
                         case "10OFFPROMODRI":
                             // Bool: True if there are 10 or more Drinks Item in Cart, False otherwise, PromotionService worthy
-                            var quantityCondition = this.Is10orMoreDrinksItemInCart(cartId);
+                            var quantityCondition = this.Is10orMoreDrinksItemInCart(allCartItems); // could have just passed in AllCartItems
                             if (!quantityCondition)
                             {
                                 result.Applied = false;
                                 result.FailedMessage = "You need to buy at least 10 or more Drinks Item!";
+                                response.Data = result;
+                                break;
                             }
 
                             foreach (var cartItem in allCartItems)
@@ -219,7 +220,7 @@ namespace AllSopFoodService.Services
 
                             response.Data = result;
                             break;
-                        case "5OFFBAKING":
+                        case "5OFFPROMOALL":
                             // conditions checking
                             // fetch All Baking/Cooking Ingredient items from Cart
                             var bakingCookingItems = currentCart.FoodProduct_Carts.Where(cartItem => cartItem.FoodProduct.CategoryId == 5).ToList();
@@ -237,7 +238,7 @@ namespace AllSopFoodService.Services
 
                             response.Data = result;
                             break;
-                        case "20OFFPROMO":
+                        case "20OFFPROMOALL":
                             // condition check, spending at least 100 pounds in total
                             if (beforeDiscountTotal < Convert.ToDecimal(100))
                             {
@@ -279,13 +280,13 @@ namespace AllSopFoodService.Services
         }
 
         //True if there are 10 or more Drinks Item in Cart, False otherwise
-        public bool Is10orMoreDrinksItemInCart(int cartId)
+        public bool Is10orMoreDrinksItemInCart(List<FoodProduct_ShoppingCart> productsIncart) // parameter changed => List<FoodProduct_Cart> 
         {
-            var currentCart = this._cartService.GetCartById(cartId).Data;
-            var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.CartId == cartId).ToList();
-            var products = allProductsInCart.Select(u => u.FoodProduct).ToList();
+            //var currentCart = this._cartService.GetCartById(cartId).Data;
+            //var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.CartId == cartId).ToList();
+            var numOfDrinksItems = productsIncart.Where(fp => fp.FoodProduct.CategoryId == 3).Sum(item => item.QuantityInCart);
 
-            if (products.Where(fp => fp.CategoryId == 3).Count() < 10)
+            if (numOfDrinksItems < 10)
             {
                 return false;
             }

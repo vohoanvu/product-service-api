@@ -14,7 +14,10 @@ namespace AllSopFoodService.Controllers
     using AllSopFoodService.Services;
     using AllSopFoodService.ViewModels;
     using Microsoft.Extensions.Logging;
+    using Microsoft.AspNetCore.Authorization;
+    using System.Security.Claims;
 
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FoodProductsController : ControllerBase
@@ -29,12 +32,14 @@ namespace AllSopFoodService.Controllers
         }
 
         // GET: api/FoodProducts
+        [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
         public async Task<IActionResult> GetFoodProducts(string sortBy, string searchString, int pageNum, int pageSize)
         {
-            this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
+            //this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
+            //var id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var response = await this._foodItemService.GetAllProducts(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
             if (response.Data == null)
             {

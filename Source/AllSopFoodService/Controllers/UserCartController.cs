@@ -31,7 +31,7 @@ namespace AllSopFoodService.Controllers
 
 
         //GET: api/CartItems
-        [HttpGet("get-all-carts-with-products")]
+        [HttpGet("get-all-product-cart-record")]
         public async Task<IActionResult> GetAllCartsWithProducts()
         {
             var serviceResponse = await this._productInCartService.GetAllProductsInCarts().ConfigureAwait(true);

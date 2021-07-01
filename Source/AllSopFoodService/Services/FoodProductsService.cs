@@ -158,7 +158,7 @@ namespace AllSopFoodService.Services
             var serviceResponse = new ServiceResponse<FoodProductVM>();
             try
             {
-                var currentFood = this.db.Products.Include(p => p.Category).FirstOrDefault(foodItem => foodItem.Id == id);
+                var currentFood = await this.db.Products.Include(p => p.Category).FirstOrDefaultAsync(foodItem => foodItem.Id == id).ConfigureAwait(true);
                 // mapping from ProductSaves to Product
                 currentFood.Name = foodProductDto.Name;
                 currentFood.Price = foodProductDto.Price;

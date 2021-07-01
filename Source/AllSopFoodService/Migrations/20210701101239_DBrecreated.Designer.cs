@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AllSopFoodService.Migrations
 {
     [DbContext(typeof(FoodDBContext))]
-    [Migration("20210629084356_ProductsCartsRecreated")]
-    partial class ProductsCartsRecreated
+    [Migration("20210701101239_DBrecreated")]
+    partial class DBrecreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -196,14 +196,15 @@ namespace AllSopFoodService.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CartLabel")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDiscounted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("VoucherId")
@@ -211,9 +212,33 @@ namespace AllSopFoodService.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.HasIndex("VoucherId");
 
                     b.ToTable("ShoppingCarts");
+                });
+
+            modelBuilder.Entity("AllSopFoodService.Model.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("AllSopFoodService.Model.FoodProduct_ShoppingCart", b =>
@@ -248,9 +273,17 @@ namespace AllSopFoodService.Migrations
 
             modelBuilder.Entity("AllSopFoodService.Model.ShoppingCart", b =>
                 {
+                    b.HasOne("AllSopFoodService.Model.User", "CartUser")
+                        .WithOne("Cart")
+                        .HasForeignKey("AllSopFoodService.Model.ShoppingCart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("AllSopFoodService.Model.Promotion", "VoucherCode")
                         .WithMany("DiscountedCarts")
                         .HasForeignKey("VoucherId");
+
+                    b.Navigation("CartUser");
 
                     b.Navigation("VoucherCode");
                 });
@@ -273,6 +306,11 @@ namespace AllSopFoodService.Migrations
             modelBuilder.Entity("AllSopFoodService.Model.ShoppingCart", b =>
                 {
                     b.Navigation("FoodProduct_Carts");
+                });
+
+            modelBuilder.Entity("AllSopFoodService.Model.User", b =>
+                {
+                    b.Navigation("Cart");
                 });
 #pragma warning restore 612, 618
         }

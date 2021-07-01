@@ -17,6 +17,9 @@ namespace AllSopFoodService
     using AllSopFoodService.Services.Interfaces;
     using AllSopFoodService.Repositories;
     using static System.Net.Mime.MediaTypeNames;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.IdentityModel.Tokens;
+    using Swashbuckle.AspNetCore.Filters;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -45,8 +48,9 @@ namespace AllSopFoodService
         /// http://blogs.msdn.com/b/webdev/archive/2014/06/17/dependency-injection-in-asp-net-vnext.aspx
         /// </summary>
         /// <param name="services">The services.</param>
-        public virtual void ConfigureServices(IServiceCollection services) => services
-                    .AddCustomCaching()
+        public virtual void ConfigureServices(IServiceCollection services)
+        {
+            services.AddCustomCaching()
                     .AddCustomCors()
                     .AddCustomOptions(this.configuration)
                     .AddCustomRouting()
@@ -66,15 +70,26 @@ namespace AllSopFoodService
                     .AddControllers()
                     .AddCustomJsonOptions(this.webHostEnvironment)
                     .AddCustomMvcOptions(this.configuration)
-                    .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
-                    .Services
-                    .AddAutoMapper(typeof(Startup))
+                    .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+
+            services.AddAutoMapper(typeof(Startup))
                     .AddProjectCommands()
                     .AddProjectMappers()
                     .AddProjectRepositories()
                     .AddProjectServices()
                     .AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")))
                     .AddDistributedMemoryCache().AddSession().AddMvc();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(this.configuration.GetSection("AppSettings:Token").Value)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    });
+        }
 
         /// <summary>
         /// Configures the application and HTTP request pipeline. Configure is called after ConfigureServices is
@@ -87,8 +102,12 @@ namespace AllSopFoodService
                         this.webHostEnvironment.IsDevelopment(),
                         x => x.UseServerTiming())
                     .UseForwardedHeaders()
-                    .UseRouting()
-                    .UseCors(CorsPolicyName.AllowAny)
+                    .UseRouting();
+
+            application.UseAuthentication();
+            application.UseAuthorization();
+
+            application.UseCors(CorsPolicyName.AllowAny)
                     .UseResponseCaching()
                     .UseResponseCompression()
                     .UseIf(

@@ -23,9 +23,8 @@ namespace AllSopFoodService.Model
         // Many-to-many relationship version of ShoppingCartItems
         public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public virtual DbSet<FoodProduct_ShoppingCart> FoodProducts_Carts { get; set; }
-
         public virtual DbSet<Log> Logs { get; set; }
-
+        public virtual DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //configuring DB relations through Fluent API
@@ -33,7 +32,7 @@ namespace AllSopFoodService.Model
                 .HasOne(fp => fp.Category)
                 .WithMany(c => c.FoodProducts)
                 .HasForeignKey(fp => fp.CategoryId);
-
+            // many-to-many relation between Product and ShoppingCart
             modelBuilder.Entity<FoodProduct_ShoppingCart>()
                 .HasOne(foodCart => foodCart.FoodProduct)
                 .WithMany(foodItem => foodItem.FoodProduct_Carts)
@@ -43,11 +42,15 @@ namespace AllSopFoodService.Model
                 .HasOne(foodCart => foodCart.ShoppingCart)
                 .WithMany(cart => cart.FoodProduct_Carts)
                 .HasForeignKey(foodCartId => foodCartId.CartId);
-
+            // 1-many relation between ShoppingCart and Promotion
             modelBuilder.Entity<ShoppingCart>()
                 .HasOne(p => p.VoucherCode)
                 .WithMany(c => c.DiscountedCarts)
                 .HasForeignKey(p => p.VoucherId);
+            // 1-to-1 relation between User and ShoppingCart
+            modelBuilder.Entity<ShoppingCart>()
+            .HasOne(c => c.CartUser).WithOne(u => u.Cart).HasForeignKey<ShoppingCart>("UserId");
+
             //Possible to configure the Composite Key for Products_Carts table, using fluent api, with a combination of ProductId + CartId
 
             //Seeding Category Data, need a solution to check if Categories table exist?

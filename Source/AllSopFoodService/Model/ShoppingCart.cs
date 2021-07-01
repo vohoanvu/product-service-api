@@ -10,12 +10,15 @@ namespace AllSopFoodService.Model
     public class ShoppingCart
     {
         public int Id { get; set; }
-        public string CartLabel { get; set; } = default!;
+        public string CartLabel { get; set; } = "Default Cart Label";
         public string UserName { get; set; } = "Default User";
-        public bool IsDiscounted { get; set; } = default!;
+        public bool IsDiscounted { get; set; }
         // Navigation Properties
         public int? VoucherId { get; set; }
-        public Promotion VoucherCode { get; set; } //assuming each Cart can only claim one Voucher at a time
-        public List<FoodProduct_ShoppingCart> FoodProduct_Carts { get; set; } = default!;
+        public virtual Promotion VoucherCode { get; set; } //assuming each Cart can only claim one Voucher at a time
+        public virtual List<FoodProduct_ShoppingCart> FoodProduct_Carts { get; set; }
+        //Navigation props
+        public int UserId { get; set; }
+        public User CartUser { get; set; }
     }
 }

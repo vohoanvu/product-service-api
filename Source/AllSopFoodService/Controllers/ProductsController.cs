@@ -20,12 +20,12 @@ namespace AllSopFoodService.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FoodProductsController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly IProductsService _foodItemService;
-        private readonly ILogger<FoodProductsController> _logger;
+        private readonly ILogger<ProductsController> _logger;
 
-        public FoodProductsController(IProductsService foodProductsService, ILogger<FoodProductsController> logger)
+        public ProductsController(IProductsService foodProductsService, ILogger<ProductsController> logger)
         {
             this._foodItemService = foodProductsService;
             this._logger = logger;
@@ -39,7 +39,6 @@ namespace AllSopFoodService.Controllers
         public async Task<IActionResult> GetFoodProducts(string sortBy, string searchString, int pageNum, int pageSize)
         {
             //this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
-            //var id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var response = await this._foodItemService.GetAllProducts(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
             if (response.Data == null)
             {

@@ -1,0 +1,128 @@
+07/02/2021 18:34:07 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 18:34:09 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 18:34:10 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 234.8719 ms
+07/02/2021 18:34:10 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 261.9166 ms
+07/02/2021 18:34:31 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 400 in 468.0377 ms
+07/02/2021 18:34:43 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 123.3702 ms
+07/02/2021 18:45:08 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 18:45:27 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 18:47:07 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 20:29:27 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 20:29:28 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 20:29:29 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 226.3151 ms
+07/02/2021 20:29:30 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 227.3575 ms
+07/02/2021 20:29:56 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-new-cart/1?api-version=1.0" responded 200 in 1887.7853 ms
+07/02/2021 20:30:50 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-cart-by-id?id=1&api-version=1.0" responded 200 in 54.0239 ms
+07/02/2021 20:32:26 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 20:32:27 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 20:32:28 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 200.4993 ms
+07/02/2021 20:32:28 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 239.6640 ms
+07/02/2021 20:33:03 +07:00 [Information] - Message: HTTP "POST" "/api/auth/register?api-version=1.0" responded 200 in 670.0895 ms
+07/02/2021 20:33:57 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-new-cart/1?api-version=1.0" responded 200 in 177.4719 ms
+07/02/2021 20:34:13 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-new-cart/2?api-version=1.0" responded 200 in 13.3815 ms
+07/02/2021 20:36:51 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-cart-by-id?id=2&api-version=1.0" responded 200 in 19.5490 ms
+07/02/2021 20:50:20 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 20:50:21 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 20:50:22 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 185.6779 ms
+07/02/2021 20:50:22 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 186.5609 ms
+07/02/2021 20:50:49 +07:00 [Information] - Message: HTTP "POST" "/api/auth/register?api-version=1.0" responded 200 in 570.8327 ms
+07/02/2021 20:52:22 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 211.9465 ms
+07/02/2021 20:53:20 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-all-user-carts?api-version=1.0" responded 200 in 141.8702 ms
+07/02/2021 22:41:37 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 22:41:39 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 22:41:40 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 194.8786 ms
+07/02/2021 22:41:40 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 194.1891 ms
+07/02/2021 22:42:17 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 576.9405 ms
+07/02/2021 22:43:00 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 221.1646 ms
+07/02/2021 22:43:12 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-cart-by-id?api-version=1.0" responded 404 in 23.4168 ms
+07/02/2021 22:43:33 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-cart-by-id?id=3&api-version=1.0" responded 200 in 14.0604 ms
+07/02/2021 22:44:22 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=9&api-version=1.0" responded 404 in 199.4764 ms
+07/02/2021 22:44:47 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=9&api-version=1.0" responded 404 in 39.7294 ms
+07/02/2021 22:48:20 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 22:48:21 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 22:48:22 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 140.5074 ms
+07/02/2021 22:48:22 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 201.9258 ms
+07/02/2021 22:48:56 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 464.2149 ms
+07/02/2021 22:49:23 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-all-user-carts?api-version=1.0" responded 200 in 189.5711 ms
+07/02/2021 22:49:35 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 37.2750 ms
+07/02/2021 22:49:49 +07:00 [Information] - Message: HTTP "DELETE" "/api/carts/remove-from-cart?productId=9&api-version=1.0" responded 404 in 99.5392 ms
+07/02/2021 22:49:55 +07:00 [Information] - Message: HTTP "DELETE" "/api/carts/remove-from-cart?productId=9&api-version=1.0" responded 404 in 51.7154 ms
+07/02/2021 22:50:27 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=9&api-version=1.0" responded 404 in 54.2877 ms
+07/02/2021 22:50:30 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=9&api-version=1.0" responded 404 in 44.4233 ms
+07/02/2021 22:50:54 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 22:50:56 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 22:50:56 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 142.2416 ms
+07/02/2021 22:50:57 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 171.7001 ms
+07/02/2021 22:51:30 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 576.8822 ms
+07/02/2021 22:51:55 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 146.1753 ms
+07/02/2021 22:56:23 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 22:56:24 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 22:56:24 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 134.6620 ms
+07/02/2021 22:56:25 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 195.8404 ms
+07/02/2021 22:56:38 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 489.2796 ms
+07/02/2021 22:57:08 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 146.6109 ms
+07/02/2021 22:59:32 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 22:59:33 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 22:59:33 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 155.1640 ms
+07/02/2021 22:59:34 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 199.8984 ms
+07/02/2021 23:00:12 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 493.4813 ms
+07/02/2021 23:00:33 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 147.2503 ms
+07/02/2021 23:01:39 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 23:01:40 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 23:01:41 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 153.1489 ms
+07/02/2021 23:01:42 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 187.2216 ms
+07/02/2021 23:04:06 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 512.8273 ms
+07/02/2021 23:04:27 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 150.3345 ms
+07/02/2021 23:04:33 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=9&api-version=1.0" responded 200 in 212.7124 ms
+07/02/2021 23:05:07 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=9&api-version=1.0" responded 200 in 57.7633 ms
+07/02/2021 23:05:28 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 15.7221 ms
+07/02/2021 23:05:28 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 20.3888 ms
+07/02/2021 23:05:29 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 11.4119 ms
+07/02/2021 23:05:30 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 11.9883 ms
+07/02/2021 23:05:30 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 10.6444 ms
+07/02/2021 23:05:31 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 11.0569 ms
+07/02/2021 23:05:32 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 10.6306 ms
+07/02/2021 23:05:32 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 11.5425 ms
+07/02/2021 23:05:33 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 11.8099 ms
+07/02/2021 23:05:33 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=10&api-version=1.0" responded 200 in 18.6450 ms
+07/02/2021 23:05:47 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-cart-by-id?api-version=1.0" responded 404 in 22.0245 ms
+07/02/2021 23:05:54 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 16.0282 ms
+07/02/2021 23:07:49 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 101.6871 ms
+07/02/2021 23:09:37 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 23:09:38 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 23:09:39 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 160.2602 ms
+07/02/2021 23:09:39 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 252.2147 ms
+07/02/2021 23:10:06 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 479.5767 ms
+07/02/2021 23:10:23 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 193.5354 ms
+07/02/2021 23:14:02 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 23:14:03 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 23:14:04 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 164.2202 ms
+07/02/2021 23:14:04 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 200.7556 ms
+07/02/2021 23:14:17 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 513.5266 ms
+07/02/2021 23:14:44 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 171.2032 ms
+07/02/2021 23:17:54 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 23:17:55 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 23:17:56 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 191.9775 ms
+07/02/2021 23:17:57 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 225.0454 ms
+07/02/2021 23:18:14 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 445.5628 ms
+07/02/2021 23:18:38 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 25.8114 ms
+07/02/2021 23:19:01 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=10OFFPROMODRI&api-version=1.0" responded 200 in 245.7491 ms
+07/02/2021 23:19:15 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 4.4907 ms
+07/02/2021 23:19:26 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=10OFFPROMODRI&api-version=1.0" responded 404 in 21.3616 ms
+07/02/2021 23:19:41 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=10OFFPROMODRIVU&api-version=1.0" responded 404 in 9.4505 ms
+07/02/2021 23:19:48 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=SHITVUVO&api-version=1.0" responded 404 in 4.1246 ms
+07/02/2021 23:20:14 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?api-version=1.0" responded 400 in 37.9187 ms
+07/02/2021 23:20:18 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=10OFFPROMODRI&api-version=1.0" responded 404 in 4.7843 ms
+07/02/2021 23:20:57 +07:00 [Information] - Message: HTTP "DELETE" "/api/usercart/remove-from-cart?productId=9&api-version=1.0" responded 404 in 20.4851 ms
+07/02/2021 23:21:02 +07:00 [Information] - Message: HTTP "DELETE" "/api/usercart/remove-from-cart?productId=9&api-version=1.0" responded 404 in 3.3934 ms
+07/02/2021 23:21:37 +07:00 [Information] - Message: HTTP "DELETE" "/api/carts/remove-from-cart?productId=9&api-version=1.0" responded 200 in 65.9366 ms
+07/02/2021 23:21:49 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 7.7724 ms
+07/02/2021 23:24:00 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/02/2021 23:24:02 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/02/2021 23:24:03 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 149.4154 ms
+07/02/2021 23:24:03 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 177.9428 ms
+07/02/2021 23:24:15 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 488.6036 ms
+07/02/2021 23:24:40 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 200.3607 ms
+07/02/2021 23:24:51 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=VUBULLSHIT&api-version=1.0" responded 404 in 26.7056 ms
+07/02/2021 23:25:02 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 13.2495 ms
+07/02/2021 23:25:21 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=7&api-version=1.0" responded 404 in 19.8052 ms

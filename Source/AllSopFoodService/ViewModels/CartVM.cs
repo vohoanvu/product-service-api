@@ -12,15 +12,8 @@ namespace AllSopFoodService.ViewModels
         public int CartId { get; set; }
         public string CartLabel { get; set; } = default!;
         public bool IsDiscounted { get; set; }
-        public string User { get; set; } = default!;
+        public int UserId { get; set; }
         public List<ProductsInCartsVM> ProductsInCart { get; set; }
-    }
-
-    public class CartSaves
-    {
-        public string CartLabel { get; set; } = default!;
-        public bool IsDiscounted { get; set; }
-        public string User { get; set; } = default!;
     }
 
     public class ProductsInCartsVM

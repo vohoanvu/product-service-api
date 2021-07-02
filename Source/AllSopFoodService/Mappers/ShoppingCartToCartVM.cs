@@ -29,7 +29,7 @@ namespace AllSopFoodService.Mappers
             destination.CartId = source.Id;
             destination.CartLabel = source.CartLabel;
             destination.IsDiscounted = source.IsDiscounted;
-            destination.User = source.UserName;
+            destination.UserId = source.UserId;
             destination.ProductsInCart = source.FoodProduct_Carts != null ? source.FoodProduct_Carts
                                             .Select(prodCart => new ProductsInCartsVM()
                                             {

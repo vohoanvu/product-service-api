@@ -11,7 +11,6 @@ namespace AllSopFoodService.Model
     {
         public int Id { get; set; }
         public string CartLabel { get; set; } = "Default Cart Label";
-        public string UserName { get; set; } = "Default User";
         public bool IsDiscounted { get; set; }
         // Navigation Properties
         public int? VoucherId { get; set; }

@@ -25,8 +25,16 @@ namespace AllSopFoodService.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterDto request)
         {
-            var response = await this.authRepo.Register(
-                new User() { UserName = request.Username }, request.Password).ConfigureAwait(true);
+            var userRegistration = new User()
+            {
+                UserName = request.Username,
+                Cart = new ShoppingCart()
+                {
+                    CartLabel = $"This Shopping Cart is owned by {request.Username}"
+                }
+            };
+
+            var response = await this.authRepo.Register(userRegistration, request.Password).ConfigureAwait(true);
 
             if (!response.Success)
             {

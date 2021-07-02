@@ -14,7 +14,6 @@ namespace AllSopFoodService
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using AllSopFoodService.Mappers;
-    using AllSopFoodService.Services.Interfaces;
     using AllSopFoodService.Repositories;
     using static System.Net.Mime.MediaTypeNames;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -64,7 +63,6 @@ namespace AllSopFoodService
                     .AddScoped<IProductsService, ProductsService>()
                     .AddScoped<ICartsService, CartsService>()
                     .AddScoped<ICategoryService, CategoryService>()
-                    .AddScoped<IProductsInCartsService, ProductsInCartsService>()
                     .AddCustomApiVersioning()
                     .AddServerTiming()
                     .AddControllers()

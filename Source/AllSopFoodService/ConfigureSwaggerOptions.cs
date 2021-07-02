@@ -1,5 +1,6 @@
 namespace AllSopFoodService
 {
+    using System;
     using AllSopFoodService.OperationFilters;
     using Boxed.AspNetCore.Swagger;
     using Boxed.AspNetCore.Swagger.OperationFilters;
@@ -37,11 +38,20 @@ namespace AllSopFoodService
             {
                 var info = new OpenApiInfo()
                 {
-                    Title = AssemblyInformation.Current.Product,
-                    Description = apiVersionDescription.IsDeprecated ?
-                        $"{AssemblyInformation.Current.Description} This API version has been deprecated." :
-                        AssemblyInformation.Current.Description,
+                    //Title = AssemblyInformation.Current.Product,
+                    //Description = apiVersionDescription.IsDeprecated ?
+                    //    $"{AssemblyInformation.Current.Description} This API version has been deprecated." :
+                    //    AssemblyInformation.Current.Description,
                     Version = apiVersionDescription.ApiVersion.ToString(),
+                    Title = "Vu Shopping Cart API",
+                    Description = "This project provides a set of web services APIs to perform Shopping Cart functionality, " +
+                    "Voucher application feature, as well as User Authentication",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Vu Vo",
+                        Email = "vohoanvu96@gmail.com",
+                        Url = new Uri("https://www.linkedin.com/in/thevuture/"),
+                    }
                 };
                 options.SwaggerDoc(apiVersionDescription.GroupName, info);
             }

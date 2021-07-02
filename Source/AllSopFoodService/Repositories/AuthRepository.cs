@@ -8,6 +8,7 @@ namespace AllSopFoodService.Repositories
     using System.Security.Claims;
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
+    using AllSopFoodService.Services;
     using AllSopFoodService.ViewModels;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -17,11 +18,13 @@ namespace AllSopFoodService.Repositories
     {
         private readonly FoodDBContext context;
         private readonly IConfiguration configuration;
+        private readonly ICartsService cartService;
 
-        public AuthRepository(FoodDBContext context, IConfiguration configuration)
+        public AuthRepository(FoodDBContext context, IConfiguration configuration, ICartsService cartService)
         {
             this.context = context;
             this.configuration = configuration;
+            this.cartService = cartService;
         }
 
 

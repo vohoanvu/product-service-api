@@ -12,6 +12,7 @@ namespace AllSopFoodService
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.IdentityModel.Tokens;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Http;
 
     /// <summary>
     /// <see cref="IServiceCollection"/> extension methods add project services.
@@ -42,11 +43,12 @@ namespace AllSopFoodService
 
         public static IServiceCollection AddProjectRepositories(this IServiceCollection services) =>
             services
-                .AddSingleton<ICarRepository, CarRepository>();
+                .AddSingleton<ICarRepository, CarRepository>()
+                .AddScoped<IAuthRepository, AuthRepository>();
 
         public static IServiceCollection AddProjectServices(this IServiceCollection services) =>
             services
                 .AddSingleton<IClockService, ClockService>()
-                .AddScoped<IAuthRepository, AuthRepository>();
+                .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     }
 }

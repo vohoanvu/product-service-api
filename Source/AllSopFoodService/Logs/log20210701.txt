@@ -304,3 +304,29 @@ Configure your application startup by adding app.UseAuthorization() inside the c
 07/01/2021 20:05:09 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 560.8742 ms
 07/01/2021 20:06:06 +07:00 [Information] - Message: This is a log test in GetAllFoodProducts Controller
 07/01/2021 20:06:06 +07:00 [Information] - Message: HTTP "GET" "/api/foodproducts?api-version=1.0" responded 200 in 155.0392 ms
+07/01/2021 23:40:28 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/01/2021 23:40:28 +07:00 [Error] - Message: Failed executing DbCommand ("74"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""CREATE TABLE [Categories] (
+    [Id] int NOT NULL IDENTITY,
+    [Label] nvarchar(max) NULL,
+    [IsAvailable] bit NOT NULL,
+    CONSTRAINT [PK_Categories] PRIMARY KEY ([Id])
+);"
+07/01/2021 23:41:15 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/01/2021 23:41:49 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/01/2021 23:41:50 +07:00 [Error] - Message: Failed executing DbCommand ("2"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""CREATE TABLE [Categories] (
+    [Id] int NOT NULL IDENTITY,
+    [Label] nvarchar(max) NULL,
+    [IsAvailable] bit NOT NULL,
+    CONSTRAINT [PK_Categories] PRIMARY KEY ([Id])
+);"
+07/01/2021 23:42:51 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/01/2021 23:43:25 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+07/01/2021 23:43:26 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+07/01/2021 23:43:28 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 209.7838 ms
+07/01/2021 23:43:28 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 193.6603 ms
+07/01/2021 23:45:50 +07:00 [Information] - Message: HTTP "GET" "/api/foodproducts?api-version=1.0" responded 200 in 414.3579 ms
+07/01/2021 23:47:02 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 400 in 117.3866 ms
+07/01/2021 23:54:45 +07:00 [Information] - Message: HTTP "POST" "/api/auth/register?api-version=1.0" responded 200 in 161.6921 ms
+07/01/2021 23:55:37 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 213.4815 ms

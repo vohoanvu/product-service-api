@@ -6,18 +6,29 @@ namespace AllSopFoodService.Controllers
     using System.Threading.Tasks;
     using AllSopFoodService.Services;
     using AllSopFoodService.ViewModels;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CartsController : Controller
     {
         private readonly ICartsService _cartService;
+        private readonly IProductsService _productService;
 
-        public CartsController(ICartsService cartService) => this._cartService = cartService;
+        public CartsController(ICartsService cartService, IProductsService productService)
+        {
+            this._cartService = cartService;
+            this._productService = productService;
+        }
 
+
+        // Get all the shopping carts created in the system
+        [AllowAnonymous]
         [HttpGet("get-all-user-carts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllCarts()
         {
             var response = await this._cartService.GetAllCarts().ConfigureAwait(true);
@@ -29,17 +40,21 @@ namespace AllSopFoodService.Controllers
             return this.Ok(response);
         }
 
+        //Create A New Cart request for the currently authenticated User, not gonna be used as much
         [HttpPost("add-new-cart")]
-        public IActionResult CreateNewCart([FromBody] CartSaves cart)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateNewCart()
         {
-            var res = this._cartService.CreateShoppingCart(cart);
+            var res = await this._cartService.CreateShoppingCart().ConfigureAwait(true);
             return this.Ok(res);
         }
 
-        [HttpGet("get-cart-with-products-by-id/{id}")]
-        public IActionResult GetCartWithProducts(int id)
+        //Get Cart with Products for the currently logged-in user
+        [HttpGet("get-user-cart-with-products")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetCartWithProducts()
         {
-            var response = this._cartService.GetCartWithProducts(id);
+            var response = this._cartService.GetCartWithProducts();
             if (response.Data == null)
             {
                 this.NotFound(response);
@@ -47,6 +62,7 @@ namespace AllSopFoodService.Controllers
             return this.Ok(response);
         }
 
+        // Helper service: Get Cart By Cart ID
         [HttpGet("get-cart-by-id")]
         public IActionResult GetCartById(int id)
         {
@@ -59,10 +75,92 @@ namespace AllSopFoodService.Controllers
             return this.Ok(res);
         }
 
-        //[HttpGet]
-        //public IActionResult GetCartByUserId(int userId)
-        //{
-        //    var id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-        //}
+        // Add a product to the cart owned by the currently logged-in User
+        [HttpPost("add-to-cart")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddToCartAsync(int productId)
+        {
+            // Still need to perform validation check for productId
+            // Check if the product is available in Stock (FoodProduct DB) first thing first!
+            var stockCheck = this._productService.IsFoodProductInStock(productId);
+            if (stockCheck.Data == null)
+            {
+                // The product does not exist
+                return this.NotFound(stockCheck);
+            }
+            if (!stockCheck.Success)
+            {
+                // The product exists, but out of stock
+                return this.NotFound(stockCheck);
+            }
+
+            var response = await this._cartService.AddToCart(productId).ConfigureAwait(true);
+            if (response.Data == null)
+            {
+                return this.NotFound(response);
+            }
+            //this._foodCatalogService.DecrementProductStockUnit(productId);
+
+            return this.Ok(response);
+        }
+
+        // Delete a Product from the Cart owned by the currenly logged-in User
+        [HttpDelete("remove-from-cart")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoveFromCartAsync(int productId)
+        {
+            var stockCheck = this._productService.IsFoodProductInStock(productId);
+            if (stockCheck.Data == null)
+            {
+                // The product does not exist
+                return this.NotFound(stockCheck);
+            }
+            if (!stockCheck.Success)
+            {
+                // The product exists, but out of stock
+                return this.NotFound(stockCheck);
+            }
+
+            var response = await this._cartService.RemoveFromCart(productId).ConfigureAwait(true);
+            if (response.Data == null)
+            {
+                return this.NotFound(response);
+            }
+
+            return this.Ok(response);
+        }
+
+
+        // This project assume only 1 coupon can be applied to the cart at a time
+        // Apply a voucher code to the Cart owned by currently authenticated user
+        [HttpPut("applyVoucher")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ApplyVoucherToCart(string voucherCode)
+        {
+            //perform validation check for Cart here 
+
+            var response = await this._cartService.ApplyVoucherToCart(voucherCode).ConfigureAwait(true);
+            if (response.Data == null)
+            {
+                return this.NotFound(response);
+            }
+
+            return this.Ok(response);
+        }
+
+
+        // Get the Total Price for the Shopping Cart owned by the currently authenticated User
+        [HttpGet("total")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetTotalPrice()
+        {
+            var response = this._cartService.GetTotal();
+            if (response.Success == false)
+            {
+                this.NotFound(response);
+            }
+
+            return this.Ok(response);
+        }
     }
 }

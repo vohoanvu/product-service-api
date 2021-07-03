@@ -8,7 +8,9 @@ namespace AllSopFoodService.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using AllSopFoodService.Model;
+    using Microsoft.AspNetCore.Authorization;
 
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PromotionsController : ControllerBase

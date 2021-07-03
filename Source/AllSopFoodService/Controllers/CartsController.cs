@@ -29,6 +29,7 @@ namespace AllSopFoodService.Controllers
         [AllowAnonymous]
         [HttpGet("get-all-user-carts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllCarts()
         {
             var response = await this._cartService.GetAllCarts().ConfigureAwait(true);
@@ -43,15 +44,21 @@ namespace AllSopFoodService.Controllers
         //Create A New Cart request for the currently authenticated User, not gonna be used as much
         [HttpPost("add-new-cart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateNewCart()
         {
             var res = await this._cartService.CreateShoppingCart().ConfigureAwait(true);
+            if (!res.Success)
+            {
+                this.BadRequest(res);
+            }
             return this.Ok(res);
         }
 
         //Get Cart with Products for the currently logged-in user
         [HttpGet("get-user-cart-with-products")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCartWithProducts()
         {
             var response = this._cartService.GetCartWithProducts();
@@ -64,6 +71,8 @@ namespace AllSopFoodService.Controllers
 
         // Helper service: Get Cart By Cart ID
         [HttpGet("get-cart-by-id")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCartById(int id)
         {
             var res = this._cartService.GetCartById(id);
@@ -78,6 +87,9 @@ namespace AllSopFoodService.Controllers
         // Add a product to the cart owned by the currently logged-in User
         [HttpPost("add-to-cart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddToCartAsync(int productId)
         {
             // Still need to perform validation check for productId
@@ -86,7 +98,7 @@ namespace AllSopFoodService.Controllers
             if (stockCheck.Data == null)
             {
                 // The product does not exist
-                return this.NotFound(stockCheck);
+                return this.BadRequest(stockCheck);
             }
             if (!stockCheck.Success)
             {
@@ -97,7 +109,7 @@ namespace AllSopFoodService.Controllers
             var response = await this._cartService.AddToCart(productId).ConfigureAwait(true);
             if (response.Data == null)
             {
-                return this.NotFound(response);
+                return this.BadRequest(response);
             }
             //this._foodCatalogService.DecrementProductStockUnit(productId);
 
@@ -107,13 +119,16 @@ namespace AllSopFoodService.Controllers
         // Delete a Product from the Cart owned by the currenly logged-in User
         [HttpDelete("remove-from-cart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoveFromCartAsync(int productId)
         {
             var stockCheck = this._productService.IsFoodProductInStock(productId);
             if (stockCheck.Data == null)
             {
                 // The product does not exist
-                return this.NotFound(stockCheck);
+                return this.BadRequest(stockCheck);
             }
             if (!stockCheck.Success)
             {
@@ -135,6 +150,7 @@ namespace AllSopFoodService.Controllers
         // Apply a voucher code to the Cart owned by currently authenticated user
         [HttpPut("applyVoucher")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> ApplyVoucherToCart(string voucherCode)
         {
             //perform validation check for Cart here 
@@ -142,7 +158,7 @@ namespace AllSopFoodService.Controllers
             var response = await this._cartService.ApplyVoucherToCart(voucherCode).ConfigureAwait(true);
             if (response.Data == null)
             {
-                return this.NotFound(response);
+                return this.Conflict(response);
             }
 
             return this.Ok(response);
@@ -152,6 +168,7 @@ namespace AllSopFoodService.Controllers
         // Get the Total Price for the Shopping Cart owned by the currently authenticated User
         [HttpGet("total")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetTotalPrice()
         {
             var response = this._cartService.GetTotal();

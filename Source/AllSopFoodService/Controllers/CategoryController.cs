@@ -6,6 +6,7 @@ namespace AllSopFoodService.Controllers
     using System.Threading.Tasks;
     using AllSopFoodService.Services;
     using AllSopFoodService.ViewModels;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
     [Route("api/[controller]")]
@@ -17,6 +18,8 @@ namespace AllSopFoodService.Controllers
         public CategoryController(ICategoryService categoryService) => this._categoryService = categoryService;
 
         [HttpGet("get-all-categories")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetAllCategories(string? sortBy, string? searchString, int? pageNum)
         {
             try
@@ -34,13 +37,20 @@ namespace AllSopFoodService.Controllers
         }
 
         [HttpPost("add-category")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult AddCategory([FromBody] CategoryVM category)
         {
+            if (category == null)
+            {
+                return this.BadRequest(category);
+            }
             this._categoryService.CreateCategory(category);
             return this.Ok();
         }
 
         [HttpGet("get-category-data/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetCategoryData(int id)
         {
             var response = this._categoryService.GetCategoryData(id);
@@ -50,6 +60,7 @@ namespace AllSopFoodService.Controllers
 
 
         [HttpDelete("delete-category/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult DeleteCategoryById(int id)
         {
             this._categoryService.DeleteCategoryById(id);

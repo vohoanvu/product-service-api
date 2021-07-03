@@ -40,7 +40,9 @@ namespace AllSopFoodService.Controllers
         // PUT: api/Promotions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutPromotionAsync(int id, Promotion promotion)
         {
             if (id != promotion.Id)
@@ -84,6 +86,7 @@ namespace AllSopFoodService.Controllers
         // DELETE: api/Promotions/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeletePromotionAsync(int id)
         {
             var promotion = await this._context.CouponCodes.FindAsync(id).ConfigureAwait(true);

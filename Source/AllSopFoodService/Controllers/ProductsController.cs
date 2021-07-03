@@ -17,7 +17,6 @@ namespace AllSopFoodService.Controllers
     using Microsoft.AspNetCore.Authorization;
     using System.Security.Claims;
 
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -32,9 +31,9 @@ namespace AllSopFoodService.Controllers
         }
 
         // GET: api/FoodProducts
-        [AllowAnonymous]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
         public async Task<IActionResult> GetFoodProducts(string sortBy, string searchString, int pageNum, int pageSize)
         {
@@ -50,6 +49,8 @@ namespace AllSopFoodService.Controllers
 
         // GET: api/FoodProducts/5
         [HttpGet("get-single/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetFoodProductById(int id)
         {
             var response = await this._foodItemService.GetFoodProductById(id).ConfigureAwait(true);
@@ -63,8 +64,16 @@ namespace AllSopFoodService.Controllers
         // PUT: api/FoodProducts/5
         // This Update request might need refactoring
         [HttpPut("update-product")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateFoodProduct(int id, ProductSaves foodProduct)
         {
+            var productExist = this._foodItemService.IsFoodProductInStock(id).Data;
+            if (productExist == null)
+            {
+                return this.BadRequest(productExist);
+            }
             var response = await this._foodItemService.UpdateFoodProduct(id, foodProduct).ConfigureAwait(true);
             if (response.Data == null)
             {
@@ -78,6 +87,8 @@ namespace AllSopFoodService.Controllers
         //POST: api/FoodProducts
         //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("add-product")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddFoodProduct([FromBody] ProductSaves foodProduct)
         {
             if (foodProduct == null)
@@ -93,6 +104,8 @@ namespace AllSopFoodService.Controllers
 
         // DELETE: api/FoodProducts/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteFoodProduct(int id)
         {
             var response = await this._foodItemService.RemoveFoodProductById(id).ConfigureAwait(true);

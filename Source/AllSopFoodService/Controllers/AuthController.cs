@@ -23,6 +23,8 @@ namespace AllSopFoodService.Controllers
         }
 
         [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(UserRegisterDto request)
         {
             var userRegistration = new User()
@@ -45,6 +47,8 @@ namespace AllSopFoodService.Controllers
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(UserLoginDto request)
         {
             var response = await this.authRepo.Login(request.Username, request.Password).ConfigureAwait(true);

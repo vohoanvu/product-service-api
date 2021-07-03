@@ -6,7 +6,7 @@
 
 Project Description
 
-Initially, I developed this RESTful API service for a B2B foodservice customer, but this personal project also serves as my learning playground to explore .NET Core API development. 
+This personal project is RESTful API service for any eCommerce store application, it also serves as my learning playground to explore .NET Core API development. 
 This project was developed using .NET 5 technology/Boxed API template, and deployed to Azure App Service.
 The sample database design was meant for a food service store database, but it can be customized and used with any type of commercial products by modifying Products and Categories entities.
 

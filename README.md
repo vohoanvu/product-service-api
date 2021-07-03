@@ -15,12 +15,8 @@ Feel free to test my API at the following URL:
 
 
 There are six pre-defined different categories of items: 
-- Meat & Poultry, 
-- Fruit & Vegetables, 
-- Drinks, 
-- Confectionary & Desserts, 
-- Baking/Cooking Ingredients,
-- and Miscellaneous Items.
+- Meat & Poultry, Fruit & Vegetables, Drinks, Confectionary & Desserts, Baking/Cooking Ingredients, and Miscellaneous Items.
+
 
 
 - You can also perform CRUD operations on the Categories entity to create new category as needed.

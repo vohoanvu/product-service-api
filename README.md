@@ -1,4 +1,4 @@
-# AllSop Food Service
+# Vu Product Shopping Cart Service
 
 [![GitHub Actions Status](https://github.com/Username/Project/workflows/Build/badge.svg?branch=main)](https://github.com/Username/Project/actions)
 

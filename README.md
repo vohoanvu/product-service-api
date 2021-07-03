@@ -6,20 +6,36 @@
 
 Project Description
 
-I’ve been asked to develop a RESTful API for a B2B foodservice customer, to be consumed by both an Angular web app and a Xamarin mobile app.
+Initially, I developed this RESTful API service for a B2B foodservice customer, but this personal project also serves as my learning playground to explore .NET Core API development. 
+This project was developed using .NET 5 technology/Boxed API template, and deployed to Azure App Service.
+The sample database design was meant for a food service store database, but it can be customized and used with any type of commercial products by modifying Products and Categories entities.
 
-The customer sells six different categories of items: Meat & Poultry, Fruit & Vegetables, Drinks, Confectionary & Desserts, Baking/Cooking Ingredients and Miscellaneous Items.
+Feel free to test my API at the following URL:
+- https://vuproductshoppingcartapi.azurewebsites.net/index.html
 
-The API that you develop should provide sufficient endpoints so that the clients are able to easily display all of the available products, as well as provide shopping cart functionality to which the products can be added, removed or have quantities updated.
+
+There are six pre-defined different categories of items: 
+- Meat & Poultry, 
+- Fruit & Vegetables, 
+- Drinks, 
+- Confectionary & Desserts, 
+- Baking/Cooking Ingredients,
+- and Miscellaneous Items.
 
 
-There are also promotions that are currently running. These are as follows:
+- You can also perform CRUD operations on the Categories entity to create new category as needed.
+- My set of API should provide sufficient endpoints so that the clients are able to easily display all of the available products, as well as provide shopping cart functionality to which the products can be added, removed or have quantities updated.
+- This project also implemented User Authentication mechanism that allows User to register and login.
+- Upon successful login, authenticated user can obtain an JWT strings, which can be used to authorize users to perform Shopping Cart related feature, such as: adding/removing a product to your cart, applying a discount voucher to your cart.
 
-• Get 10% off bulk drinks – any drinks are 10% off the listed price (including already reduced items) when buying 10 or more
 
-• £5.00 off your order when spending £50.00 or more on Baking/Cooking Ingredients
+Additionally, There are also promotions that are currently running. These are as follows:
 
-• £20.00 off your total order value when spending £100.00 or more and using the code “20OFFPROMO”
+• Get 10% off bulk drinks – any drinks are 10% off the listed price (including already reduced items) when buying 10 or more using the code "10OFFPROMODRI"
+
+• £5.00 off your order when spending £50.00 or more on Baking/Cooking Ingredients using the code "5OFFPROMOALL"
+
+• £20.00 off your total order value when spending £100.00 or more and using the code “20OFFPROMOAA”
 
 
 The prioritised list of user stories is as follows:
@@ -34,14 +50,8 @@ The prioritised list of user stories is as follows:
 
 
 
-I created this project template with .NET Core API Boxed template. These API are not yet published online since i'm still refactoring them.
 
 List of possible code improvement:
 
 - Repositories Layers
 - Refactor according to .net core api Boxed template
-- Use GetModelDto/AddModelDto for view models and possibly use AutoMapper() (not effective)
-- User Authentication (User Model and its equivalent relationships)
-- Eager Loading and Explicit Loading for optimized DB queries:
-- context.Entry(entity).Reference(u => u.RelatedEntity).Load();
-- context.Entity.Include(u => u.RelatedEntity).ThenInclude(re => re.SubRelatedEntity)

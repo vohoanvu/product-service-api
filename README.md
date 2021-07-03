@@ -19,6 +19,8 @@ There are six pre-defined different categories of items:
 
 
 
+
+
 You can also perform CRUD operations on the Categories entity to create new category as needed.
 
 My set of API should provide sufficient endpoints so that the clients are able to easily display all of the available products, as well as provide shopping cart functionality to which the products can be added, removed or have quantities updated.

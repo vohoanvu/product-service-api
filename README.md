@@ -19,10 +19,10 @@ There are six pre-defined different categories of items:
 
 
 
-- You can also perform CRUD operations on the Categories entity to create new category as needed.
-- My set of API should provide sufficient endpoints so that the clients are able to easily display all of the available products, as well as provide shopping cart functionality to which the products can be added, removed or have quantities updated.
-- This project also implemented User Authentication mechanism that allows User to register and login.
-- Upon successful login, authenticated user can obtain an JWT strings, which can be used to authorize users to perform Shopping Cart related feature, such as: adding/removing a product to your cart, applying a discount voucher to your cart.
+You can also perform CRUD operations on the Categories entity to create new category as needed.
+My set of API should provide sufficient endpoints so that the clients are able to easily display all of the available products, as well as provide shopping cart functionality to which the products can be added, removed or have quantities updated.
+This project also implemented User Authentication mechanism that allows User to register and login.
+Upon successful login, authenticated user can obtain an JWT strings, which can be used to authorize users to perform Shopping Cart related feature, such as: adding/removing a product to your cart, applying a discount voucher to your cart.
 
 
 Additionally, There are also promotions that are currently running. These are as follows:

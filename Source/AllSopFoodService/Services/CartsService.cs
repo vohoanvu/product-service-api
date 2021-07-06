@@ -8,6 +8,7 @@ namespace AllSopFoodService.Services
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
     using AllSopFoodService.ViewModels;
+    using AllSopFoodService.ViewModels.UserAuth;
     using Boxed.Mapping;
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
@@ -422,5 +423,53 @@ namespace AllSopFoodService.Services
         }
 
         private bool CheckVoucherExists(string code) => this._db.CouponCodes.Any(promo => promo.CouponCode == code);
+
+        public ServiceResponse<bool> DeleteUserAccount(int userId)
+        {
+            var response = new ServiceResponse<bool>();
+
+            var currentUser = this._db.Users.FirstOrDefault(u => u.Id == userId);
+            if (currentUser == null)
+            {
+                response.Data = false;
+                response.Success = false;
+                response.Message = "The User account with this Id does not exist!";
+
+                return response;
+            }
+
+            this._db.Users.Remove(currentUser);
+            this._db.SaveChanges();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "This User has been deleted successfully";
+
+            return response;
+        }
+
+
+        public async Task<ServiceResponse<List<UserAccountVM>>> GetAllUsers()
+        {
+            var response = new ServiceResponse<List<UserAccountVM>>();
+            try
+            {
+                var allusers = await this._db.Users.Select(u => new UserAccountVM()
+                {
+                    UserId = u.Id,
+                    Username = u.UserName
+                }).ToListAsync().ConfigureAwait(true);
+
+                response.Data = allusers;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
     }
 }

@@ -6,6 +6,7 @@ namespace AllSopFoodService.Services
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
     using AllSopFoodService.ViewModels;
+    using AllSopFoodService.ViewModels.UserAuth;
 
     public interface ICartsService
     {
@@ -28,5 +29,8 @@ namespace AllSopFoodService.Services
         Task<ServiceResponse<VoucherResponseModel>> ApplyVoucherToCart(string voucherCode);
         // Get the Total Price for the Shopping Cart owned by the currently authenticated User
         ServiceResponse<decimal> GetTotal();
+        // Delete A User Account, along with his/her cart
+        ServiceResponse<bool> DeleteUserAccount(int userId);
+        Task<ServiceResponse<List<UserAccountVM>>> GetAllUsers();
     }
 }

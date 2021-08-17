@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AllSopFoodService.Migrations
 {
-    public partial class DBrecreated : Migration
+    public partial class localDbSchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -98,7 +98,6 @@ namespace AllSopFoodService.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CartLabel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDiscounted = table.Column<bool>(type: "bit", nullable: false),
                     VoucherId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)

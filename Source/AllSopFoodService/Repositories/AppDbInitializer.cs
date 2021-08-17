@@ -1,3 +1,4 @@
+#nullable disable
 namespace AllSopFoodService.Repositories
 {
     using System;
@@ -17,9 +18,7 @@ namespace AllSopFoodService.Repositories
                 var context = serviceScope.ServiceProvider.GetService<FoodDBContext>();
 
                 //seeding Products data
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 if (!context.Products.Any())
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 {
                     context.Products.AddRange(new Product()
                     {

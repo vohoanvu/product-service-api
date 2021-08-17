@@ -10,15 +10,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AllSopFoodService.Migrations
 {
     [DbContext(typeof(FoodDBContext))]
-    [Migration("20210701101239_DBrecreated")]
-    partial class DBrecreated
+    [Migration("20210817180224_localDbSchema")]
+    partial class localDbSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.7")
+                .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("AllSopFoodService.Model.Category", b =>
@@ -203,9 +203,6 @@ namespace AllSopFoodService.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("VoucherId")
                         .HasColumnType("int");

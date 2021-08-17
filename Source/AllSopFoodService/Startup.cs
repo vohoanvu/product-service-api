@@ -76,8 +76,9 @@ namespace AllSopFoodService
                     .AddProjectMappers()
                     .AddProjectRepositories()
                     .AddProjectServices()
-                    .AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")))
                     .AddDistributedMemoryCache().AddSession().AddMvc();
+
+            services.AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters

@@ -13,6 +13,7 @@ namespace AllSopFoodService
     using Microsoft.IdentityModel.Tokens;
     using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.Http;
+    using AllSopFoodService.Repositories.Interfaces;
 
     /// <summary>
     /// <see cref="IServiceCollection"/> extension methods add project services.
@@ -44,11 +45,19 @@ namespace AllSopFoodService
         public static IServiceCollection AddProjectRepositories(this IServiceCollection services) =>
             services
                 .AddSingleton<ICarRepository, CarRepository>()
-                .AddScoped<IAuthRepository, AuthRepository>();
+                .AddScoped<IAuthRepository, AuthRepository>()
+                .AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>))
+                .AddScoped<IProductRepository, ProductRepository>()
+                .AddScoped<ICategoryRepository, CategoryRepository>()
+                .AddScoped<ICartRepository, ShoppingCartRepository>()
+                .AddScoped<IUnitOfWork, UnitOfWork>();
 
         public static IServiceCollection AddProjectServices(this IServiceCollection services) =>
             services
                 .AddSingleton<IClockService, ClockService>()
-                .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+                .AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
+                .AddScoped<IProductsService, ProductsService>()
+                .AddScoped<ICartsService, CartsService>()
+                .AddScoped<ICategoryService, CategoryService>();
     }
 }

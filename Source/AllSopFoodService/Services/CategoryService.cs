@@ -1,3 +1,4 @@
+#nullable disable
 namespace AllSopFoodService.Services
 {
     using System;
@@ -34,30 +35,9 @@ namespace AllSopFoodService.Services
             this._db.SaveChanges();
         }
 
-        public List<Category> GetAllCategories(string? sortBy, string? searchString, int? pageNum)
+        public List<Category> GetAllCategories()
         {
             var allCategories = this._db.Categories.OrderBy(n => n.Label).ToList();
-
-            if (!string.IsNullOrEmpty(sortBy))
-            {
-                switch (sortBy)
-                {
-                    case "label_desc":
-                        allCategories = allCategories.OrderByDescending(n => n.Label).ToList();
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                allCategories = allCategories.Where(n => n.Label.Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
-            }
-
-            //Server Side Paging
-            //var pageSize = 3;
-            //allCategories = PaginatedList<Category>.Create(allCategories.AsQueryable(), pageNum ?? 1, pageSize);
 
             return allCategories;
         }
@@ -71,9 +51,7 @@ namespace AllSopFoodService.Services
                                                         Products = c.FoodProducts.Select(fp => this.productMapper.Map(fp)).ToList()
                                                     }).FirstOrDefault();
 
-#pragma warning disable CS8603 // Possible null reference return.
             return categoryData;
-#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public void DeleteCategoryById(int id)

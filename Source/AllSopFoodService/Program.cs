@@ -38,9 +38,7 @@ namespace AllSopFoodService
                     hostEnvironment.EnvironmentName);
                 return 0;
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception exception)
-#pragma warning restore CA1031 // Do not catch general exception types
             {
                 if (hostEnvironment is null)
                 {

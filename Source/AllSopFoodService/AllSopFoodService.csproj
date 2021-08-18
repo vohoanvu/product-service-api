@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\CarsController.cs" />
-    <Compile Remove="Models\CartItem.cs" />
+    <Compile Remove="Model\CartItem.cs" />
     <Compile Remove="Services\CartItemService.cs" />
     <Compile Remove="Services\Interfaces\ICartItemService.cs" />
   </ItemGroup>

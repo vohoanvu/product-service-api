@@ -20,11 +20,11 @@ namespace AllSopFoodService.Controllers
         [HttpGet("get-all-categories")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAllCategories(string? sortBy, string? searchString, int? pageNum)
+        public IActionResult GetAllCategories()
         {
             try
             {
-                var allCategories = this._categoryService.GetAllCategories(sortBy, searchString, pageNum);
+                var allCategories = this._categoryService.GetAllCategories();
 
                 return this.Ok(allCategories);
             }

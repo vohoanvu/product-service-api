@@ -11,7 +11,7 @@ namespace AllSopFoodService.Services
     {
         void CreateCategory(CategoryVM cartegory);
 
-        List<Category> GetAllCategories(string? sortBy, string? searchString, int? pageNum);
+        List<Category> GetAllCategories();
 
         CategoryWithProducts GetCategoryData(int categoryId);
 

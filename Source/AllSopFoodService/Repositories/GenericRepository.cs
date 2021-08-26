@@ -30,5 +30,27 @@ namespace AllSopFoodService.Repositories
         public void DeleteRange(IEnumerable<T> entities) => this.context.Set<T>().RemoveRange(entities);
 
         public void Update(T entity) => this.context.Set<T>().Update(entity);
+
+        public async Task<IEnumerable<T>> EntitiesWithEagerLoad(Expression<Func<T, bool>>? filter, string[] children)
+        {
+            try
+            {
+                IQueryable<T> query = this.context.Set<T>();
+                foreach (var entity in children)
+                {
+                    query = query.Include(entity);
+                }
+
+                if (filter != null)
+                {
+                    return await query.Where(filter).ToListAsync().ConfigureAwait(true);
+                }
+                return await query.ToListAsync().ConfigureAwait(true);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace AllSopFoodService.Repositories.Interfaces
         IProductRepository Products { get; }
         ICategoryRepository Categories { get; }
         ICartRepository ShoppingCarts { get; }
+        //still need interface for FoodProduct_ShoppingCart entity
+        IProductinShoppingCartRepository ProductsInCarts { get; }
         int Complete();
     }
 }

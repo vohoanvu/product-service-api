@@ -22,5 +22,7 @@ namespace AllSopFoodService.Repositories.Interfaces
         void DeleteRange(IEnumerable<T> entities);
 
         void Update(T entity);
+
+        Task<IEnumerable<T>> EntitiesWithEagerLoad(Expression<Func<T, bool>>? filter, string[] children);
     }
 }

@@ -8,17 +8,9 @@ namespace AllSopFoodService.Repositories.Interfaces
 
     public interface IProductRepository : IGenericRepository<Product>
     {
-        IEnumerable<Product> GetAllProductsData();
-
-        //Product GetSingleProduct(int productId);
-
-        //void CreateProduct(Product newProduct);
-
+        Task<IEnumerable<Product>> GetAllProductsWithEagerLoad();
+        Task<Product> GetProductWithEagerLoad(int productId);
         IEnumerable<Product> SearchProducts(string searchString);
         bool CheckProductExist(int productId);
-
-        //void UpdateFoodProduct(Product product);
-
-        //void RemoveProductById(int productId);
     }
 }

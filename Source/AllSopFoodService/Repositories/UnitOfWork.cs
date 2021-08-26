@@ -15,12 +15,15 @@ namespace AllSopFoodService.Repositories
         public ICategoryRepository Categories { get; private set; }
         public ICartRepository ShoppingCarts { get; private set; }
 
+        public IProductinShoppingCartRepository ProductsInCarts { get; private set; }
+
         public UnitOfWork(FoodDBContext context)
         {
             this.context = context;
             this.Products = new ProductRepository(context);
             this.Categories = new CategoryRepository(context);
             this.ShoppingCarts = new ShoppingCartRepository(context);
+            this.ProductsInCarts = new ProductinShoppingCartRepository(context);
         }
 
         public int Complete() => this.context.SaveChanges();

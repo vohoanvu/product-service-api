@@ -6,8 +6,8 @@ namespace AllSopFoodService.Repositories.Interfaces
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
 
-    public interface ICategoryRepository : IGenericRepository<Category>
+    public interface IProductinShoppingCartRepository : IGenericRepository<FoodProduct_ShoppingCart>
     {
-        IQueryable<Category> GetCategoryDataWithEagerLoad(int id);
+
     }
 }

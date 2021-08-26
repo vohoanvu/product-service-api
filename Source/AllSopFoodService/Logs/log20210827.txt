@@ -1,0 +1,53 @@
+08/27/2021 00:29:31 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+08/27/2021 00:29:32 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+08/27/2021 00:29:33 +07:00 [Information] - Message: HTTP "GET" "/" responded 301 in 40.7387 ms
+08/27/2021 00:29:33 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 96.1962 ms
+08/27/2021 00:29:33 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui.css" responded 200 in 13.8685 ms
+08/27/2021 00:29:33 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js" responded 200 in 400.4640 ms
+08/27/2021 00:29:34 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-bundle.js" responded 200 in 1586.0639 ms
+08/27/2021 00:29:36 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-bundle.js.map" responded 404 in 3.4196 ms
+08/27/2021 00:29:36 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js.map" responded 404 in 3.4531 ms
+08/27/2021 00:29:36 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 177.5068 ms
+08/27/2021 00:29:53 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 436.8629 ms
+08/27/2021 00:30:08 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-all-user-carts?api-version=1.0" responded 200 in 186.4547 ms
+08/27/2021 00:30:23 +07:00 [Information] - Message: HTTP "GET" "/api/products?api-version=1.0" responded 200 in 59.4975 ms
+08/27/2021 00:30:41 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=1&api-version=1.0" responded 200 in 175.2113 ms
+08/27/2021 00:30:44 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=1&api-version=1.0" responded 200 in 111.8580 ms
+08/27/2021 00:30:51 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=3&api-version=1.0" responded 200 in 6.0563 ms
+08/27/2021 00:30:53 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=3&api-version=1.0" responded 200 in 5.7188 ms
+08/27/2021 00:30:56 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=3&api-version=1.0" responded 200 in 7.3977 ms
+08/27/2021 00:31:01 +07:00 [Information] - Message: HTTP "POST" "/api/carts/add-to-cart?productId=6&api-version=1.0" responded 200 in 6.2521 ms
+08/27/2021 00:31:10 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 23.3584 ms
+08/27/2021 00:32:23 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-cart-by-id?id=2&api-version=1.0" responded 200 in 53.7858 ms
+08/27/2021 00:32:32 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 10.7767 ms
+08/27/2021 00:32:43 +07:00 [Information] - Message: HTTP "GET" "/api/promotions?api-version=1.0" responded 200 in 18.8899 ms
+08/27/2021 00:33:13 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=5OFFPROMOALL&api-version=1.0" responded 200 in 74.3573 ms
+08/27/2021 00:33:26 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 2.3637 ms
+08/27/2021 00:33:56 +07:00 [Information] - Message: HTTP "GET" "/api/promotions?api-version=1.0" responded 200 in 12.7137 ms
+08/27/2021 00:34:16 +07:00 [Information] - Message: HTTP "GET" "/api/promotions?api-version=1.0" responded 200 in 4.6282 ms
+08/27/2021 00:34:39 +07:00 [Information] - Message: HTTP "DELETE" "/api/carts/remove-from-cart?productId=6&api-version=1.0" responded 200 in 46.7049 ms
+08/27/2021 00:34:50 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 2.0030 ms
+08/27/2021 00:35:01 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=5OFFPROMOALL&api-version=1.0" responded 200 in 5.5256 ms
+08/27/2021 00:35:14 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=5OFFPROMOALL&api-version=1.0" responded 200 in 3.8053 ms
+08/27/2021 00:35:51 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 11.8663 ms
+08/27/2021 00:37:27 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 11.0034 ms
+08/27/2021 00:37:32 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 2.8956 ms
+08/27/2021 00:38:11 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 12.7120 ms
+08/27/2021 00:38:21 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=5OFFPROMOALLVu&api-version=1.0" responded 409 in 4.3993 ms
+08/27/2021 00:38:36 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 3.1108 ms
+08/27/2021 00:38:51 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=5OFFPROMOALL&api-version=1.0" responded 200 in 3.5986 ms
+08/27/2021 00:39:07 +07:00 [Information] - Message: HTTP "GET" "/api/category/get-all-categories?api-version=1.0" responded 200 in 12.0446 ms
+08/27/2021 00:42:53 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+08/27/2021 00:42:54 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+08/27/2021 00:42:55 +07:00 [Information] - Message: HTTP "GET" "/" responded 301 in 35.4665 ms
+08/27/2021 00:42:55 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 96.0930 ms
+08/27/2021 00:42:55 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui.css" responded 200 in 12.7905 ms
+08/27/2021 00:42:55 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js" responded 200 in 376.1767 ms
+08/27/2021 00:42:56 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-bundle.js" responded 200 in 1513.3200 ms
+08/27/2021 00:42:57 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-bundle.js.map" responded 404 in 3.1155 ms
+08/27/2021 00:42:57 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js.map" responded 404 in 0.3176 ms
+08/27/2021 00:42:58 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 182.4734 ms
+08/27/2021 00:43:15 +07:00 [Information] - Message: HTTP "POST" "/api/auth/login?api-version=1.0" responded 200 in 416.2874 ms
+08/27/2021 00:43:31 +07:00 [Information] - Message: HTTP "GET" "/api/carts/get-user-cart-with-products?api-version=1.0" responded 200 in 155.7081 ms
+08/27/2021 00:43:38 +07:00 [Information] - Message: HTTP "GET" "/api/carts/total?api-version=1.0" responded 200 in 7.8347 ms
+08/27/2021 00:44:20 +07:00 [Information] - Message: HTTP "PUT" "/api/carts/applyvoucher?voucherCode=5OFFPROMOALL&api-version=1.0" responded 200 in 26.4157 ms

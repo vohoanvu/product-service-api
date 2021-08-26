@@ -7,6 +7,7 @@ namespace AllSopFoodService.Services
     using System.Security.Claims;
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
+    using AllSopFoodService.Repositories.Interfaces;
     using AllSopFoodService.ViewModels;
     using AllSopFoodService.ViewModels.UserAuth;
     using Boxed.Mapping;
@@ -19,13 +20,15 @@ namespace AllSopFoodService.Services
         private readonly IMapper<ShoppingCart, CartVM> cartMapper;
         private readonly IMapper<Product, FoodProductVM> productMapper;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IUnitOfWork unitOfWork;
 
-        public CartsService(FoodDBContext dbcontext, IMapper<ShoppingCart, CartVM> mapper, IMapper<Product, FoodProductVM> mapper1, IHttpContextAccessor httpContextAccessor)
+        public CartsService(FoodDBContext dbcontext, IMapper<ShoppingCart, CartVM> mapper, IMapper<Product, FoodProductVM> mapper1, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
         {
             this._db = dbcontext;
             this.cartMapper = mapper;
             this.productMapper = mapper1;
             this.httpContextAccessor = httpContextAccessor;
+            this.unitOfWork = unitOfWork;
         }
 
         //since each cart is associated with a specific user, we're gonna need lots of User Id
@@ -34,15 +37,15 @@ namespace AllSopFoodService.Services
         // Create a new cart for the currently logged-in user
         // I really just need to a UserID to be able to create a new cart,
         // need to pass in newUserId since the new Id might have not been created yet
-        public async Task<ServiceResponse<ShoppingCart>> CreateShoppingCart()
+        public ServiceResponse<ShoppingCart> CreateShoppingCart()
         {
             var response = new ServiceResponse<ShoppingCart>();
             var currentUser = this.GetUserId();
             // need to check if the new User has already been assigned a Shopping Cart
-            var cartExist = await this._db.ShoppingCarts.AnyAsync(c => c.UserId == currentUser).ConfigureAwait(true);
+            var cartExist = this.unitOfWork.ShoppingCarts.CheckUserCart(currentUser);
             if (cartExist)
             {
-                response.Data = this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts).FirstOrDefault(c => c.UserId == currentUser);
+                response.Data = this.unitOfWork.ShoppingCarts.GetShoppingCartByUserId(currentUser);
                 response.Success = false;
                 response.Message = $"The User with ID {currentUser} was already assigned a Shopping Cart";
 
@@ -56,15 +59,16 @@ namespace AllSopFoodService.Services
                 UserId = currentUser
             };
 
-            this._db.ShoppingCarts.Add(newcart);
-            this._db.SaveChanges();
-            // I cannot believe this works LOL, without using: db.Entry(MyNewObject).GetDatabaseValues();
-            //var newCartId = newcart.Id;
+            //this._db.ShoppingCarts.Add(newcart);
+            //this._db.SaveChanges();
+            this.unitOfWork.ShoppingCarts.Add(newcart);
+            this.unitOfWork.Complete();
+
+
             //perhaps a ServiceResponse wrapper here is way over the top
-            response.Data = this._db.ShoppingCarts.FirstOrDefault(c => c.UserId == currentUser);
+            response.Data = this.unitOfWork.ShoppingCarts.GetShoppingCartByUserId(currentUser);
             response.Success = true;
             response.Message = "A new shopping cart has also been created for this currently authenticated User";
-            //Data = this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts.Where(joint => joint.CartId == newcart.Id)).Select(cart => this.cartMapper.Map(cart)).ToList()
 
             return response;
         }
@@ -75,8 +79,7 @@ namespace AllSopFoodService.Services
 
             try
             {
-                var allUserCarts = await this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts)
-                                                .ThenInclude(u => u.FoodProduct)
+                var allUserCarts = await this.unitOfWork.ShoppingCarts.GetAllCartsWithProductData()
                                                 .Select(cart => this.cartMapper.Map(cart))
                                                 .ToListAsync().ConfigureAwait(true);
                 //var allUserCarts = await this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts).Select(cart => this.cartMapper.Map(cart)).ToListAsync().ConfigureAwait(true);
@@ -92,13 +95,11 @@ namespace AllSopFoodService.Services
             return response;
         }
 
-        public async Task<ServiceResponse<ShoppingCart>> GetSingleCartByCurrentUser()
+        public ServiceResponse<ShoppingCart> GetSingleCartByCurrentUser()
         {
             var response = new ServiceResponse<ShoppingCart>();
 
-            var theCart = await this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts)
-                                                    .ThenInclude(pc => pc.FoodProduct)
-                                                    .FirstOrDefaultAsync(u => u.UserId == this.GetUserId()).ConfigureAwait(true);
+            var theCart = this.unitOfWork.ShoppingCarts.GetCartWithProductDataByUserId(this.GetUserId());
 
             if (theCart != null)
             {
@@ -117,7 +118,7 @@ namespace AllSopFoodService.Services
         public ServiceResponse<ShoppingCart> GetCartById(int cartId)
         {
             var response = new ServiceResponse<ShoppingCart>();
-            var cart = this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts).FirstOrDefault(c => c.Id == cartId);
+            var cart = this.unitOfWork.ShoppingCarts.GetShoppingCartByCartId(cartId);
             if (cart != null)
             {
                 response.Data = cart;
@@ -137,9 +138,7 @@ namespace AllSopFoodService.Services
         {
             var response = new ServiceResponse<CartVM>();
             //querying ShoppingCart including related Products List
-            var cart = this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts)
-                                                .ThenInclude(u => u.FoodProduct)
-                                                .FirstOrDefault(c => c.UserId == this.GetUserId());
+            var cart = this.unitOfWork.ShoppingCarts.GetCartWithProductDataByUserId(this.GetUserId());
 
             if (cart != null)
             {
@@ -167,7 +166,7 @@ namespace AllSopFoodService.Services
         }
 
 
-        public async Task<ServiceResponse<ProductsInCartsVM>> AddToCart(int productId)
+        public ServiceResponse<ProductsInCartsVM> AddToCart(int productId)
         {
             // assuming productId is both valid, validation are executed in controller
             var serviceResponse = new ServiceResponse<ProductsInCartsVM>();
@@ -175,14 +174,14 @@ namespace AllSopFoodService.Services
             try
             {
                 // retrieve the Cart owned by the currently logged-in User
-                var yourCart = await this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts).FirstOrDefaultAsync(c => c.UserId == this.GetUserId()).ConfigureAwait(true);
+                var yourCart = this.unitOfWork.ShoppingCarts.GetShoppingCartByUserId(this.GetUserId());
                 //Check if this Product exists in this Cart
                 var isProductInCart = yourCart.FoodProduct_Carts.FirstOrDefault(p => p.ProductId == productId);
                 if (isProductInCart != null)
                 {
                     //Increment quantity in cart
                     isProductInCart.QuantityInCart++;
-                    await this._db.SaveChangesAsync().ConfigureAwait(true);
+                    this.unitOfWork.Complete();
 
                     serviceResponse.Data = new ProductsInCartsVM()
                     {
@@ -204,8 +203,11 @@ namespace AllSopFoodService.Services
                     CartId = yourCart.Id,
                     QuantityInCart = 1
                 };
-                this._db.FoodProducts_Carts.Add(newProductInACart);
-                this._db.SaveChanges();
+                //this._db.FoodProducts_Carts.Add(newProductInACart);
+                //this._db.SaveChanges();
+                this.unitOfWork.ProductsInCarts.Add(newProductInACart);
+                this.unitOfWork.Complete();
+
                 serviceResponse.Data = new ProductsInCartsVM()
                 {
                     ProductDescription = newProductInACart.FoodProduct.Name, //might cause error here
@@ -224,19 +226,21 @@ namespace AllSopFoodService.Services
         }
 
 
-        public async Task<ServiceResponse<CartVM>> RemoveFromCart(int productId)
+        public ServiceResponse<CartVM> RemoveFromCart(int productId)
         {
             // Again, assuming productId is Valid, the validation took place in controller
             var response = new ServiceResponse<CartVM>();
             try
             {
                 // retrieve the Cart owned by the currently logged-in User
-                var yourCart = await this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts).FirstOrDefaultAsync(c => c.UserId == this.GetUserId()).ConfigureAwait(true);
+                var yourCart = this.unitOfWork.ShoppingCarts.GetShoppingCartByUserId(this.GetUserId());
                 //Get the Product association with this Cart
                 var isProductInCart = yourCart.FoodProduct_Carts.FirstOrDefault(p => p.ProductId == productId);
 
-                this._db.FoodProducts_Carts.Remove(isProductInCart);
-                await this._db.SaveChangesAsync().ConfigureAwait(true);
+                //this._db.FoodProducts_Carts.Remove(isProductInCart);
+                //await this._db.SaveChangesAsync().ConfigureAwait(true);
+                this.unitOfWork.ProductsInCarts.Delete(isProductInCart);
+                this.unitOfWork.Complete();
 
                 var cartResponse = this.GetCartWithProducts();
                 response.Data = cartResponse.Data;
@@ -254,15 +258,13 @@ namespace AllSopFoodService.Services
 
 
         //this should return the total price of the cart after discount, not yet refactored
-        public async Task<ServiceResponse<VoucherResponseModel>> ApplyVoucherToCart(string voucherCode)
+        public ServiceResponse<VoucherResponseModel> ApplyVoucherToCart(string voucherCode)
         {
             var response = new ServiceResponse<VoucherResponseModel>();
             try
             {
                 // check if this cart is already discounted
-                var currentCart = this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts)
-                                                        .ThenInclude(u => u.FoodProduct)
-                                                        .FirstOrDefault(c => c.UserId == this.GetUserId());
+                var currentCart = this.unitOfWork.ShoppingCarts.GetCartWithProductDataByUserId(this.GetUserId());
                 //var currentCart = this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts).Where(c => c.Id == cartId).FirstOrDefault();
                 var beforeDiscountTotal = this.GetTotal().Data;
 
@@ -285,7 +287,7 @@ namespace AllSopFoodService.Services
                     {
                         case "10OFFPROMODRI":
                             // Bool: True if there are 10 or more Drinks Item in Cart, False otherwise, PromotionService worthy
-                            var quantityCondition = this.Is10orMoreDrinksItemInCart(allCartItems); // could have just passed in AllCartItems
+                            var quantityCondition = Is10orMoreDrinksItemInCart(allCartItems); // could have just passed in AllCartItems
                             if (!quantityCondition)
                             {
                                 result.Applied = false;
@@ -309,10 +311,10 @@ namespace AllSopFoodService.Services
 
                             // mark the current cart as already discounted
                             currentCart.IsDiscounted = true;
-                            this._db.ShoppingCarts.Update(currentCart);
+                            this.unitOfWork.ShoppingCarts.Update(currentCart);
                             //mark this coupon as used, PromotionService worthy
                             this._db.CouponCodes.First(c => c.CouponCode == voucherCode).IsClaimed = true;
-                            await this._db.SaveChangesAsync().ConfigureAwait(true);
+                            this.unitOfWork.Complete();
 
                             result.Applied = true;
                             result.FailedMessage = "Successfully applied Voucher to Cart!";
@@ -330,6 +332,9 @@ namespace AllSopFoodService.Services
                                 result.Applied = false;
                                 result.FailedMessage = "Failed to apply this coupon! You need to spend £50.00 or more on Baking/Cooking Ingredients";
                                 result.DiscountedCartPrice = 0;
+
+                                response.Data = result;
+                                break;
                             }
                             // apply discount percentage
                             result.Applied = true;
@@ -385,9 +390,7 @@ namespace AllSopFoodService.Services
             var response = new ServiceResponse<decimal>();
             try
             {
-                var currentCart = this._db.ShoppingCarts.Include(c => c.FoodProduct_Carts)
-                                                           .ThenInclude(u => u.FoodProduct)
-                                                           .FirstOrDefault(c => c.UserId == this.GetUserId());
+                var currentCart = this.unitOfWork.ShoppingCarts.GetCartWithProductDataByUserId(this.GetUserId());
                 var allProductsInCart = currentCart.FoodProduct_Carts.ToList();
 
                 var total = decimal.Zero;
@@ -409,7 +412,7 @@ namespace AllSopFoodService.Services
         }
 
         //True if there are 10 or more Drinks Item in Cart, False otherwise
-        private bool Is10orMoreDrinksItemInCart(List<FoodProduct_ShoppingCart> productsIncart) // parameter changed => List<FoodProduct_Cart> 
+        private static bool Is10orMoreDrinksItemInCart(List<FoodProduct_ShoppingCart> productsIncart) // parameter changed => List<FoodProduct_Cart> 
         {
             //var currentCart = this._cartService.GetCartById(cartId).Data;
             //var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.CartId == cartId).ToList();

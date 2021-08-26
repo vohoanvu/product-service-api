@@ -14,15 +14,15 @@ namespace AllSopFoodService.Repositories
         {
         }
 
-        public IEnumerable<Product> GetAllProductsData()
+        public async Task<IEnumerable<Product>> GetAllProductsWithEagerLoad()
         {
-            return this.context.Products.Include(p => p.Category).ToList();
+            var children = new string[] { "Category" };
+            return await this.EntitiesWithEagerLoad(null, children).ConfigureAwait(true);
         }
 
-        public bool CheckProductExist(int productId)
-        {
-            return this.context.Products.Any(p => p.Id == productId);
-        }
+        public async Task<Product> GetProductWithEagerLoad(int productId) => await this.context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == productId).ConfigureAwait(true);
+
+        public bool CheckProductExist(int productId) => this.context.Products.Any(p => p.Id == productId);
 
         public IEnumerable<Product> SearchProducts(string searchString)
         {

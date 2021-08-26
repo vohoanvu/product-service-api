@@ -45,9 +45,9 @@ namespace AllSopFoodService.Controllers
         [HttpPost("add-new-cart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateNewCart()
+        public IActionResult CreateNewCart()
         {
-            var res = await this._cartService.CreateShoppingCart().ConfigureAwait(true);
+            var res = this._cartService.CreateShoppingCart();
             if (!res.Success)
             {
                 this.BadRequest(res);
@@ -90,7 +90,7 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddToCartAsync(int productId)
+        public IActionResult AddToCart(int productId)
         {
             // Still need to perform validation check for productId
             // Check if the product is available in Stock (FoodProduct DB) first thing first!
@@ -106,7 +106,7 @@ namespace AllSopFoodService.Controllers
                 return this.NotFound(stockCheck);
             }
 
-            var response = await this._cartService.AddToCart(productId).ConfigureAwait(true);
+            var response = this._cartService.AddToCart(productId);
             if (response.Data == null)
             {
                 return this.BadRequest(response);
@@ -122,7 +122,7 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> RemoveFromCartAsync(int productId)
+        public IActionResult RemoveFromCart(int productId)
         {
             var stockCheck = this._productService.IsFoodProductInStock(productId);
             if (stockCheck.Data == null)
@@ -136,7 +136,7 @@ namespace AllSopFoodService.Controllers
                 return this.NotFound(stockCheck);
             }
 
-            var response = await this._cartService.RemoveFromCart(productId).ConfigureAwait(true);
+            var response = this._cartService.RemoveFromCart(productId);
             if (response.Data == null)
             {
                 return this.NotFound(response);
@@ -151,11 +151,11 @@ namespace AllSopFoodService.Controllers
         [HttpPut("applyVoucher")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> ApplyVoucherToCart(string voucherCode)
+        public IActionResult ApplyVoucherToCart(string voucherCode)
         {
             //perform validation check for Cart here 
 
-            var response = await this._cartService.ApplyVoucherToCart(voucherCode).ConfigureAwait(true);
+            var response = this._cartService.ApplyVoucherToCart(voucherCode);
             if (response.Data == null)
             {
                 return this.Conflict(response);

@@ -7,19 +7,20 @@ namespace AllSopFoodService.Services
     using System.Threading.Tasks;
     using AllSopFoodService.Model;
     using AllSopFoodService.Model.Paging;
+    using AllSopFoodService.Repositories.Interfaces;
     using AllSopFoodService.ViewModels;
     using Boxed.Mapping;
     using Microsoft.EntityFrameworkCore;
 
     public class CategoryService : ICategoryService
     {
-        private readonly FoodDBContext _db;
         private readonly IMapper<Product, FoodProductVM> productMapper;
+        private readonly IUnitOfWork unitOfWork;
 
-        public CategoryService(FoodDBContext dbcontext, IMapper<Product, FoodProductVM> productMapper)
+        public CategoryService(IMapper<Product, FoodProductVM> productMapper, IUnitOfWork unitOfWork)
         {
-            this._db = dbcontext;
             this.productMapper = productMapper;
+            this.unitOfWork = unitOfWork;
         }
 
 
@@ -31,20 +32,24 @@ namespace AllSopFoodService.Services
                 IsAvailable = cartegory.IsAvailable
             };
 
-            this._db.Categories.Add(newCategory);
-            this._db.SaveChanges();
+            //this._db.Categories.Add(newCategory);
+            //this._db.SaveChanges();
+            this.unitOfWork.Categories.Add(newCategory);
+            this.unitOfWork.Complete();
         }
 
         public List<Category> GetAllCategories()
         {
-            var allCategories = this._db.Categories.OrderBy(n => n.Label).ToList();
+            //var allCategories = this._db.Categories.OrderBy(n => n.Label).ToList();
+            var allCategories = this.unitOfWork.Categories.GetAll().OrderBy(n => n.Label).ToList();
 
             return allCategories;
         }
 
         public CategoryWithProducts GetCategoryData(int categoryId)
         {
-            var categoryData = this._db.Categories.Include(c => c.FoodProducts.Where(p => p.CategoryId == categoryId)).ThenInclude(fp => fp.Category)
+            //var categoryData = this._db.Categories.Include(c => c.FoodProducts.Where(p => p.CategoryId == categoryId)).ThenInclude(fp => fp.Category)
+            var categoryData = this.unitOfWork.Categories.GetCategoryDataWithEagerLoad(categoryId)
                                                     .Select(c => new CategoryWithProducts()
                                                     {
                                                         Label = c.Label,
@@ -56,12 +61,14 @@ namespace AllSopFoodService.Services
 
         public void DeleteCategoryById(int id)
         {
-            var category = this._db.Categories.FirstOrDefault(c => c.Id == id);
+            var category = this.unitOfWork.Categories.GetById(id);
 
             if (category != null)
             {
-                this._db.Remove(category);
-                this._db.SaveChanges();
+                //this._db.Remove(category);
+                //this._db.SaveChanges();
+                this.unitOfWork.Categories.Delete(category);
+                this.unitOfWork.Complete();
             }
         }
 

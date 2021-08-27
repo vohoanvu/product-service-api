@@ -21,6 +21,7 @@ namespace AllSopFoodService
     using Microsoft.IdentityModel.Tokens;
     using Swashbuckle.AspNetCore.Filters;
     using System;
+    using Npgsql;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -98,20 +99,21 @@ namespace AllSopFoodService
                                 var pgHost = pgHostPort.Split(":")[0];
                                 var pgPort = pgHostPort.Split(":")[1];*/
                 var uri = new Uri(connUrl);
+                var userInfo = uri.UserInfo.Split(':');
 
-                var username = uri.UserInfo.Split(':')[0];
-
-                var password = uri.UserInfo.Split(':')[1];
-
-                var connectionString =  "; Database=" + uri.AbsolutePath.Substring(1) +
-                                        "; Username=" + username +
-                                        "; Password=" + password +
-                                        "; Port=" + uri.Port +
-                                        "; SSL Mode=Require; Trust Server Certificate=true;";
-
+                var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+                {
+                    Host = uri.Host,
+                    Port = uri.Port,
+                    Username = userInfo[0],
+                    Password = userInfo[1],
+                    Database = uri.LocalPath.TrimStart('/'),
+                    SslMode = SslMode.Require,
+                    TrustServerCertificate = true
+                };
                 //connUrl = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};sslmode=Prefer;Trust Server Certificate=true";
 
-                services.AddEntityFrameworkNpgsql().AddDbContext<FoodDBContext>(options => options.UseNpgsql(connectionString));
+                services.AddEntityFrameworkNpgsql().AddDbContext<FoodDBContext>(options => options.UseNpgsql(connectionStringBuilder.ToString()));
             }
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

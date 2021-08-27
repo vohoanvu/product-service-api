@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AllSopFoodService.Migrations
 {
     [DbContext(typeof(FoodDBContext))]
-    [Migration("20210817180224_localDbSchema")]
-    partial class localDbSchema
+    [Migration("20210827195837_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -179,6 +179,10 @@ namespace AllSopFoodService.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("VoucherCode");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsClaimed")
                         .HasColumnType("bit");

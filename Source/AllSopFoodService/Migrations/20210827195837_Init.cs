@@ -2,7 +2,7 @@
 
 namespace AllSopFoodService.Migrations
 {
-    public partial class herokuPostgreSQL : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

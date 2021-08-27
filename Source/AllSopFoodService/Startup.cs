@@ -88,19 +88,30 @@ namespace AllSopFoodService
                 var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
                 Console.WriteLine(connUrl);
                 // Parse connection URL to connection string for Npgsql
-                var connectionUrl = connUrl.Replace("postgres://", string.Empty);
-                var pgUserPass = connectionUrl.Split("@")[0];
-                var pgHostPortDb = connectionUrl.Split("@")[1];
-                var pgHostPort = pgHostPortDb.Split("/")[0];
-                var pgDb = pgHostPortDb.Split("/")[1];
-                var pgUser = pgUserPass.Split(":")[0];
-                var pgPass = pgUserPass.Split(":")[1];
-                var pgHost = pgHostPort.Split(":")[0];
-                var pgPort = pgHostPort.Split(":")[1];
+                /*                var connectionUrl = connUrl.Replace("postgres://", string.Empty);
+                                var pgUserPass = connectionUrl.Split("@")[0];
+                                var pgHostPortDb = connectionUrl.Split("@")[1];
+                                var pgHostPort = pgHostPortDb.Split("/")[0];
+                                var pgDb = pgHostPortDb.Split("/")[1];
+                                var pgUser = pgUserPass.Split(":")[0];
+                                var pgPass = pgUserPass.Split(":")[1];
+                                var pgHost = pgHostPort.Split(":")[0];
+                                var pgPort = pgHostPort.Split(":")[1];*/
+                var uri = new Uri(connUrl);
 
-                connUrl = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};sslmode=Prefer;Trust Server Certificate=true";
+                var username = uri.UserInfo.Split(':')[0];
 
-                services.AddEntityFrameworkNpgsql().AddDbContext<FoodDBContext>(options => options.UseNpgsql(connUrl));
+                var password = uri.UserInfo.Split(':')[1];
+
+                var connectionString =  "; Database=" + uri.AbsolutePath.Substring(1) +
+                                        "; Username=" + username +
+                                        "; Password=" + password +
+                                        "; Port=" + uri.Port +
+                                        "; SSL Mode=Require; Trust Server Certificate=true;";
+
+                //connUrl = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};sslmode=Prefer;Trust Server Certificate=true";
+
+                services.AddEntityFrameworkNpgsql().AddDbContext<FoodDBContext>(options => options.UseNpgsql(connectionString));
             }
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

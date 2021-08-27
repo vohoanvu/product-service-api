@@ -111,7 +111,6 @@ namespace AllSopFoodService
                         ValidateAudience = false
                     });
 
-            
         }
 
         /// <summary>

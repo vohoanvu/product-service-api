@@ -12,7 +12,7 @@ namespace AllSopFoodService.Model
     {
         public int Id { get; set; }
         public string Label { get; set; }
-        public bool IsAvailable { get; set; } = default!;
+        public bool IsAvailable { get; set; }
         public virtual List<Product> FoodProducts { get; set; }
     }
 }

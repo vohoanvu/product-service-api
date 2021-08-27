@@ -87,17 +87,8 @@ namespace AllSopFoodService
             {
                 //Prepare Heroku PostgreSQL credentials according to postgreSQL format
                 var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-                Console.WriteLine(connUrl);
-                // Parse connection URL to connection string for Npgsql
-                /*                var connectionUrl = connUrl.Replace("postgres://", string.Empty);
-                                var pgUserPass = connectionUrl.Split("@")[0];
-                                var pgHostPortDb = connectionUrl.Split("@")[1];
-                                var pgHostPort = pgHostPortDb.Split("/")[0];
-                                var pgDb = pgHostPortDb.Split("/")[1];
-                                var pgUser = pgUserPass.Split(":")[0];
-                                var pgPass = pgUserPass.Split(":")[1];
-                                var pgHost = pgHostPort.Split(":")[0];
-                                var pgPort = pgHostPort.Split(":")[1];*/
+                Console.WriteLine("Hello, Vu Vo is debugging here....");
+
                 var uri = new Uri(connUrl);
                 var userInfo = uri.UserInfo.Split(':');
 
@@ -111,7 +102,6 @@ namespace AllSopFoodService
                     SslMode = SslMode.Require,
                     TrustServerCertificate = true
                 };
-                //connUrl = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};sslmode=Prefer;Trust Server Certificate=true";
 
                 services.AddEntityFrameworkNpgsql().AddDbContext<FoodDBContext>(options => options.UseNpgsql(connectionStringBuilder.ToString()));
             }
@@ -124,7 +114,6 @@ namespace AllSopFoodService
                         ValidateIssuer = false,
                         ValidateAudience = false
                     });
-
         }
 
         /// <summary>

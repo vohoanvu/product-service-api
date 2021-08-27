@@ -38,12 +38,12 @@ namespace AllSopFoodService.Services
             this.unitOfWork.Complete();
         }
 
-        public List<Category> GetAllCategories()
+        public async Task<List<Category>> GetAllCategoriesAsync()
         {
-            //var allCategories = this._db.Categories.OrderBy(n => n.Label).ToList();
-            var allCategories = this.unitOfWork.Categories.GetAll().OrderBy(n => n.Label).ToList();
+            var allCategories = await this.unitOfWork.Categories.GetAllAsync().ConfigureAwait(true);
+            allCategories = allCategories.OrderBy(n => n.Label).ToList();
 
-            return allCategories;
+            return allCategories.ToList();
         }
 
         public CategoryWithProducts GetCategoryData(int categoryId)

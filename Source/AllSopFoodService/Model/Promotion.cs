@@ -13,7 +13,7 @@ namespace AllSopFoodService.Model
         public int Id { get; set; }
         [Column("VoucherCode")]
         public string CouponCode { get; set; } = default!;
-
+        public string Description { get; set; } = default!;
         public bool IsClaimed { get; set; }
         public virtual List<ShoppingCart>? DiscountedCarts { get; set; } = default!;
     }

@@ -180,30 +180,5 @@ namespace AllSopFoodService.Controllers
             return this.Ok(response);
         }
 
-        [HttpDelete("delete-current-user")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteUserAndCart(int userId)
-        {
-            var response = this._cartService.DeleteUserAccount(userId);
-            if (!response.Data)
-            {
-                return this.BadRequest(response);
-            }
-
-            return this.Ok(response);
-        }
-
-        [HttpGet("get-all-users")]
-        public async Task<IActionResult> GetAllUsersAccount()
-        {
-            var response = await this._cartService.GetAllUsers().ConfigureAwait(true);
-            if (response.Data == null)
-            {
-                return this.NotFound(response);
-            }
-
-            return this.Ok(response);
-        }
     }
 }

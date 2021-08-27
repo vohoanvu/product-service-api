@@ -9,78 +9,87 @@ namespace AllSopFoodService.Controllers
     using Microsoft.EntityFrameworkCore;
     using AllSopFoodService.Model;
     using Microsoft.AspNetCore.Authorization;
+    using AllSopFoodService.Repositories.Interfaces;
 
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PromotionsController : ControllerBase
     {
-        private readonly FoodDBContext _context;
+        private readonly IUnitOfWork unitOfWork;
 
-        public PromotionsController(FoodDBContext context) => this._context = context;
+        public PromotionsController(IUnitOfWork unitOfWork) => this.unitOfWork = unitOfWork;
 
         // GET: api/Promotions
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<Promotion>>> GetPromotionsAsync() => await this._context.CouponCodes.ToListAsync().ConfigureAwait(true);
+        public async Task<IActionResult> GetPromotionsAsync()
+        {
+            try
+            {
+                return this.Ok(await this.unitOfWork.Promotions.GetAllAsync().ConfigureAwait(true));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         // GET: api/Promotions/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Promotion>> GetCouponCodeByIdAsync(int id)
+        public IActionResult GetCouponCodeById(int id)
         {
-            var promotion = await this._context.CouponCodes.FindAsync(id).ConfigureAwait(true);
+            var promotion = this.unitOfWork.Promotions.GetById(id);
 
             if (promotion == null)
             {
                 return this.NotFound($"This Voucher Code is Invalid! Please try again!");
             }
 
-            return promotion;
+            return this.Ok(promotion);
         }
 
         // PUT: api/Promotions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutPromotionAsync(int id, Promotion promotion)
+        public IActionResult PutPromotion(int id, Promotion promotion)
         {
             if (id != promotion.Id)
             {
                 return this.BadRequest();
             }
-
-            this._context.Entry(promotion).State = EntityState.Modified;
-
             try
             {
-                await this._context.SaveChangesAsync().ConfigureAwait(true);
+                this.unitOfWork.Promotions.Update(promotion);
+                this.unitOfWork.Complete();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
-                if (!this.PromotionExists(id))
-                {
-                    return this.NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return this.NoContent();
+            return this.Ok($"The promotion has successfully been updated");
         }
 
         // POST: api/Promotions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<Promotion>> PostPromotionAsync(Promotion promotion)
+        public ActionResult<Promotion> PostPromotion(Promotion promotion)
         {
-            this._context.CouponCodes.Add(promotion);
-            await this._context.SaveChangesAsync().ConfigureAwait(true);
+            try
+            {
+                this.unitOfWork.Promotions.Add(promotion);
+                this.unitOfWork.Complete();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
             return this.CreatedAtAction("GetPromotion", new { id = promotion.Id }, promotion);
         }
@@ -88,21 +97,19 @@ namespace AllSopFoodService.Controllers
         // DELETE: api/Promotions/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeletePromotionAsync(int id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeletePromotion(int id)
         {
-            var promotion = await this._context.CouponCodes.FindAsync(id).ConfigureAwait(true);
+            var promotion = this.unitOfWork.Promotions.GetById(id);
             if (promotion == null)
             {
                 return this.NotFound();
             }
 
-            this._context.CouponCodes.Remove(promotion);
-            await this._context.SaveChangesAsync().ConfigureAwait(true);
+            this.unitOfWork.Promotions.Delete(promotion);
+            this.unitOfWork.Complete();
 
-            return this.NoContent();
+            return this.Ok();
         }
-
-        private bool PromotionExists(int id) => this._context.CouponCodes.Any(e => e.Id == id);
     }
 }

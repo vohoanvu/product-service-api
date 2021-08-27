@@ -16,7 +16,7 @@ namespace AllSopFoodService.Repositories
         public ICartRepository ShoppingCarts { get; private set; }
 
         public IProductinShoppingCartRepository ProductsInCarts { get; private set; }
-
+        public IPromotionRepository Promotions { get; private set; }
         public UnitOfWork(FoodDBContext context)
         {
             this.context = context;
@@ -24,6 +24,7 @@ namespace AllSopFoodService.Repositories
             this.Categories = new CategoryRepository(context);
             this.ShoppingCarts = new ShoppingCartRepository(context);
             this.ProductsInCarts = new ProductinShoppingCartRepository(context);
+            this.Promotions = new PromotionRepository(context);
         }
 
         public int Complete() => this.context.SaveChanges();

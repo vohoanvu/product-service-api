@@ -20,11 +20,11 @@ namespace AllSopFoodService.Controllers
         [HttpGet("get-all-categories")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetAllCategories()
+        public async Task<IActionResult> GetAllCategoriesAsync()
         {
             try
             {
-                var allCategories = this._categoryService.GetAllCategories();
+                var allCategories = await this._categoryService.GetAllCategoriesAsync().ConfigureAwait(true);
 
                 return this.Ok(allCategories);
             }

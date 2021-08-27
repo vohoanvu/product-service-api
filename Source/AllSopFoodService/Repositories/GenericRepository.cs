@@ -21,7 +21,7 @@ namespace AllSopFoodService.Repositories
 
         public IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression) => this.context.Set<T>().Where(expression);
 
-        public IEnumerable<T> GetAll() => this.context.Set<T>().ToList();
+        public async Task<IEnumerable<T>> GetAllAsync() => await this.context.Set<T>().ToListAsync().ConfigureAwait(true);
 
         public T GetById(int id) => this.context.Set<T>().Find(id);
 

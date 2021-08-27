@@ -18,15 +18,13 @@ namespace AllSopFoodService.Services
     {
         private readonly FoodDBContext _db;
         private readonly IMapper<ShoppingCart, CartVM> cartMapper;
-        private readonly IMapper<Product, FoodProductVM> productMapper;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUnitOfWork unitOfWork;
 
-        public CartsService(FoodDBContext dbcontext, IMapper<ShoppingCart, CartVM> mapper, IMapper<Product, FoodProductVM> mapper1, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
+        public CartsService(FoodDBContext dbcontext, IMapper<ShoppingCart, CartVM> mapper, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
         {
             this._db = dbcontext;
             this.cartMapper = mapper;
-            this.productMapper = mapper1;
             this.httpContextAccessor = httpContextAccessor;
             this.unitOfWork = unitOfWork;
         }
@@ -276,7 +274,7 @@ namespace AllSopFoodService.Services
                 }
 
 
-                if (this.CheckVoucherExists(voucherCode))
+                if (this.unitOfWork.Promotions.CheckVoucherExist(voucherCode))
                 {
                     // voucherCode is real
                     var allCartItems = currentCart.FoodProduct_Carts.ToList();
@@ -313,7 +311,7 @@ namespace AllSopFoodService.Services
                             currentCart.IsDiscounted = true;
                             this.unitOfWork.ShoppingCarts.Update(currentCart);
                             //mark this coupon as used, PromotionService worthy
-                            this._db.CouponCodes.First(c => c.CouponCode == voucherCode).IsClaimed = true;
+                            this.unitOfWork.Promotions.GetCouponByCode(voucherCode).IsClaimed = true;
                             this.unitOfWork.Complete();
 
                             result.Applied = true;
@@ -425,54 +423,5 @@ namespace AllSopFoodService.Services
             return true;
         }
 
-        private bool CheckVoucherExists(string code) => this._db.CouponCodes.Any(promo => promo.CouponCode == code);
-
-        public ServiceResponse<bool> DeleteUserAccount(int userId)
-        {
-            var response = new ServiceResponse<bool>();
-
-            var currentUser = this._db.Users.FirstOrDefault(u => u.Id == userId);
-            if (currentUser == null)
-            {
-                response.Data = false;
-                response.Success = false;
-                response.Message = "The User account with this Id does not exist!";
-
-                return response;
-            }
-
-            this._db.Users.Remove(currentUser);
-            this._db.SaveChanges();
-
-            response.Data = true;
-            response.Success = true;
-            response.Message = "This User has been deleted successfully";
-
-            return response;
-        }
-
-
-        public async Task<ServiceResponse<List<UserAccountVM>>> GetAllUsers()
-        {
-            var response = new ServiceResponse<List<UserAccountVM>>();
-            try
-            {
-                var allusers = await this._db.Users.Select(u => new UserAccountVM()
-                {
-                    UserId = u.Id,
-                    Username = u.UserName
-                }).ToListAsync().ConfigureAwait(true);
-
-                response.Data = allusers;
-                response.Success = true;
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-            }
-
-            return response;
-        }
     }
 }

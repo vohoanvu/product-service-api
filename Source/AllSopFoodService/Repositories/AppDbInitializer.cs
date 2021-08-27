@@ -173,16 +173,19 @@ namespace AllSopFoodService.Repositories
                         new Promotion
                         {
                             CouponCode = "10OFFPROMODRI",
+                            Description = "Get 10% off bulk drinks – any drinks are 10% off the listed price (including already reduced items) when buying 10 or more",
                             IsClaimed = false
                         },
                         new Promotion
                         {
                             CouponCode = "5OFFPROMOALL",
+                            Description = "$5.00 off your order when spending $50.00 or more on Baking/Cooking Ingredients",
                             IsClaimed = false
                         },
                         new Promotion
                         {
                             CouponCode = "20OFFPROMOALL",
+                            Description = "$20.00 off your total order value when spending $100.00 or more and using the code 20OFFPROMOALL",
                             IsClaimed = false
                         }
                     );

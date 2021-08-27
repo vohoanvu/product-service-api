@@ -10,6 +10,7 @@ namespace AllSopFoodService.Repositories
     using AllSopFoodService.Model;
     using AllSopFoodService.Services;
     using AllSopFoodService.ViewModels;
+    using AllSopFoodService.ViewModels.UserAuth;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.IdentityModel.Tokens;
@@ -131,6 +132,54 @@ namespace AllSopFoodService.Repositories
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public ServiceResponse<bool> DeleteUserAccount(int userId)
+        {
+            var response = new ServiceResponse<bool>();
+
+            var currentUser = this.context.Users.FirstOrDefault(u => u.Id == userId);
+            if (currentUser == null)
+            {
+                response.Data = false;
+                response.Success = false;
+                response.Message = "The User account with this Id does not exist!";
+
+                return response;
+            }
+
+            this.context.Users.Remove(currentUser);
+            this.context.SaveChanges();
+
+            response.Data = true;
+            response.Success = true;
+            response.Message = "This User has been deleted successfully";
+
+            return response;
+        }
+
+
+        public async Task<ServiceResponse<List<UserAccountVM>>> GetAllUsers()
+        {
+            var response = new ServiceResponse<List<UserAccountVM>>();
+            try
+            {
+                var allusers = await this.context.Users.Select(u => new UserAccountVM()
+                {
+                    UserId = u.Id,
+                    Username = u.UserName
+                }).ToListAsync().ConfigureAwait(true);
+
+                response.Data = allusers;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
         }
     }
 }

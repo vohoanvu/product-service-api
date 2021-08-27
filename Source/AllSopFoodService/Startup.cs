@@ -87,9 +87,9 @@ namespace AllSopFoodService
                 //Prepare Heroku PostgreSQL credentials according to postgreSQL format
                 var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
                 // Parse connection URL to connection string for Npgsql
-                connUrl = connUrl.Replace("postgres://", string.Empty);
-                var pgUserPass = connUrl.Split("@")[0];
-                var pgHostPortDb = connUrl.Split("@")[1];
+                var connectionUrl = connUrl.Replace("postgres://", string.Empty);
+                var pgUserPass = connectionUrl.Split("@")[0];
+                var pgHostPortDb = connectionUrl.Split("@")[1];
                 var pgHostPort = pgHostPortDb.Split("/")[0];
                 var pgDb = pgHostPortDb.Split("/")[1];
                 var pgUser = pgUserPass.Split(":")[0];

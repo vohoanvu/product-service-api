@@ -1,3 +1,4 @@
+#nullable disable
 namespace AllSopFoodService
 {
     using AllSopFoodService.Commands;
@@ -14,6 +15,9 @@ namespace AllSopFoodService
     using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.Http;
     using AllSopFoodService.Repositories.Interfaces;
+    using Microsoft.AspNetCore.Hosting;
+    using System;
+    using Microsoft.EntityFrameworkCore;
 
     /// <summary>
     /// <see cref="IServiceCollection"/> extension methods add project services.

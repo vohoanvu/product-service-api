@@ -1,3 +1,4 @@
+#nullable disable
 namespace AllSopFoodService
 {
     using AllSopFoodService.Constants;
@@ -19,6 +20,7 @@ namespace AllSopFoodService
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.IdentityModel.Tokens;
     using Swashbuckle.AspNetCore.Filters;
+    using System;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -75,7 +77,30 @@ namespace AllSopFoodService
                     .AddProjectServices()
                     .AddDistributedMemoryCache().AddSession().AddMvc();
 
-            services.AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
+            var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+            if (isDevelopment)
+            {
+                services.AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
+            }
+            else
+            {
+                //Prepare Heroku PostgreSQL credentials according to postgreSQL format
+                var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                // Parse connection URL to connection string for Npgsql
+                connUrl = connUrl.Replace("postgres://", string.Empty);
+                var pgUserPass = connUrl.Split("@")[0];
+                var pgHostPortDb = connUrl.Split("@")[1];
+                var pgHostPort = pgHostPortDb.Split("/")[0];
+                var pgDb = pgHostPortDb.Split("/")[1];
+                var pgUser = pgUserPass.Split(":")[0];
+                var pgPass = pgUserPass.Split(":")[1];
+                var pgHost = pgHostPort.Split(":")[0];
+                var pgPort = pgHostPort.Split(":")[1];
+
+                connUrl = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb}";
+
+                services.AddEntityFrameworkNpgsql().AddDbContext<FoodDBContext>(options => options.UseNpgsql(connUrl));
+            }
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
@@ -85,6 +110,8 @@ namespace AllSopFoodService
                         ValidateIssuer = false,
                         ValidateAudience = false
                     });
+
+            
         }
 
         /// <summary>

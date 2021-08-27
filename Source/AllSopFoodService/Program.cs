@@ -26,7 +26,7 @@ namespace AllSopFoodService
                 var host = CreateHostBuilder(args).Build();
                 hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();
                 hostEnvironment.ApplicationName = AssemblyInformation.Current.Product;
-
+                host.MigrateDatabase();
                 Log.Information(
                     "Started {Application} in {Environment} mode.",
                     hostEnvironment.ApplicationName,

@@ -26,12 +26,12 @@ namespace AllSopFoodService
                 var host = CreateHostBuilder(args).Build();
                 hostEnvironment = host.Services.GetRequiredService<IHostEnvironment>();
                 hostEnvironment.ApplicationName = AssemblyInformation.Current.Product;
-                host.MigrateDatabase();
+
                 Log.Information(
                     "Started {Application} in {Environment} mode.",
                     hostEnvironment.ApplicationName,
                     hostEnvironment.EnvironmentName);
-                await host.RunAsync().ConfigureAwait(false);
+                await host.MigrateDatabase().RunAsync().ConfigureAwait(false);
                 Log.Information(
                     "Stopped {Application} in {Environment} mode.",
                     hostEnvironment.ApplicationName,

@@ -63,3 +63,13 @@
 08/28/2021 17:05:00 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js.map" responded 404 in 4.1021 ms
 08/28/2021 17:05:00 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-bundle.js.map" responded 404 in 1.8100 ms
 08/28/2021 17:05:00 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js.map" responded 404 in 0.1909 ms
+08/28/2021 19:09:02 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+08/28/2021 19:09:03 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+08/28/2021 19:09:04 +07:00 [Information] - Message: HTTP "GET" "/" responded 301 in 34.2766 ms
+08/28/2021 19:09:04 +07:00 [Information] - Message: HTTP "GET" "/index.html" responded 200 in 90.8776 ms
+08/28/2021 19:09:04 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui.css" responded 200 in 12.5040 ms
+08/28/2021 19:09:04 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js" responded 200 in 366.7564 ms
+08/28/2021 19:09:05 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-bundle.js" responded 200 in 1528.0335 ms
+08/28/2021 19:09:06 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-bundle.js.map" responded 404 in 3.5037 ms
+08/28/2021 19:09:06 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js.map" responded 404 in 0.3476 ms
+08/28/2021 19:09:07 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 177.3542 ms

@@ -22,6 +22,7 @@ namespace AllSopFoodService
     using Swashbuckle.AspNetCore.Filters;
     using System;
     using Npgsql;
+    using Microsoft.AspNetCore.HttpOverrides;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -70,6 +71,7 @@ namespace AllSopFoodService
                     .AddCustomMvcOptions(this.configuration)
                     .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+            services.AddHttpsRedirection(options => { options.HttpsPort = 443; });
 
             services.AddAutoMapper(typeof(Startup))
                     .AddProjectCommands()
@@ -129,6 +131,11 @@ namespace AllSopFoodService
                     .UseForwardedHeaders()
                     .UseRouting();
 
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DYNO")))
+            {
+                Console.WriteLine("Use https redirection");
+                application.UseHttpsRedirection();
+            }
             application.UseAuthentication();
             application.UseAuthorization();
 

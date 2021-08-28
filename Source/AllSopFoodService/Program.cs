@@ -93,7 +93,7 @@ namespace AllSopFoodService
                     })
                 // Used for IIS and IIS Express for in-process hosting. Use UseIISIntegration for out-of-process hosting.
                 .UseIIS()
-                .UseStartup<Startup>();
+                .UseStartup<Startup>().UseUrls("http://*:$PORT");
 
         private static IConfigurationBuilder AddConfiguration(
             IConfigurationBuilder configurationBuilder,

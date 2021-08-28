@@ -87,7 +87,7 @@ namespace AllSopFoodService
             {
                 //Prepare Heroku PostgreSQL credentials according to postgreSQL format
                 var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-                Console.WriteLine("Hello, Vu Vo is debugging here....");
+                Console.WriteLine("Hello, Vu Vo is debugging here...." + connUrl);
 
                 var uri = new Uri(connUrl);
                 var userInfo = uri.UserInfo.Split(':');

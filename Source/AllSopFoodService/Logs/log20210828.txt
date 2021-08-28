@@ -73,3 +73,7 @@
 08/28/2021 19:09:06 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-bundle.js.map" responded 404 in 3.5037 ms
 08/28/2021 19:09:06 +07:00 [Information] - Message: HTTP "GET" "/swagger-ui-standalone-preset.js.map" responded 404 in 0.3476 ms
 08/28/2021 19:09:07 +07:00 [Information] - Message: HTTP "GET" "/swagger/v1/swagger.json" responded 200 in 177.3542 ms
+08/28/2021 20:52:49 +07:00 [Information] - Message: Started "Project Title" in "Development" mode.
+08/28/2021 20:52:50 +07:00 [Warning] - Message: No type was specified for the decimal property '"Price"' on entity type '"Product"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType()', specify precision and scale using 'HasPrecision()' or configure a value converter using 'HasConversion()'.
+08/28/2021 20:52:50 +07:00 [Warning] - Message: Overriding address(es) '"http://localhost:5000"'. Binding to endpoints defined in "UseKestrel()" instead.
+08/28/2021 20:53:35 +07:00 [Information] - Message: Stopped "Project Title" in "Development" mode.

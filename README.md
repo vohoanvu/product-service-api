@@ -48,6 +48,12 @@ The prioritised list of user stories is as follows:
 6. As a User I can view the total price for the products in my shopping cart with discounts applied.
 7. As a User I am alerted when I apply an invalid voucher to my shopping cart.
 8. As a User I am unable to Out of Stock products to the shopping cart.
+9. As a User I can perform CRUD operations on new/existing Categories.
+10. As a User I can perform CRUD operations on new/existing Products database.
+11. As a User I can perform CRUD operations on new/existing Promotions/Voucher deals.
+12. As A User I can register a new User account credentials.
+13. As A User I can login with my User account credentials.
+14. As An authorized User I can delete an existing User Account
 
 
 

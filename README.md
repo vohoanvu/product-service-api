@@ -11,7 +11,7 @@ This project was developed using .NET 5 technology/Boxed API template, and deplo
 The sample database design was meant for a food service store database, but it can be customized and used with any type of commercial products by modifying Products and Categories entities.
 
 Feel free to test my API at the following URL:
-- https://vuproductshoppingcartapi.azurewebsites.net/index.html
+- https://vu-product-shopping-cart-api.herokuapp.com/
 
 
 There are six pre-defined different categories of items: 

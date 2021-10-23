@@ -10,9 +10,6 @@ This personal project is RESTful API service for any eCommerce store application
 This project was developed using .NET 5 technology/Boxed API template, and deployed to Azure App Service.
 The sample database design was meant for a food service store database, but it can be customized and used with any type of commercial products by modifying Products and Categories entities.
 
-Feel free to test my API at the following URL:
-- https://vu-product-shopping-cart-api.herokuapp.com/
-
 
 There are six pre-defined different categories of items: 
 - Meat & Poultry, Fruit & Vegetables, Drinks, Confectionary & Desserts, Baking/Cooking Ingredients, and Miscellaneous Items.

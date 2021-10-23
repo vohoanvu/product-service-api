@@ -57,5 +57,5 @@ The prioritised list of user stories is as follows:
 
 List of possible code improvement:
 
-- Repositories Layers
-- Refactor according to .net core api Boxed template
+- Authentication with IdentityServer
+- Single Sign On

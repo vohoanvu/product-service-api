@@ -2,8 +2,8 @@ namespace AllSopFoodService.Commands
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using AllSopFoodService.Repositories;
     using Microsoft.AspNetCore.Mvc;
+    using Repositories.Interfaces;
 
     public class DeleteCarCommand
     {

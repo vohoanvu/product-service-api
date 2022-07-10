@@ -1,11 +1,8 @@
-#nullable disable
 namespace AllSopFoodService.Repositories
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
-    using AllSopFoodService.Model;
+    using Model;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -15,10 +12,10 @@ namespace AllSopFoodService.Repositories
         {
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetService<FoodDBContext>();
+                var context = serviceScope.ServiceProvider.GetService<FoodDbContext>();
 
                 //seeding Products data
-                if (!context.Products.Any())
+                if (context != null && !context.Products.Any())
                 {
                     context.Products.AddRange(new Product()
                     {
@@ -167,7 +164,7 @@ namespace AllSopFoodService.Repositories
 
 
                 // seeding Promotion Data
-                if (!context.CouponCodes.Any())
+                if (context != null && !context.CouponCodes.Any())
                 {
                     context.CouponCodes.AddRange(
                         new Promotion

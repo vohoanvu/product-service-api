@@ -3,8 +3,6 @@ namespace AllSopFoodService.Model.Paging
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
-
     public class PaginatedList<T> : List<T>
     {
         public int PageIndex { get; private set; }
@@ -19,23 +17,11 @@ namespace AllSopFoodService.Model.Paging
             this.AddRange(items);
         }
 
-        public bool HasPreviousPage
-        {
-            get
-            {
-                return this.PageIndex > 1;
-            }
-        }
+        public bool HasPreviousPage => this.PageIndex > 1;
 
-        public bool HasNextPage
-        {
-            get
-            {
-                return this.PageIndex < this.TotalPages;
-            }
-        }
+        public bool HasNextPage => this.PageIndex < this.TotalPages;
 
-        public static PaginatedList<T> Create(IQueryable<T> source, int pageIndex, int pageSize)
+        public PaginatedList<T> Create(IQueryable<T> source, int pageIndex, int pageSize)
         {
             var count = source.Count();
             var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();

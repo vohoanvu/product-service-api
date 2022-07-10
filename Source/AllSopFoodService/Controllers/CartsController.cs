@@ -1,27 +1,23 @@
 namespace AllSopFoodService.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using AllSopFoodService.Services;
-    using AllSopFoodService.ViewModels;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Services.Interfaces;
 
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CartsController : Controller
     {
-        private readonly ICartsService _cartService;
-        private readonly IProductsService _productService;
+        private readonly ICartsService cartService;
+        private readonly IProductsService productService;
 
         public CartsController(ICartsService cartService, IProductsService productService)
         {
-            this._cartService = cartService;
-            this._productService = productService;
+            this.cartService = cartService;
+            this.productService = productService;
         }
 
 
@@ -30,10 +26,10 @@ namespace AllSopFoodService.Controllers
         [HttpGet("get-all-user-carts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAllCarts()
+        public async Task<IActionResult> GetAllCartsAsync()
         {
-            var response = await this._cartService.GetAllCarts().ConfigureAwait(true);
-            if (response.Data == null)
+            var response = await this.cartService.GetAllCartsAsync().ConfigureAwait(true);
+            if (!response.Success)
             {
                 return this.NotFound(response);
             }
@@ -47,7 +43,7 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult CreateNewCart()
         {
-            var res = this._cartService.CreateShoppingCart();
+            var res = this.cartService.CreateShoppingCart();
             if (!res.Success)
             {
                 this.BadRequest(res);
@@ -61,8 +57,8 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCartWithProducts()
         {
-            var response = this._cartService.GetCartWithProducts();
-            if (response.Data == null)
+            var response = this.cartService.GetCartWithProducts();
+            if (!response.Success)
             {
                 this.NotFound(response);
             }
@@ -75,8 +71,8 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCartById(int id)
         {
-            var res = this._cartService.GetCartById(id);
-            if (res.Data == null)
+            var res = this.cartService.GetCartById(id);
+            if (!res.Success)
             {
                 return this.NotFound(res);
             }
@@ -94,8 +90,8 @@ namespace AllSopFoodService.Controllers
         {
             // Still need to perform validation check for productId
             // Check if the product is available in Stock (FoodProduct DB) first thing first!
-            var stockCheck = this._productService.IsFoodProductInStock(productId);
-            if (stockCheck.Data == null)
+            var stockCheck = this.productService.IsFoodProductInStock(productId);
+            if (!stockCheck.Success)
             {
                 // The product does not exist
                 return this.BadRequest(stockCheck);
@@ -106,8 +102,8 @@ namespace AllSopFoodService.Controllers
                 return this.NotFound(stockCheck);
             }
 
-            var response = this._cartService.AddToCart(productId);
-            if (response.Data == null)
+            var response = this.cartService.AddToCart(productId);
+            if (!response.Success)
             {
                 return this.BadRequest(response);
             }
@@ -124,8 +120,8 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult RemoveFromCart(int productId)
         {
-            var stockCheck = this._productService.IsFoodProductInStock(productId);
-            if (stockCheck.Data == null)
+            var stockCheck = this.productService.IsFoodProductInStock(productId);
+            if (!stockCheck.Success)
             {
                 // The product does not exist
                 return this.BadRequest(stockCheck);
@@ -136,8 +132,8 @@ namespace AllSopFoodService.Controllers
                 return this.NotFound(stockCheck);
             }
 
-            var response = this._cartService.RemoveFromCart(productId);
-            if (response.Data == null)
+            var response = this.cartService.RemoveFromCart(productId);
+            if (!stockCheck.Success)
             {
                 return this.NotFound(response);
             }
@@ -155,8 +151,8 @@ namespace AllSopFoodService.Controllers
         {
             //perform validation check for Cart here 
 
-            var response = this._cartService.ApplyVoucherToCart(voucherCode);
-            if (response.Data == null)
+            var response = this.cartService.ApplyVoucherToCart(voucherCode);
+            if (!response.Success)
             {
                 return this.Conflict(response);
             }
@@ -171,7 +167,7 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetTotalPrice()
         {
-            var response = this._cartService.GetTotal();
+            var response = this.cartService.GetTotal();
             if (response.Success == false)
             {
                 this.NotFound(response);

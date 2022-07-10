@@ -11,21 +11,19 @@ namespace AllSopFoodService.Controllers
     using AllSopFoodService.ViewModels.UserAuth;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Repositories.Interfaces;
 
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository authRepo;
-        public AuthController(IAuthRepository authRepository)
-        {
-            this.authRepo = authRepository;
-        }
+        public AuthController(IAuthRepository authRepository) => this.authRepo = authRepository;
 
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Register(UserRegisterDto request)
+        public async Task<IActionResult> RegisterAsync(UserRegisterDto request)
         {
             var userRegistration = new User()
             {
@@ -36,7 +34,7 @@ namespace AllSopFoodService.Controllers
                 }
             };
 
-            var response = await this.authRepo.Register(userRegistration, request.Password).ConfigureAwait(true);
+            var response = await this.authRepo.RegisterAsync(userRegistration, request.Password).ConfigureAwait(true);
 
             if (!response.Success)
             {
@@ -49,9 +47,9 @@ namespace AllSopFoodService.Controllers
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Login(UserLoginDto request)
+        public async Task<IActionResult> LoginAsync(UserLoginDto request)
         {
-            var response = await this.authRepo.Login(request.Username, request.Password).ConfigureAwait(true);
+            var response = await this.authRepo.LoginAsync(request.Username, request.Password).ConfigureAwait(true);
 
             if (!response.Success)
             {
@@ -76,9 +74,9 @@ namespace AllSopFoodService.Controllers
         }
 
         [HttpGet("get-all-users")]
-        public async Task<IActionResult> GetAllUsersAccount()
+        public async Task<IActionResult> GetAllUsersAccountAsync()
         {
-            var response = await this.authRepo.GetAllUsers().ConfigureAwait(true);
+            var response = await this.authRepo.GetAllUsersAsync().ConfigureAwait(true);
             if (response.Data == null)
             {
                 return this.NotFound(response);

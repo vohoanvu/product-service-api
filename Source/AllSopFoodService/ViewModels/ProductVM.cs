@@ -1,11 +1,6 @@
 #nullable disable
 namespace AllSopFoodService.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    // This model is used to create/update product record
     public class ProductSaves
     {
         public string Name { get; set; } = default!;
@@ -14,7 +9,6 @@ namespace AllSopFoodService.ViewModels
         public int CategoryId { get; set; }
     }
 
-    // this model has the Category Label
     public class FoodProductVM
     {
         public int ProductId { get; set; }

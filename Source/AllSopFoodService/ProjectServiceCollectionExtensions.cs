@@ -1,23 +1,18 @@
-#nullable disable
 namespace AllSopFoodService
 {
-    using AllSopFoodService.Commands;
-    using AllSopFoodService.Mappers;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.Repositories;
-    using AllSopFoodService.Services;
-    using AllSopFoodService.ViewModels;
+    using Commands;
+    using Mappers;
+    using Model;
+    using Repositories;
+    using Services;
+    using ViewModels;
     using Boxed.Mapping;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.IdentityModel.Tokens;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.Http;
-    using AllSopFoodService.Repositories.Interfaces;
-    using Microsoft.AspNetCore.Hosting;
-    using System;
-    using Microsoft.EntityFrameworkCore;
+    using Repositories.Interfaces;
+    using Services.Interfaces;
+    using Car = Model.Car;
+    using ViewCar = ViewModels.Car;
 
     /// <summary>
     /// <see cref="IServiceCollection"/> extension methods add project services.
@@ -40,9 +35,9 @@ namespace AllSopFoodService
 
         public static IServiceCollection AddProjectMappers(this IServiceCollection services) =>
             services
-                .AddSingleton<IMapper<Models.Car, Car>, CarToCarMapper>()
-                .AddSingleton<IMapper<Models.Car, SaveCar>, CarToSaveCarMapper>()
-                .AddSingleton<IMapper<SaveCar, Models.Car>, CarToSaveCarMapper>()
+                .AddSingleton<IMapper<Car, ViewCar>, CarToCarMapper>()
+                .AddSingleton<IMapper<Car, SaveCar>, CarToSaveCarMapper>()
+                .AddSingleton<IMapper<SaveCar, Car>, CarToSaveCarMapper>()
                 .AddSingleton<IMapper<Product, FoodProductVM>, FoodProductToVMMapper>()
                 .AddSingleton<IMapper<ShoppingCart, CartVM>, ShoppingCartToCartVM>();
 

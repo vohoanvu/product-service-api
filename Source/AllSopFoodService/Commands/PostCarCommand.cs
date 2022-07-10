@@ -2,22 +2,22 @@ namespace AllSopFoodService.Commands
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using AllSopFoodService.Constants;
-    using AllSopFoodService.Repositories;
-    using AllSopFoodService.ViewModels;
+    using Constants;
+    using ViewModels;
     using Boxed.Mapping;
     using Microsoft.AspNetCore.Mvc;
+    using Repositories.Interfaces;
 
     public class PostCarCommand
     {
         private readonly ICarRepository carRepository;
-        private readonly IMapper<Models.Car, Car> carToCarMapper;
-        private readonly IMapper<SaveCar, Models.Car> saveCarToCarMapper;
+        private readonly IMapper<Model.Car, Car> carToCarMapper;
+        private readonly IMapper<SaveCar, Model.Car> saveCarToCarMapper;
 
         public PostCarCommand(
             ICarRepository carRepository,
-            IMapper<Models.Car, Car> carToCarMapper,
-            IMapper<SaveCar, Models.Car> saveCarToCarMapper)
+            IMapper<Model.Car, Car> carToCarMapper,
+            IMapper<SaveCar, Model.Car> saveCarToCarMapper)
         {
             this.carRepository = carRepository;
             this.carToCarMapper = carToCarMapper;

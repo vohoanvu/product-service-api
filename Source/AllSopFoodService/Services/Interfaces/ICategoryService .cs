@@ -1,11 +1,9 @@
-namespace AllSopFoodService.Services
+namespace AllSopFoodService.Services.Interfaces
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.ViewModels;
+    using Model;
+    using ViewModels;
 
     public interface ICategoryService
     {

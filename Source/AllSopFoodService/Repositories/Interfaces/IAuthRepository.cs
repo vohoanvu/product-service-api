@@ -1,21 +1,19 @@
-namespace AllSopFoodService.Repositories
+namespace AllSopFoodService.Repositories.Interfaces
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.ViewModels;
-    using AllSopFoodService.ViewModels.UserAuth;
+    using Model;
+    using ViewModels;
+    using ViewModels.UserAuth;
 
     public interface IAuthRepository
     {
-        Task<ServiceResponse<int>> Register(User user, string password);
-        Task<ServiceResponse<string>> Login(string username, string password);
-        Task<bool> UserExists(string username);
+        Task<ServiceResponse<int>> RegisterAsync(User user, string password);
+        Task<ServiceResponse<string>> LoginAsync(string username, string password);
+        Task<bool> UserExistsAsync(string username);
 
         // Delete A User Account, along with his/her cart
         ServiceResponse<bool> DeleteUserAccount(int userId);
-        Task<ServiceResponse<List<UserAccountVM>>> GetAllUsers();
+        Task<ServiceResponse<List<UserAccountVm>>> GetAllUsersAsync();
     }
 }

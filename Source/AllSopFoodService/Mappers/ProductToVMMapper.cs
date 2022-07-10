@@ -2,20 +2,14 @@ namespace AllSopFoodService.Mappers
 {
     using System;
     using Boxed.Mapping;
-    using AllSopFoodService.ViewModels;
-    using AllSopFoodService.Model;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Routing;
+    using Model;
+    using ViewModels;
 
     public class FoodProductToVMMapper : IMapper<Product, FoodProductVM>
     {
         //private readonly IHttpContextAccessor httpContextAccessor;
         //private readonly LinkGenerator linkGenerator;
 
-        public FoodProductToVMMapper()
-        {
-
-        }
         public void Map(Product source, FoodProductVM destination)
         {
             if (source is null)

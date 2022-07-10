@@ -6,31 +6,35 @@ namespace AllSopFoodService.Services
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using AllSopFoodService.Model;
+    using Model;
     using AllSopFoodService.Repositories.Interfaces;
-    using AllSopFoodService.ViewModels;
-    using AllSopFoodService.ViewModels.UserAuth;
+    using ViewModels;
     using Boxed.Mapping;
+    using Interfaces;
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
 
     public class CartsService : ICartsService
     {
-        private readonly FoodDBContext _db;
         private readonly IMapper<ShoppingCart, CartVM> cartMapper;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUnitOfWork unitOfWork;
 
-        public CartsService(FoodDBContext dbcontext, IMapper<ShoppingCart, CartVM> mapper, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
+        public CartsService(IMapper<ShoppingCart, CartVM> mapper, IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork)
         {
-            this._db = dbcontext;
             this.cartMapper = mapper;
             this.httpContextAccessor = httpContextAccessor;
             this.unitOfWork = unitOfWork;
         }
 
         //since each cart is associated with a specific user, we're gonna need lots of User Id
-        private int GetUserId() => int.Parse(this.httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        private int GetUserId()
+        {
+            var userClaim = this.httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+#pragma warning disable CA1305 // Specify IFormatProvider
+            return int.Parse(userClaim);
+#pragma warning restore CA1305 // Specify IFormatProvider
+        }
 
         // Create a new cart for the currently logged-in user
         // I really just need to a UserID to be able to create a new cart,
@@ -71,7 +75,7 @@ namespace AllSopFoodService.Services
             return response;
         }
 
-        public async Task<ServiceResponse<List<CartVM>>> GetAllCarts()
+        public async Task<ServiceResponse<List<CartVM>>> GetAllCartsAsync()
         {
             var response = new ServiceResponse<List<CartVM>>();
 
@@ -143,7 +147,7 @@ namespace AllSopFoodService.Services
                 // mapping from ShoppingCart to CartVM
                 var cartView = this.cartMapper.Map(cart);
                 // mapping from list of FoodProduct_Carts into list of FoodProduct, overriding the default ProductsInCart
-                cartView.ProductsInCart = cart.FoodProduct_Carts.Select(pc => new ProductsInCartsVM()
+                cartView.ProductsInCart = cart.FoodProductCarts.Select(pc => new ProductsInCartsVM()
                 {
                     ProductDescription = pc.FoodProduct.Name,
                     QuantityInCart = pc.QuantityInCart,
@@ -174,7 +178,7 @@ namespace AllSopFoodService.Services
                 // retrieve the Cart owned by the currently logged-in User
                 var yourCart = this.unitOfWork.ShoppingCarts.GetShoppingCartByUserId(this.GetUserId());
                 //Check if this Product exists in this Cart
-                var isProductInCart = yourCart.FoodProduct_Carts.FirstOrDefault(p => p.ProductId == productId);
+                var isProductInCart = yourCart.FoodProductCarts.FirstOrDefault(p => p.ProductId == productId);
                 if (isProductInCart != null)
                 {
                     //Increment quantity in cart
@@ -195,7 +199,7 @@ namespace AllSopFoodService.Services
                 }
 
                 // if this product was NOT already in this cart then add new entry into Products_In_Cart joint entity
-                var newProductInACart = new FoodProduct_ShoppingCart()
+                var newProductInACart = new FoodProductShoppingCart()
                 {
                     ProductId = productId,
                     CartId = yourCart.Id,
@@ -233,7 +237,7 @@ namespace AllSopFoodService.Services
                 // retrieve the Cart owned by the currently logged-in User
                 var yourCart = this.unitOfWork.ShoppingCarts.GetShoppingCartByUserId(this.GetUserId());
                 //Get the Product association with this Cart
-                var isProductInCart = yourCart.FoodProduct_Carts.FirstOrDefault(p => p.ProductId == productId);
+                var isProductInCart = yourCart.FoodProductCarts.FirstOrDefault(p => p.ProductId == productId);
 
                 //this._db.FoodProducts_Carts.Remove(isProductInCart);
                 //await this._db.SaveChangesAsync().ConfigureAwait(true);
@@ -277,7 +281,7 @@ namespace AllSopFoodService.Services
                 if (this.unitOfWork.Promotions.CheckVoucherExist(voucherCode))
                 {
                     // voucherCode is real
-                    var allCartItems = currentCart.FoodProduct_Carts.ToList();
+                    var allCartItems = currentCart.FoodProductCarts.ToList();
                     var result = new VoucherResponseModel();
                     var discountedCartPrice = decimal.Zero;
 
@@ -323,7 +327,7 @@ namespace AllSopFoodService.Services
                         case "5OFFPROMOALL":
                             // conditions checking
                             // fetch All Baking/Cooking Ingredient items from Cart
-                            var bakingCookingItems = currentCart.FoodProduct_Carts.Where(cartItem => cartItem.FoodProduct.CategoryId == 5).ToList();
+                            var bakingCookingItems = currentCart.FoodProductCarts.Where(cartItem => cartItem.FoodProduct.CategoryId == 5).ToList();
                             var bakingCookingTotal = bakingCookingItems.Sum(each => each.FoodProduct.Price * each.QuantityInCart);
                             if (bakingCookingTotal < Convert.ToDecimal(50))
                             {
@@ -389,7 +393,7 @@ namespace AllSopFoodService.Services
             try
             {
                 var currentCart = this.unitOfWork.ShoppingCarts.GetCartWithProductDataByUserId(this.GetUserId());
-                var allProductsInCart = currentCart.FoodProduct_Carts.ToList();
+                var allProductsInCart = currentCart.FoodProductCarts.ToList();
 
                 var total = decimal.Zero;
 
@@ -410,7 +414,7 @@ namespace AllSopFoodService.Services
         }
 
         //True if there are 10 or more Drinks Item in Cart, False otherwise
-        private static bool Is10orMoreDrinksItemInCart(List<FoodProduct_ShoppingCart> productsIncart) // parameter changed => List<FoodProduct_Cart> 
+        private static bool Is10orMoreDrinksItemInCart(List<FoodProductShoppingCart> productsIncart) // parameter changed => List<FoodProduct_Cart> 
         {
             //var currentCart = this._cartService.GetCartById(cartId).Data;
             //var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.CartId == cartId).ToList();

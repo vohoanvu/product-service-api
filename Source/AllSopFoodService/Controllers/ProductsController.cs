@@ -1,48 +1,30 @@
-#nullable disable
 namespace AllSopFoodService.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.Mappers;
-    using Microsoft.AspNetCore.JsonPatch;
-    using AllSopFoodService.Services;
-    using AllSopFoodService.ViewModels;
+    using ViewModels;
     using Microsoft.Extensions.Logging;
-    using Microsoft.AspNetCore.Authorization;
-    using System.Security.Claims;
+    using Services.Interfaces;
 
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductsService _foodItemService;
-        private readonly ILogger<ProductsController> _logger;
+        private readonly IProductsService foodItemService;
 
-        public ProductsController(IProductsService foodProductsService, ILogger<ProductsController> logger)
-        {
-            this._foodItemService = foodProductsService;
-            this._logger = logger;
-        }
+        public ProductsController(IProductsService foodProductsService) => this.foodItemService = foodProductsService;
 
         // GET: api/FoodProducts
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [LoggerMessage(0, LogLevel.Information, "This is a log test in GetAllFoodProducts Controller")]
         // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
-        public async Task<IActionResult> GetFoodProducts(string sortBy, string searchString, int pageNum, int pageSize)
+        public async Task<IActionResult> GetFoodProductsAsync(string sortBy, string searchString, int pageNum, int pageSize)
         {
-            //this._logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
-            var response = await this._foodItemService.GetAllProducts(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
-            if (response.Data == null)
-            {
-                return this.NotFound(response);
-            }
+            //this.logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
+            var response = await this.foodItemService.GetAllProductsAsync(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
             response.Message = $"There are a total of {response.Data.Count} product records";
             return this.Ok(response); // if returned type was ActionResult<T>, then only need to 'return foodItems;'
         }
@@ -51,9 +33,9 @@ namespace AllSopFoodService.Controllers
         [HttpGet("get-single/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetFoodProductById(int id)
+        public async Task<IActionResult> GetFoodProductByIdAsync(int id)
         {
-            var response = await this._foodItemService.GetFoodProductById(id).ConfigureAwait(true);
+            var response = await this.foodItemService.GetFoodProductByIdAsync(id).ConfigureAwait(true);
             if (!response.Success)
             {
                 return this.NotFound(response);
@@ -67,18 +49,14 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateFoodProduct(int id, ProductSaves foodProduct)
+        public async Task<IActionResult> UpdateFoodProductAsync(int id, ProductSaves foodProduct)
         {
-            var productExist = this._foodItemService.IsFoodProductInStock(id).Data;
-            if (productExist == null)
+            var serviceResponse = this.foodItemService.IsFoodProductInStock(id);
+            if (!serviceResponse.Success)
             {
-                return this.BadRequest(productExist);
+                return this.BadRequest(serviceResponse);
             }
-            var response = await this._foodItemService.UpdateFoodProduct(id, foodProduct).ConfigureAwait(true);
-            if (response.Data == null)
-            {
-                return this.NotFound(response);
-            }
+            var response = await this.foodItemService.UpdateFoodProductAsync(id, foodProduct).ConfigureAwait(true);
             response.Success = true;
             response.Message = "This product has been updated successfully";
             return this.Ok(response);
@@ -89,14 +67,14 @@ namespace AllSopFoodService.Controllers
         [HttpPost("add-product")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddFoodProduct([FromBody] ProductSaves foodProduct)
+        public async Task<IActionResult> AddFoodProductAsync([FromBody] ProductSaves foodProduct)
         {
             if (foodProduct == null)
             {
                 return this.BadRequest(); // might be unecessary
             }
 
-            var response = await this._foodItemService.CreateFoodProduct(foodProduct).ConfigureAwait(true);
+            var response = await this.foodItemService.CreateFoodProductAsync(foodProduct).ConfigureAwait(true);
             response.Message = $"There are a total of {response.Data.Count} product records";
 
             return this.Ok(response);
@@ -106,17 +84,12 @@ namespace AllSopFoodService.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteFoodProduct(int id)
+        public async Task<IActionResult> DeleteFoodProductAsync(int id)
         {
-            var response = await this._foodItemService.RemoveFoodProductById(id).ConfigureAwait(true);
-            if (response.Data == null)
-            {
-                return this.NotFound(response);
-            }
+            var response = await this.foodItemService.RemoveFoodProductByIdAsync(id).ConfigureAwait(true);
             response.Message = $"There are a total of {response.Data.Count} product records";
 
             return this.Ok(response);
-
         }
     }
 }

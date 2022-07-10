@@ -1,11 +1,7 @@
 #nullable disable
 namespace AllSopFoodService.ViewModels
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AllSopFoodService.Model;
 
     public class CartVM
     {

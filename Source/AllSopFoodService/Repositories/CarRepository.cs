@@ -5,7 +5,8 @@ namespace AllSopFoodService.Repositories
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using AllSopFoodService.Models;
+    using Interfaces;
+    using Model;
 
     public class CarRepository : ICarRepository
     {

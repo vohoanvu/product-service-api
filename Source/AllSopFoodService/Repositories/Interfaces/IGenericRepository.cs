@@ -2,7 +2,6 @@ namespace AllSopFoodService.Repositories.Interfaces
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
@@ -23,6 +22,6 @@ namespace AllSopFoodService.Repositories.Interfaces
 
         void Update(T entity);
 
-        Task<IEnumerable<T>> EntitiesWithEagerLoad(Expression<Func<T, bool>>? filter, string[] children);
+        Task<IEnumerable<T>> EntitiesWithEagerLoadAsync(Expression<Func<T, bool>>? filter, string[] children);
     }
 }

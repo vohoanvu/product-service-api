@@ -1,17 +1,15 @@
 namespace AllSopFoodService.IntegrationTest
 {
-    using System;
     using System.Net.Http;
-    using AllSopFoodService.Options;
-    using AllSopFoodService.Repositories;
-    using AllSopFoodService.Services;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
     using Moq;
+    using Options;
+    using Repositories.Interfaces;
     using Serilog;
-    using Serilog.Events;
+    using Services.Interfaces;
     using Xunit.Abstractions;
 
     public class CustomWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint>
@@ -23,7 +21,7 @@ namespace AllSopFoodService.IntegrationTest
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Debug()
-                .WriteTo.TestOutput(testOutputHelper, LogEventLevel.Verbose)
+                .WriteTo.TestOutput(testOutputHelper)
                 .CreateLogger();
         }
 

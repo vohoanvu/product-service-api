@@ -1,15 +1,12 @@
 namespace AllSopFoodService.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using AllSopFoodService.Model;
+    using Model;
     using Microsoft.AspNetCore.Authorization;
-    using AllSopFoodService.Repositories.Interfaces;
+    using Repositories.Interfaces;
 
     [Authorize]
     [Route("api/[controller]")]
@@ -91,7 +88,7 @@ namespace AllSopFoodService.Controllers
                 throw;
             }
 
-            return this.CreatedAtAction("GetPromotion", new { id = promotion.Id }, promotion);
+            return this.CreatedAtAction("GetPromotions", new { id = promotion.Id }, promotion);
         }
 
         // DELETE: api/Promotions/5

@@ -1,31 +1,32 @@
+#nullable disable
 namespace AllSopFoodService.Commands
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using AllSopFoodService.Repositories;
-    using AllSopFoodService.ViewModels;
+    using ViewModels;
     using Boxed.Mapping;
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Infrastructure;
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+    using Repositories.Interfaces;
 
     public class PatchCarCommand
     {
         private readonly IActionContextAccessor actionContextAccessor;
         private readonly IObjectModelValidator objectModelValidator;
         private readonly ICarRepository carRepository;
-        private readonly IMapper<Models.Car, Car> carToCarMapper;
-        private readonly IMapper<Models.Car, SaveCar> carToSaveCarMapper;
-        private readonly IMapper<SaveCar, Models.Car> saveCarToCarMapper;
+        private readonly IMapper<Model.Car, Car> carToCarMapper;
+        private readonly IMapper<Model.Car, SaveCar> carToSaveCarMapper;
+        private readonly IMapper<SaveCar, Model.Car> saveCarToCarMapper;
 
         public PatchCarCommand(
             IActionContextAccessor actionContextAccessor,
             IObjectModelValidator objectModelValidator,
             ICarRepository carRepository,
-            IMapper<Models.Car, Car> carToCarMapper,
-            IMapper<Models.Car, SaveCar> carToSaveCarMapper,
-            IMapper<SaveCar, Models.Car> saveCarToCarMapper)
+            IMapper<Model.Car, Car> carToCarMapper,
+            IMapper<Model.Car, SaveCar> carToSaveCarMapper,
+            IMapper<SaveCar, Model.Car> saveCarToCarMapper)
         {
             this.actionContextAccessor = actionContextAccessor;
             this.objectModelValidator = objectModelValidator;

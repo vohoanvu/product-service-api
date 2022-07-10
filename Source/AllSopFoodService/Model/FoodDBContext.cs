@@ -2,17 +2,15 @@
 
 namespace AllSopFoodService.Model
 {
-    using System;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata;
 
-    public partial class FoodDBContext : DbContext
+    public partial class FoodDbContext : DbContext
     {
-        public FoodDBContext()
+        public FoodDbContext()
         {
         }
 
-        public FoodDBContext(DbContextOptions<FoodDBContext> options)
+        public FoodDbContext(DbContextOptions<FoodDbContext> options)
             : base(options)
         {
         }
@@ -22,7 +20,7 @@ namespace AllSopFoodService.Model
         public virtual DbSet<Promotion> CouponCodes { get; set; }
         // Many-to-many relationship version of ShoppingCartItems
         public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
-        public virtual DbSet<FoodProduct_ShoppingCart> FoodProducts_Carts { get; set; }
+        public virtual DbSet<FoodProductShoppingCart> FoodProductsCarts { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
         public virtual DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,14 +31,14 @@ namespace AllSopFoodService.Model
                 .WithMany(c => c.FoodProducts)
                 .HasForeignKey(fp => fp.CategoryId);
             // many-to-many relation between Product and ShoppingCart
-            modelBuilder.Entity<FoodProduct_ShoppingCart>()
+            modelBuilder.Entity<FoodProductShoppingCart>()
                 .HasOne(foodCart => foodCart.FoodProduct)
-                .WithMany(foodItem => foodItem.FoodProduct_Carts)
+                .WithMany(foodItem => foodItem.FoodProductCarts)
                 .HasForeignKey(foodCartId => foodCartId.ProductId);
 
-            modelBuilder.Entity<FoodProduct_ShoppingCart>()
+            modelBuilder.Entity<FoodProductShoppingCart>()
                 .HasOne(foodCart => foodCart.ShoppingCart)
-                .WithMany(cart => cart.FoodProduct_Carts)
+                .WithMany(cart => cart.FoodProductCarts)
                 .HasForeignKey(foodCartId => foodCartId.CartId);
             // 1-many relation between ShoppingCart and Promotion
             modelBuilder.Entity<ShoppingCart>()

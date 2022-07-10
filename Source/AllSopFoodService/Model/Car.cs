@@ -1,4 +1,4 @@
-﻿namespace AllSopFoodService.Models
+namespace AllSopFoodService.Model
 {
     using System;
 

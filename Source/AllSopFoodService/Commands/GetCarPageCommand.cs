@@ -4,27 +4,27 @@ namespace AllSopFoodService.Commands
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using AllSopFoodService.Constants;
-    using AllSopFoodService.Repositories;
-    using AllSopFoodService.ViewModels;
+    using Constants;
+    using ViewModels;
     using Boxed.AspNetCore;
     using Boxed.Mapping;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
+    using Repositories.Interfaces;
 
     public class GetCarPageCommand
     {
         private const string LinkHttpHeaderName = "Link";
         private const int DefaultPageSize = 3;
         private readonly ICarRepository carRepository;
-        private readonly IMapper<Models.Car, Car> carMapper;
+        private readonly IMapper<Model.Car, Car> carMapper;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly LinkGenerator linkGenerator;
 
         public GetCarPageCommand(
             ICarRepository carRepository,
-            IMapper<Models.Car, Car> carMapper,
+            IMapper<Model.Car, Car> carMapper,
             IHttpContextAccessor httpContextAccessor,
             LinkGenerator linkGenerator)
         {
@@ -114,14 +114,14 @@ namespace AllSopFoodService.Commands
             return new OkObjectResult(connection);
         }
 
-        private Task<List<Models.Car>> GetCarsAsync(
+        private Task<List<Model.Car>> GetCarsAsync(
             int? first,
             int? last,
             DateTimeOffset? createdAfter,
             DateTimeOffset? createdBefore,
             CancellationToken cancellationToken)
         {
-            Task<List<Models.Car>> getCarsTask;
+            Task<List<Model.Car>> getCarsTask;
             if (first.HasValue)
             {
                 getCarsTask = this.carRepository.GetCarsAsync(first, createdAfter, createdBefore, cancellationToken);

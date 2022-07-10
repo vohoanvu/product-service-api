@@ -1,18 +1,19 @@
 namespace AllSopFoodService.Mappers
 {
     using System;
-    using AllSopFoodService.Services;
-    using AllSopFoodService.ViewModels;
+    using ViewModels;
     using Boxed.Mapping;
+    using Services.Interfaces;
+    using Car = Model.Car;
 
-    public class CarToSaveCarMapper : IMapper<Models.Car, SaveCar>, IMapper<SaveCar, Models.Car>
+    public class CarToSaveCarMapper : IMapper<Car, SaveCar>, IMapper<SaveCar, Car>
     {
         private readonly IClockService clockService;
 
         public CarToSaveCarMapper(IClockService clockService) =>
             this.clockService = clockService;
 
-        public void Map(Models.Car source, SaveCar destination)
+        public void Map(Car source, SaveCar destination)
         {
             if (source is null)
             {
@@ -29,7 +30,7 @@ namespace AllSopFoodService.Mappers
             destination.Model = source.Model;
         }
 
-        public void Map(SaveCar source, Models.Car destination)
+        public void Map(SaveCar source, Car destination)
         {
             if (source is null)
             {

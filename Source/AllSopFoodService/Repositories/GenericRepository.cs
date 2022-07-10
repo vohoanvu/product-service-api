@@ -5,15 +5,15 @@ namespace AllSopFoodService.Repositories
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.Repositories.Interfaces;
+    using Interfaces;
     using Microsoft.EntityFrameworkCore;
+    using Model;
 
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected readonly FoodDBContext context;
+        internal readonly FoodDbContext context;
 
-        public GenericRepository(FoodDBContext context) => this.context = context;
+        public GenericRepository(FoodDbContext context) => this.context = context;
 
         public void Add(T entity) => this.context.Set<T>().Add(entity);
 
@@ -31,26 +31,19 @@ namespace AllSopFoodService.Repositories
 
         public void Update(T entity) => this.context.Set<T>().Update(entity);
 
-        public async Task<IEnumerable<T>> EntitiesWithEagerLoad(Expression<Func<T, bool>>? filter, string[] children)
+        public async Task<IEnumerable<T>> EntitiesWithEagerLoadAsync(Expression<Func<T, bool>>? filter, string[] children)
         {
-            try
+            IQueryable<T> query = this.context.Set<T>();
+            foreach (var entity in children)
             {
-                IQueryable<T> query = this.context.Set<T>();
-                foreach (var entity in children)
-                {
-                    query = query.Include(entity);
-                }
+                query = query.Include(entity);
+            }
 
-                if (filter != null)
-                {
-                    return await query.Where(filter).ToListAsync().ConfigureAwait(true);
-                }
-                return await query.ToListAsync().ConfigureAwait(true);
-            }
-            catch (Exception)
+            if (filter != null)
             {
-                throw;
+                return await query.Where(filter).ToListAsync().ConfigureAwait(true);
             }
+            return await query.ToListAsync().ConfigureAwait(true);
         }
     }
 }

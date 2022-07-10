@@ -1,4 +1,4 @@
-namespace AllSopFoodService.Services
+namespace AllSopFoodService.Services.Interfaces
 {
     using System;
 

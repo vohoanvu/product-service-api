@@ -1,15 +1,11 @@
 namespace AllSopFoodService.Repositories
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.Repositories.Interfaces;
+    using Interfaces;
+    using Model;
 
-    public class ProductinShoppingCartRepository : GenericRepository<FoodProduct_ShoppingCart>, IProductinShoppingCartRepository
+    public class ProductinShoppingCartRepository : GenericRepository<FoodProductShoppingCart>, IProductinShoppingCartRepository
     {
-        public ProductinShoppingCartRepository(FoodDBContext context) : base(context)
+        public ProductinShoppingCartRepository(FoodDbContext context) : base(context)
         {
         }
 

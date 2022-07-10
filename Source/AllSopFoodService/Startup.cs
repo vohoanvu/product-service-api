@@ -3,7 +3,6 @@ namespace AllSopFoodService
 {
     using AllSopFoodService.Constants;
     using AllSopFoodService.Model;
-    using AllSopFoodService.Services;
     using Boxed.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -13,16 +12,11 @@ namespace AllSopFoodService
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
-    using AllSopFoodService.Mappers;
     using AllSopFoodService.Repositories;
-    using static System.Net.Mime.MediaTypeNames;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.IdentityModel.Tokens;
-    using Swashbuckle.AspNetCore.Filters;
     using System;
     using Npgsql;
-    using Microsoft.AspNetCore.HttpOverrides;
 
     /// <summary>
     /// The main start-up class for the application.
@@ -82,7 +76,7 @@ namespace AllSopFoodService
             var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
             if (isDevelopment)
             {
-                services.AddDbContext<FoodDBContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
+                services.AddDbContext<FoodDbContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
             }
             else
             {
@@ -104,7 +98,7 @@ namespace AllSopFoodService
                     TrustServerCertificate = true
                 };
 
-                services.AddEntityFrameworkNpgsql().AddDbContext<FoodDBContext>(options => options.UseNpgsql(connectionStringBuilder.ToString()));
+                services.AddEntityFrameworkNpgsql().AddDbContext<FoodDbContext>(options => options.UseNpgsql(connectionStringBuilder.ToString()));
             }
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

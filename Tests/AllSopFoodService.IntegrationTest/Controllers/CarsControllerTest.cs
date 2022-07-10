@@ -72,7 +72,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
         [Fact]
         public async Task Delete_CarFound_Returns204NoContentAsync()
         {
-            var car = new Models.Car();
+            var car = new Model.Car();
             this.CarRepositoryMock.Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(car);
             this.CarRepositoryMock.Setup(x => x.DeleteAsync(car, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
@@ -84,7 +84,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
         [Fact]
         public async Task Delete_CarNotFound_Returns404NotFoundAsync()
         {
-            this.CarRepositoryMock.Setup(x => x.GetAsync(999, It.IsAny<CancellationToken>())).ReturnsAsync((Models.Car?)null);
+            this.CarRepositoryMock.Setup(x => x.GetAsync(999, It.IsAny<CancellationToken>())).ReturnsAsync((Model.Car?)null);
 
             var response = await this.client.DeleteAsync(new Uri("/cars/999", UriKind.Relative)).ConfigureAwait(false);
 
@@ -96,7 +96,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
         [Fact]
         public async Task Get_CarFound_Returns200OkAsync()
         {
-            var car = new Models.Car() { Modified = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) };
+            var car = new Model.Car() { Modified = new DateTimeOffset(2000, 1, 2, 3, 4, 5, TimeSpan.FromHours(6)) };
             this.CarRepositoryMock.Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(car);
 
             var response = await this.client.GetAsync(new Uri("/cars/1", UriKind.Relative)).ConfigureAwait(false);
@@ -110,7 +110,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
         [Fact]
         public async Task Get_CarNotFound_Returns404NotFoundAsync()
         {
-            this.CarRepositoryMock.Setup(x => x.GetAsync(999, It.IsAny<CancellationToken>())).ReturnsAsync((Models.Car?)null);
+            this.CarRepositoryMock.Setup(x => x.GetAsync(999, It.IsAny<CancellationToken>())).ReturnsAsync((Model.Car?)null);
 
             var response = await this.client.GetAsync(new Uri("/cars/999", UriKind.Relative)).ConfigureAwait(false);
 
@@ -122,7 +122,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
         [Fact]
         public async Task Get_InvalidAcceptHeader_Returns406NotAcceptableAsync()
         {
-            this.CarRepositoryMock.Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync((Models.Car?)null);
+            this.CarRepositoryMock.Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync((Model.Car?)null);
             using var request = new HttpRequestMessage(HttpMethod.Get, "/cars/1");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentType.Text));
 
@@ -136,7 +136,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
         [Fact]
         public async Task Get_CarNotModifiedSince_Returns304NotModifiedAsync()
         {
-            var car = new Models.Car() { Modified = new DateTimeOffset(2000, 1, 1, 23, 59, 59, TimeSpan.Zero) };
+            var car = new Model.Car() { Modified = new DateTimeOffset(2000, 1, 1, 23, 59, 59, TimeSpan.Zero) };
             this.CarRepositoryMock.Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(car);
             using var request = new HttpRequestMessage(HttpMethod.Get, "/cars/1");
             request.Headers.IfModifiedSince = new DateTimeOffset(2000, 1, 2, 0, 0, 0, TimeSpan.Zero);
@@ -149,7 +149,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
         [Fact]
         public async Task Get_CarHasBeenModifiedSince_Returns200OKAsync()
         {
-            var car = new Models.Car() { Modified = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) };
+            var car = new Model.Car() { Modified = new DateTimeOffset(2000, 1, 1, 0, 0, 1, TimeSpan.Zero) };
             this.CarRepositoryMock.Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(car);
             using var request = new HttpRequestMessage(HttpMethod.Get, "/cars/1");
             request.Headers.IfModifiedSince = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
@@ -319,10 +319,10 @@ namespace AllSopFoodService.IntegrationTest.Controllers
                 Make = "Honda",
                 Model = "Civic",
             };
-            var car = new Models.Car() { CarId = 1 };
+            var car = new Model.Car() { CarId = 1 };
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.CarRepositoryMock
-                .Setup(x => x.AddAsync(It.IsAny<Models.Car>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.AddAsync(It.IsAny<Model.Car>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(car);
 
             var response = await this.client.PostAsJsonAsync("cars", saveCar).ConfigureAwait(false);
@@ -382,7 +382,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
                 Make = "Honda",
                 Model = "Civic",
             };
-            var car = new Models.Car() { CarId = 1 };
+            var car = new Model.Car() { CarId = 1 };
             this.CarRepositoryMock
                 .Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(car);
@@ -405,7 +405,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
                 Make = "Honda",
                 Model = "Civic",
             };
-            this.CarRepositoryMock.Setup(x => x.GetAsync(999, It.IsAny<CancellationToken>())).ReturnsAsync((Models.Car?)null);
+            this.CarRepositoryMock.Setup(x => x.GetAsync(999, It.IsAny<CancellationToken>())).ReturnsAsync((Model.Car?)null);
 
             var response = await this.client.PutAsJsonAsync("cars/999", saveCar).ConfigureAwait(false);
 
@@ -431,7 +431,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
             patch.Remove(x => x.Make);
             var json = JsonConvert.SerializeObject(patch);
             using var content = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            this.CarRepositoryMock.Setup(x => x.GetAsync(999, It.IsAny<CancellationToken>())).ReturnsAsync((Models.Car?)null);
+            this.CarRepositoryMock.Setup(x => x.GetAsync(999, It.IsAny<CancellationToken>())).ReturnsAsync((Model.Car?)null);
 
             var response = await this.client
                 .PatchAsync(new Uri("cars/999", UriKind.Relative), content)
@@ -449,7 +449,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
             patch.Remove(x => x.Make);
             var json = JsonConvert.SerializeObject(patch);
             using var content = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            var car = new Models.Car();
+            var car = new Model.Car();
             this.CarRepositoryMock.Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(car);
 
             var response = await this.client
@@ -466,7 +466,7 @@ namespace AllSopFoodService.IntegrationTest.Controllers
             patch.Add(x => x.Model, "Civic Type-R");
             var json = JsonConvert.SerializeObject(patch);
             using var content = new StringContent(json, Encoding.UTF8, ContentType.JsonPatch);
-            var car = new Models.Car() { CarId = 1, Cylinders = 2, Make = "Honda", Model = "Civic" };
+            var car = new Model.Car() { CarId = 1, Cylinders = 2, Make = "Honda", Model = "Civic" };
             this.CarRepositoryMock.Setup(x => x.GetAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(car);
             this.ClockServiceMock.SetupGet(x => x.UtcNow).Returns(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             this.CarRepositoryMock.Setup(x => x.UpdateAsync(car, It.IsAny<CancellationToken>())).ReturnsAsync(car);
@@ -480,13 +480,13 @@ namespace AllSopFoodService.IntegrationTest.Controllers
             Assert.Equal("Civic Type-R", carViewModel.Model);
         }
 
-        private static List<Models.Car> GetCars() =>
+        private static List<Model.Car> GetCars() =>
             new()
             {
-                new Models.Car() { Created = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero) },
-                new Models.Car() { Created = new DateTimeOffset(2000, 1, 2, 0, 0, 0, TimeSpan.Zero) },
-                new Models.Car() { Created = new DateTimeOffset(2000, 1, 3, 0, 0, 0, TimeSpan.Zero) },
-                new Models.Car() { Created = new DateTimeOffset(2000, 1, 4, 0, 0, 0, TimeSpan.Zero) },
+                new Model.Car() { Created = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero) },
+                new Model.Car() { Created = new DateTimeOffset(2000, 1, 2, 0, 0, 0, TimeSpan.Zero) },
+                new Model.Car() { Created = new DateTimeOffset(2000, 1, 3, 0, 0, 0, TimeSpan.Zero) },
+                new Model.Car() { Created = new DateTimeOffset(2000, 1, 4, 0, 0, 0, TimeSpan.Zero) },
             };
 
         private async Task AssertPageUrlsAsync(

@@ -1,21 +1,19 @@
 namespace AllSopFoodService.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using AllSopFoodService.Services;
-    using AllSopFoodService.ViewModels;
+    using ViewModels;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Services.Interfaces;
 
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : Controller
     {
-        private readonly ICategoryService _categoryService;
+        private readonly ICategoryService categoryService;
 
-        public CategoryController(ICategoryService categoryService) => this._categoryService = categoryService;
+        public CategoryController(ICategoryService categoryService) => this.categoryService = categoryService;
 
         [HttpGet("get-all-categories")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -24,7 +22,7 @@ namespace AllSopFoodService.Controllers
         {
             try
             {
-                var allCategories = await this._categoryService.GetAllCategoriesAsync().ConfigureAwait(true);
+                var allCategories = await this.categoryService.GetAllCategoriesAsync().ConfigureAwait(true);
 
                 return this.Ok(allCategories);
             }
@@ -45,7 +43,7 @@ namespace AllSopFoodService.Controllers
             {
                 return this.BadRequest(category);
             }
-            this._categoryService.CreateCategory(category);
+            this.categoryService.CreateCategory(category);
             return this.Ok();
         }
 
@@ -53,7 +51,7 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetCategoryData(int id)
         {
-            var response = this._categoryService.GetCategoryData(id);
+            var response = this.categoryService.GetCategoryData(id);
 
             return this.Ok(response);
         }
@@ -63,7 +61,7 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult DeleteCategoryById(int id)
         {
-            this._categoryService.DeleteCategoryById(id);
+            this.categoryService.DeleteCategoryById(id);
 
             return this.Ok();
         }

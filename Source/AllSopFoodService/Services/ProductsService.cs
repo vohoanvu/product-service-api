@@ -1,19 +1,14 @@
-#nullable disable
 namespace AllSopFoodService.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.Model.Paging;
-    using AllSopFoodService.ViewModels;
-    using AllSopFoodService.Mappers;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using AutoMapper;
+    using Model;
+    using ViewModels;
     using Boxed.Mapping;
-    using AllSopFoodService.Repositories.Interfaces;
+    using Interfaces;
+    using Repositories.Interfaces;
 
     public class ProductsService : IProductsService
     {
@@ -28,7 +23,7 @@ namespace AllSopFoodService.Services
         }
 
         //Perhaps this should be placed at the repo layer?
-        public async Task<ServiceResponse<List<FoodProductVM>>> GetAllProducts(string sortBy, string searchString, int pageNum, int pageSize)
+        public async Task<ServiceResponse<List<FoodProductVM>>> GetAllProductsAsync(string sortBy, string searchString, int pageNum, int pageSize)
         {
             var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
             // Eager loading
@@ -38,7 +33,8 @@ namespace AllSopFoodService.Services
             //{
             //    this.db.Entry(prod).Reference(u => u.Category).Load();
             //}
-            var dbProductsEagerLoaded = await this.unitOfWork.Products.GetAllProductsWithEagerLoad().ConfigureAwait(true);
+            var dbProductsEagerLoaded = await this.unitOfWork.Products
+                .GetAllProductsWithEagerLoadAsync().ConfigureAwait(true);
 
             serviceResponse.Data = dbProductsEagerLoaded.Select(fooditem => this.productMapper.Map(fooditem)).ToList();
             //serviceResponse.Data = dbProducts.Select(fp => this._mapper.Map<FoodProductVM>(fp)).ToList()
@@ -46,15 +42,11 @@ namespace AllSopFoodService.Services
             // Server side sorting
             if (!string.IsNullOrEmpty(sortBy))
             {
-                switch (sortBy)
+                serviceResponse.Data = sortBy switch
                 {
-                    case "name_desc":
-                        serviceResponse.Data = serviceResponse.Data.OrderByDescending(n => n.Name).ToList();
-                        break;
-                    default:
-                        serviceResponse.Data = serviceResponse.Data.OrderBy(n => n.Name).ToList();
-                        break;
-                }
+                    "name_desc" => serviceResponse.Data.OrderByDescending(n => n.Name).ToList(),
+                    _ => serviceResponse.Data.OrderBy(n => n.Name).ToList()
+                };
             }
             // server side Searching
             if (!string.IsNullOrEmpty(searchString))
@@ -69,11 +61,11 @@ namespace AllSopFoodService.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<FoodProductVM>> GetFoodProductById(int id)
+        public async Task<ServiceResponse<FoodProductVM>> GetFoodProductByIdAsync(int id)
         {
             var serviceResponse = new ServiceResponse<FoodProductVM>();
             //var dbProduct = await this.db.Products.Include(p => p.Category).FirstOrDefaultAsync(fp => fp.Id == id).ConfigureAwait(true);
-            var dbProduct = await this.unitOfWork.Products.GetProductWithEagerLoad(id).ConfigureAwait(true);
+            var dbProduct = await this.unitOfWork.Products.GetProductWithEagerLoadAsync(id).ConfigureAwait(true);
 
             if (dbProduct != null)
             {
@@ -88,7 +80,7 @@ namespace AllSopFoodService.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<FoodProductVM>>> CreateFoodProduct(ProductSaves foodProductDto)
+        public async Task<ServiceResponse<List<FoodProductVM>>> CreateFoodProductAsync(ProductSaves foodProductDto)
         {
             var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
             //possibly use AutoMapper here
@@ -98,7 +90,7 @@ namespace AllSopFoodService.Services
                 Price = foodProductDto.Price,
                 Quantity = foodProductDto.Quantity,
                 CategoryId = foodProductDto.CategoryId,
-                FoodProduct_Carts = null
+                FoodProductCarts = null
             };
 
             //this.db.Products.Add(foodProduct);
@@ -107,7 +99,8 @@ namespace AllSopFoodService.Services
             this.unitOfWork.Complete();
 
             //Mapping all products to FoodProductVM
-            var allProducts = await this.unitOfWork.Products.GetAllProductsWithEagerLoad().ConfigureAwait(true);
+            var allProducts = await this.unitOfWork.Products
+                .GetAllProductsWithEagerLoadAsync().ConfigureAwait(true);
             serviceResponse.Data = allProducts.Select(foodItem => this.productMapper.Map(foodItem)).ToList();
 
             return serviceResponse;
@@ -155,14 +148,14 @@ namespace AllSopFoodService.Services
 
         public decimal GetOriginalCostbyFoodProductId(int id) => this.unitOfWork.Products.GetById(id).Price;
 
-        public async Task<ServiceResponse<FoodProductVM>> UpdateFoodProduct(int id, ProductSaves foodProductDto)
+        public async Task<ServiceResponse<FoodProductVM>> UpdateFoodProductAsync(int id, ProductSaves foodProductDto)
         {
             //At the moment, the update request is not returning product Id upon successful update
             var serviceResponse = new ServiceResponse<FoodProductVM>();
             try
             {
                 //var currentFood = await this.db.Products.Include(p => p.Category).FirstOrDefaultAsync(foodItem => foodItem.Id == id).ConfigureAwait(true);
-                var currentFood = await this.unitOfWork.Products.GetProductWithEagerLoad(id).ConfigureAwait(true);
+                var currentFood = await this.unitOfWork.Products.GetProductWithEagerLoadAsync(id).ConfigureAwait(true);
                 // mapping from ProductSaves to Product
                 currentFood.Name = foodProductDto.Name;
                 currentFood.Price = foodProductDto.Price;
@@ -186,7 +179,7 @@ namespace AllSopFoodService.Services
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<FoodProductVM>>> RemoveFoodProductById(int id)
+        public async Task<ServiceResponse<List<FoodProductVM>>> RemoveFoodProductByIdAsync(int id)
         {
             var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
             try
@@ -198,7 +191,7 @@ namespace AllSopFoodService.Services
                 this.unitOfWork.Complete();
 
                 //manuall mapping
-                var allProducts = await this.unitOfWork.Products.GetAllProductsWithEagerLoad().ConfigureAwait(true);
+                var allProducts = await this.unitOfWork.Products.GetAllProductsWithEagerLoadAsync().ConfigureAwait(true);
                 serviceResponse.Data = allProducts.Select(foodItem => this.productMapper.Map(foodItem)).ToList();
             }
             catch (Exception ex)

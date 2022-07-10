@@ -1,11 +1,7 @@
 #nullable disable
 namespace AllSopFoodService.Model
 {
-    using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class ShoppingCart
     {
@@ -15,7 +11,7 @@ namespace AllSopFoodService.Model
         // Navigation Properties
         public int? VoucherId { get; set; }
         public virtual Promotion VoucherCode { get; set; } //assuming each Cart can only claim one Voucher at a time
-        public virtual List<FoodProduct_ShoppingCart> FoodProduct_Carts { get; set; }
+        public virtual List<FoodProductShoppingCart> FoodProductCarts { get; set; }
         //Navigation props
         public int UserId { get; set; }
         public User CartUser { get; set; }

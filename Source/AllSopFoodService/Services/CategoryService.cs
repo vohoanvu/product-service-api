@@ -1,16 +1,14 @@
 #nullable disable
 namespace AllSopFoodService.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.Model.Paging;
+    using Model;
     using AllSopFoodService.Repositories.Interfaces;
-    using AllSopFoodService.ViewModels;
+    using ViewModels;
     using Boxed.Mapping;
-    using Microsoft.EntityFrameworkCore;
+    using Interfaces;
 
     public class CategoryService : ICategoryService
     {

@@ -24,7 +24,7 @@ namespace AllSopFoodService
                 using (var scope = serviceScopeFactory.CreateScope())
                 {
                     var services = scope.ServiceProvider;
-                    var dbContext = services.GetRequiredService<FoodDBContext>();
+                    var dbContext = services.GetRequiredService<FoodDbContext>();
                     dbContext.Database.Migrate();
                 }
             }

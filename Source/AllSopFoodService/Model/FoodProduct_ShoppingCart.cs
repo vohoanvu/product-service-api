@@ -1,12 +1,7 @@
 namespace AllSopFoodService.Model
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using System.Threading.Tasks;
     // This Model Entity is used to demonstrate the many-many relationships between ShoppingCart and FoodProduct
-    public class FoodProduct_ShoppingCart
+    public class FoodProductShoppingCart
     {
         public int Id { get; set; }
         public int ProductId { get; set; }

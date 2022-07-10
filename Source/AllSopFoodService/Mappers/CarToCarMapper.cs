@@ -7,7 +7,7 @@ namespace AllSopFoodService.Mappers
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
 
-    public class CarToCarMapper : IMapper<Models.Car, Car>
+    public class CarToCarMapper : IMapper<Model.Car, Car>
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly LinkGenerator linkGenerator;
@@ -20,7 +20,7 @@ namespace AllSopFoodService.Mappers
             this.linkGenerator = linkGenerator;
         }
 
-        public void Map(Models.Car source, Car destination)
+        public void Map(Model.Car source, Car destination)
         {
             if (source is null)
             {

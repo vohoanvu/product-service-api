@@ -4,24 +4,24 @@ namespace AllSopFoodService.Commands
     using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
-    using AllSopFoodService.Repositories;
-    using AllSopFoodService.ViewModels;
+    using ViewModels;
     using Boxed.Mapping;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Infrastructure;
     using Microsoft.Net.Http.Headers;
+    using Repositories.Interfaces;
 
     public class GetCarCommand
     {
         private readonly IActionContextAccessor actionContextAccessor;
         private readonly ICarRepository carRepository;
-        private readonly IMapper<Models.Car, Car> carMapper;
+        private readonly IMapper<Model.Car, Car> carMapper;
 
         public GetCarCommand(
             IActionContextAccessor actionContextAccessor,
             ICarRepository carRepository,
-            IMapper<Models.Car, Car> carMapper)
+            IMapper<Model.Car, Car> carMapper)
         {
             this.actionContextAccessor = actionContextAccessor;
             this.carRepository = carRepository;
@@ -36,21 +36,27 @@ namespace AllSopFoodService.Commands
                 return new NotFoundResult();
             }
 
-            var httpContext = this.actionContextAccessor.ActionContext.HttpContext;
-            if (httpContext.Request.Headers.TryGetValue(HeaderNames.IfModifiedSince, out var stringValues))
+            var actionContext = this.actionContextAccessor.ActionContext;
+            if (actionContext != null)
             {
-                if (DateTimeOffset.TryParse(stringValues, out var modifiedSince) &&
-                    (modifiedSince >= car.Modified))
+                var httpContext = actionContext.HttpContext;
+                if (httpContext.Request.Headers.TryGetValue(HeaderNames.IfModifiedSince, out var stringValues))
                 {
-                    return new StatusCodeResult(StatusCodes.Status304NotModified);
+                    if (DateTimeOffset.TryParse(stringValues, out var modifiedSince) &&
+                        (modifiedSince >= car.Modified))
+                    {
+                        return new StatusCodeResult(StatusCodes.Status304NotModified);
+                    }
                 }
+
+                var carViewModel = this.carMapper.Map(car);
+                httpContext.Response.Headers.Add(
+                    HeaderNames.LastModified,
+                    car.Modified.ToString("R", CultureInfo.InvariantCulture));
+                return new OkObjectResult(carViewModel);
             }
 
-            var carViewModel = this.carMapper.Map(car);
-            httpContext.Response.Headers.Add(
-                HeaderNames.LastModified,
-                car.Modified.ToString("R", CultureInfo.InvariantCulture));
-            return new OkObjectResult(carViewModel);
+            return new NotFoundResult();
         }
     }
 }

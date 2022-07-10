@@ -1,18 +1,15 @@
-namespace AllSopFoodService.Services
+namespace AllSopFoodService.Services.Interfaces
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using AllSopFoodService.Model;
-    using AllSopFoodService.ViewModels;
-    using AllSopFoodService.ViewModels.UserAuth;
+    using Model;
+    using ViewModels;
 
     public interface ICartsService
     {
         // See all available cart associated with each User in the system
         // Since all Cart API service requires User Authorization, there's no need for newUserId really
-        Task<ServiceResponse<List<CartVM>>> GetAllCarts();
+        Task<ServiceResponse<List<CartVM>>> GetAllCartsAsync();
         // Create A New User Cart but rarely executed, since new user registration automatically create new shopping cart
         ServiceResponse<ShoppingCart> CreateShoppingCart();
         // See all Cart information owned by currently authenticated User

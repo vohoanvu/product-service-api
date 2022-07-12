@@ -26,10 +26,15 @@ namespace AllSopFoodService.Model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //configuring DB relations through Fluent API
-            modelBuilder.Entity<Product>()
+            /*modelBuilder.Entity<Product>()
                 .HasOne(fp => fp.Category)
                 .WithMany(c => c.FoodProducts)
-                .HasForeignKey(fp => fp.CategoryId);
+                .HasForeignKey(fp => fp.CategoryId);*/
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany()
+                .IsRequired();
+
             // many-to-many relation between Product and ShoppingCart
             modelBuilder.Entity<FoodProductInShoppingCart>()
                 .HasOne(foodCart => foodCart.FoodProduct)

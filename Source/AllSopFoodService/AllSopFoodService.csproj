@@ -2,6 +2,7 @@
 
   <PropertyGroup Label="Build">
     <TargetFramework>net6.0</TargetFramework>
+    <nullable>disable</nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- Used to store connection strings and other sensitive settings, so you don't have to check them into your source
          control provider. Only use this in Development, it is not intended for Production use.

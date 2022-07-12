@@ -4,13 +4,13 @@ orbs:
   windows: circleci/windows@2.4.1
 jobs:
   build:
-    working_directory: ~/product-service-api/Source/AllSopFoodService
+    working_directory: ~/Source/AllSopFoodService
     description: Build application with Release configuration
     executor:
       name: windows/default
     steps:
       - checkout:
-          path: ~/product-service-api
+          path: ~/Source
       - restore_cache:
           keys:
             - dotnet-packages-v1-{{ checksum "AllSopFoodService.csproj" }}

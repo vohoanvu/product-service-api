@@ -1,8 +1,8 @@
 #nullable disable
 namespace AllSopFoodService
 {
-    using AllSopFoodService.Constants;
-    using AllSopFoodService.Model;
+    using Constants;
+    using Model;
     using Boxed.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -12,7 +12,7 @@ namespace AllSopFoodService
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using AllSopFoodService.Repositories;
+    using Repositories;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.IdentityModel.Tokens;
     using System;

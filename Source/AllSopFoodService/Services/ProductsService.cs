@@ -23,7 +23,7 @@ namespace AllSopFoodService.Services
         }
 
         //Perhaps this should be placed at the repo layer?
-        public async Task<ServiceResponse<List<FoodProductVM>>> GetAllProductsAsync(string sortBy, string searchString, int pageNum, int pageSize)
+        public async Task<ServiceResponse<List<FoodProductVM>>> GetAllProductsAsync(string sortBy, int pageNum, int pageSize, string? searchString = null)
         {
             var serviceResponse = new ServiceResponse<List<FoodProductVM>>();
             // Eager loading
@@ -90,7 +90,7 @@ namespace AllSopFoodService.Services
                 Price = foodProductDto.Price,
                 Quantity = foodProductDto.Quantity,
                 CategoryId = foodProductDto.CategoryId,
-                FoodProductCarts = null
+                FoodProductInCarts = null
             };
 
             //this.db.Products.Add(foodProduct);

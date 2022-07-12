@@ -21,10 +21,10 @@ namespace AllSopFoodService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [LoggerMessage(0, LogLevel.Information, "This is a log test in GetAllFoodProducts Controller")]
         // or ---public async Task<ActionResult<IEnumerable<FoodProductDTO>>> GetFoodProductsAsync()--- is also correct!
-        public async Task<IActionResult> GetFoodProductsAsync(string sortBy, string searchString, int pageNum, int pageSize)
+        public async Task<IActionResult> GetFoodProductsAsync(string sortBy, string? searchString, int pageNum, int pageSize)
         {
             //this.logger.LogInformation("This is a log test in GetAllFoodProducts Controller");
-            var response = await this.foodItemService.GetAllProductsAsync(sortBy, searchString, pageNum, pageSize).ConfigureAwait(true);
+            var response = await this.foodItemService.GetAllProductsAsync(sortBy, pageNum, pageSize, searchString).ConfigureAwait(true);
             response.Message = $"There are a total of {response.Data.Count} product records";
             return this.Ok(response); // if returned type was ActionResult<T>, then only need to 'return foodItems;'
         }

@@ -2,11 +2,7 @@
 namespace AllSopFoodService
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AllSopFoodService.Model;
-    using Microsoft.AspNetCore.Hosting;
+    using Model;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;

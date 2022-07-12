@@ -4,7 +4,7 @@ namespace AllSopFoodService.Model
 {
     using Microsoft.EntityFrameworkCore;
 
-    public partial class FoodDbContext : DbContext
+    public class FoodDbContext : DbContext
     {
         public FoodDbContext()
         {
@@ -20,7 +20,7 @@ namespace AllSopFoodService.Model
         public virtual DbSet<Promotion> CouponCodes { get; set; }
         // Many-to-many relationship version of ShoppingCartItems
         public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
-        public virtual DbSet<FoodProductShoppingCart> FoodProductsCarts { get; set; }
+        public virtual DbSet<FoodProductInShoppingCart> FoodProductsInCarts { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
         public virtual DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,12 +31,12 @@ namespace AllSopFoodService.Model
                 .WithMany(c => c.FoodProducts)
                 .HasForeignKey(fp => fp.CategoryId);
             // many-to-many relation between Product and ShoppingCart
-            modelBuilder.Entity<FoodProductShoppingCart>()
+            modelBuilder.Entity<FoodProductInShoppingCart>()
                 .HasOne(foodCart => foodCart.FoodProduct)
-                .WithMany(foodItem => foodItem.FoodProductCarts)
+                .WithMany(foodItem => foodItem.FoodProductInCarts)
                 .HasForeignKey(foodCartId => foodCartId.ProductId);
 
-            modelBuilder.Entity<FoodProductShoppingCart>()
+            modelBuilder.Entity<FoodProductInShoppingCart>()
                 .HasOne(foodCart => foodCart.ShoppingCart)
                 .WithMany(cart => cart.FoodProductCarts)
                 .HasForeignKey(foodCartId => foodCartId.CartId);

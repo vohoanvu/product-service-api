@@ -7,7 +7,7 @@ namespace AllSopFoodService.Services.Interfaces
 
     public interface IProductsService
     {
-        Task<ServiceResponse<List<FoodProductVM>>> GetAllProductsAsync(string sortBy, string searchString, int pageNum, int pageSize);
+        Task<ServiceResponse<List<FoodProductVM>>> GetAllProductsAsync(string sortBy, int pageNum, int pageSize, string? searchString = null);
         Task<ServiceResponse<FoodProductVM>> GetFoodProductByIdAsync(int id);
         Task<ServiceResponse<FoodProductVM>> UpdateFoodProductAsync(int id, ProductSaves foodProductDto);
         Task<ServiceResponse<List<FoodProductVM>>> CreateFoodProductAsync(ProductSaves foodProductDto);

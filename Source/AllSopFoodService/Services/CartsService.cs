@@ -199,7 +199,7 @@ namespace AllSopFoodService.Services
                 }
 
                 // if this product was NOT already in this cart then add new entry into Products_In_Cart joint entity
-                var newProductInACart = new FoodProductShoppingCart()
+                var newProductInACart = new FoodProductInShoppingCart()
                 {
                     ProductId = productId,
                     CartId = yourCart.Id,
@@ -414,7 +414,7 @@ namespace AllSopFoodService.Services
         }
 
         //True if there are 10 or more Drinks Item in Cart, False otherwise
-        private static bool Is10orMoreDrinksItemInCart(List<FoodProductShoppingCart> productsIncart) // parameter changed => List<FoodProduct_Cart> 
+        private static bool Is10orMoreDrinksItemInCart(List<FoodProductInShoppingCart> productsIncart) // parameter changed => List<FoodProduct_Cart> 
         {
             //var currentCart = this._cartService.GetCartById(cartId).Data;
             //var allProductsInCart = this._db.FoodProducts_Carts.Where(c => c.CartId == cartId).ToList();

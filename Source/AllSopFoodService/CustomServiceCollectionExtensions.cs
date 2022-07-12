@@ -1,22 +1,17 @@
 namespace AllSopFoodService
 {
-    using System;
-    using System.Collections.Generic;
     using System.IO.Compression;
     using System.Linq;
-    using AllSopFoodService.Constants;
-    using AllSopFoodService.Options;
+    using Constants;
+    using Options;
     using Boxed.AspNetCore;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.AspNetCore.Server.Kestrel.Core;
     using Microsoft.Extensions.Caching.Distributed;
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Swashbuckle.AspNetCore.Filters;

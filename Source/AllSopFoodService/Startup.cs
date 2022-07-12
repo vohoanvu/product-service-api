@@ -76,7 +76,9 @@ namespace AllSopFoodService
             var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
             if (isDevelopment)
             {
-                services.AddDbContext<FoodDbContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
+                //services.AddDbContext<FoodDbContext>(options => options.UseSqlServer(connectionString: this.configuration.GetConnectionString("DefaultConnection")));
+                services.AddEntityFrameworkNpgsql().AddDbContext<FoodDbContext>(options =>
+                    options.UseNpgsql(this.configuration.GetConnectionString("DefaultConnection")));
             }
             else
             {

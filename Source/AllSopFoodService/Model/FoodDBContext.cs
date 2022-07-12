@@ -3,9 +3,11 @@
 namespace AllSopFoodService.Model
 {
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
 
     public class FoodDbContext : DbContext
     {
+
         public FoodDbContext()
         {
         }
@@ -23,17 +25,14 @@ namespace AllSopFoodService.Model
         public virtual DbSet<FoodProductInShoppingCart> FoodProductsInCarts { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
         public virtual DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //configuring DB relations through Fluent API
-            /*modelBuilder.Entity<Product>()
+            modelBuilder.Entity<Product>()
                 .HasOne(fp => fp.Category)
                 .WithMany(c => c.FoodProducts)
-                .HasForeignKey(fp => fp.CategoryId);*/
-            modelBuilder.Entity<Product>()
-                .HasOne(p => p.Category)
-                .WithMany()
-                .IsRequired();
+                .HasForeignKey(fp => fp.CategoryId);
 
             // many-to-many relation between Product and ShoppingCart
             modelBuilder.Entity<FoodProductInShoppingCart>()

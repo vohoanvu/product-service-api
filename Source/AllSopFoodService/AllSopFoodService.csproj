@@ -15,9 +15,9 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <Authors>Project Author</Authors>
-    <Company>Project Author</Company>
-    <Product>Vu Shopping Cart</Product>
+    <Authors>Vu-Vo</Authors>
+    <Company>Vu-Vo</Company>
+    <Product>Vu-Shopping-Cart</Product>
     <Description>Project Description</Description>
     <Copyright>Copyright © Project Author. All rights Reserved</Copyright>
   </PropertyGroup>

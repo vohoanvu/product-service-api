@@ -15,9 +15,9 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <Authors>Project Author</Authors>
-    <Company>Project Author</Company>
-    <Product>Vu Shopping Cart</Product>
+    <Authors>Vu-Vo</Authors>
+    <Company>Vu-Vo</Company>
+    <Product>Vu-Shopping-Cart</Product>
     <Description>Project Description</Description>
     <Copyright>Copyright © Project Author. All rights Reserved</Copyright>
   </PropertyGroup>
@@ -68,7 +68,7 @@
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.6.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.2" />
   </ItemGroup>
 

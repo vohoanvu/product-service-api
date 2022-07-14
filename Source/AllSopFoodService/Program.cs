@@ -4,7 +4,7 @@ namespace AllSopFoodService
     using System.IO;
     using System.Reflection;
     using System.Threading.Tasks;
-    using AllSopFoodService.Options;
+    using Options;
     using Boxed.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;

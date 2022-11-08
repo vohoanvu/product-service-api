@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 8000
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0.100 AS build
 WORKDIR /Source/AllSopFoodService
 COPY ["Source/AllSopFoodService/AllSopFoodService.csproj", "Source/AllSopFoodService/"]
 RUN dotnet restore "Source/AllSopFoodService/AllSopFoodService.csproj"
